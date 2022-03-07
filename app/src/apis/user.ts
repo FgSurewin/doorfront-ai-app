@@ -196,16 +196,19 @@ export const addUserBonusCredit = (data: { id: string }) =>
 /* -------------------------------------------------------------------------- */
 /*                   Get All User Information From Database                   */
 /* -------------------------------------------------------------------------- */
+export interface AllUserScores {
+  email: string;
+  score: number;
+  username: string;
+  labels: number;
+  review: number;
+  modify: number;
+  create: number;
+}
+
 export const getAllUsersFromDB = () =>
   baseRequest
-    .request<
-      UserReturnData<{
-        email: string;
-        score: number;
-        username: string;
-        labels: number;
-      }>
-    >({
+    .request<UserReturnData<AllUserScores[]>>({
       method: "GET",
       url: `/user/getAllUsers`,
     })

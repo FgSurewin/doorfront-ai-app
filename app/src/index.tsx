@@ -10,6 +10,8 @@ import ExplorationPage from "./pages/Exploration";
 import LabelPage from "./pages/Label";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditLabelingPage from "./pages/Label/EditLabelingPage";
+import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
+import LeaderBoard from "./pages/LeaderBoard";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -18,10 +20,12 @@ ReactDOM.render(
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/leaderBoard" element={<LeaderBoard />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
+            <Route path="/reviewLabels" element={<ReviewLabelingPage />} />
             <Route path="/editLabel/:id" element={<EditLabelingPage />} />
           </Route>
         </Route>

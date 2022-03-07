@@ -29,6 +29,14 @@ export class CollectImageController {
     await collectImageService.updateImage({ req, res, next }, body);
   }
 
+  async getAllImages(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    await collectImageService.getAllImages({ req, res, next });
+  }
+
   async getMultiImageByIds(
     req: Request,
     res: Response,

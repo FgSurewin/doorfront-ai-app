@@ -96,8 +96,15 @@ export default function SignUpForm({
             }
           }}
         >
-          {({ submitForm, isSubmitting }) => (
-            <Form id="Login-form">
+          {({ submitForm, isSubmitting, isValid }) => (
+            <Form
+              id="signUp-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                submitForm();
+              }}
+            >
               <Field
                 required
                 fullWidth
@@ -166,10 +173,10 @@ export default function SignUpForm({
               />
               <Button
                 fullWidth
+                type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting}
-                onClick={submitForm}
+                disabled={isSubmitting || !isValid}
                 sx={{ color: "white", fontWeight: "bold", mb: 4 }}
               >
                 Submit

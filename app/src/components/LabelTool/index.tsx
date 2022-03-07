@@ -118,8 +118,9 @@ export default function LabelTool({
     if (e.key === "q" || e.key === "Q") {
       resetLabelingProcess();
     } else if (e.key === "d" || e.key === "D") {
-      deleteReactToolImageLabel(selectedBoxId);
+      if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
     }
+    console.log("test ctrl -> ", e.key);
   };
 
   return (

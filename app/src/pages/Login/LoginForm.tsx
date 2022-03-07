@@ -52,6 +52,7 @@ export default function LoginForm() {
             ) {
               errors.email = "Invalid email address";
             }
+            if (!values.password) errors.password = "Required";
             return errors;
           }}
           onSubmit={async (values, { setSubmitting }) => {
@@ -78,8 +79,15 @@ export default function LoginForm() {
             }
           }}
         >
-          {({ submitForm, isSubmitting }) => (
-            <Form id="Login-form">
+          {({ submitForm, isSubmitting, isValid }) => (
+            <Form
+              id="Login-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                submitForm();
+              }}
+            >
               <Field
                 fullWidth
                 component={TextField}
@@ -98,10 +106,10 @@ export default function LoginForm() {
               />
               <Button
                 fullWidth
+                type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting}
-                onClick={submitForm}
+                disabled={isSubmitting || !isValid}
                 sx={{ color: "white", fontWeight: "bold" }}
               >
                 Submit

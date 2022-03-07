@@ -5,11 +5,12 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ListItemIcon from "@mui/material/ListItemIcon";
 // import Divider from "@mui/material/Divider";
 import Logout from "@mui/icons-material/Logout";
 import Login from "@mui/icons-material/Login";
-import { PaperProps } from "@mui/material";
+import { Divider, PaperProps } from "@mui/material";
 import { useHandleMenu } from "../../hooks/useHandleMenu";
 import { Link as RouterLink } from "react-router-dom";
 import { useUserStore } from "../../global/userState";
@@ -114,13 +115,13 @@ export default function UserAvatar() {
         onClose={handleCloseMenu}
         PaperProps={paperProps}
       >
-        {/* <MenuItem>
+        <MenuItem component={RouterLink} to="/leaderBoard">
           <ListItemIcon>
-            <Avatar />
+            <EmojiEventsIcon />
           </ListItemIcon>
-          Profile
-        </MenuItem> */}
-        {/* <Divider /> */}
+          Leader Board
+        </MenuItem>
+        <Divider />
         {!userInfo.nickname ? <LoginItem /> : <LogoutItem />}
       </Menu>
     </Box>

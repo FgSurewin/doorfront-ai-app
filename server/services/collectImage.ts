@@ -96,6 +96,33 @@ export class CollectImageService {
     }
   }
 
+  async getAllImages(ctx: AppContext): Promise<void> {
+    const { res } = ctx;
+    try {
+      const result: CollectedImageInterface[] =
+        await CollectImageModel.find().lean();
+      if (result.length > 0) {
+        res.json({
+          code: 0,
+          message: "Get all images successfully",
+          data: result,
+        });
+      } else {
+        res.json({
+          code: 5000,
+          message: "Result is NULL",
+          data: null,
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
   async getMultiImageByIds(
     ctx: AppContext,
     body: GetMultiImagesByIdsBody

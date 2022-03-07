@@ -7,6 +7,7 @@ const collectImageController = new CollectImageController();
 route.post("/createImage", checkToken, collectImageController.createImage);
 route.post("/updateImage", checkToken, collectImageController.updateImage);
 route.delete("/deleteImage", checkToken, collectImageController.deleteImage);
+route.get("/getAllImages", checkToken, collectImageController.getAllImages);
 route.post(
   "/getMultiImageByIds",
   checkToken,

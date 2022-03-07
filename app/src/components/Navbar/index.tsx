@@ -15,7 +15,10 @@ import {
 import { Box, SxProps } from "@mui/material";
 
 // const menuItems = ["Start Exploring", "Validation"];
-const menuItems = [{ name: "Start Exploring", path: "/exploration" }];
+const menuItems = [
+  { name: "Start Exploring", path: "/exploration" },
+  { name: "Validate Labels", path: "/reviewLabels" },
+];
 
 export interface NavbarProps {
   position?: "static" | "fixed";

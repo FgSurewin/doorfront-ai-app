@@ -1,0 +1,135 @@
+import React from "react";
+import LabelTool from "../../components/LabelTool";
+import { testTypeConfigs } from "./testImageData";
+import { CollectedImageInterface } from "../../types/collectedImage";
+import {
+  convertHumanImageToInputImageList,
+  convertReactToolImageLabelsToDBImageLabels,
+} from "./utils/label";
+import { ReactToolImageListItemType } from "../../components/LabelTool/state/reactToolState";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { fetchAllImages, updateHumanLabels } from "../../apis/collectedImage";
+import { useUserStore } from "../../global/userState";
+import { useExplorationStore } from "../../global/explorationState";
+import { addUserCredit, addUserLabelCredit } from "../../apis/user";
+import { deleteAllLocal } from "../../utils/localStorage";
+
+export default function ReviewLabelingPage() {
+  const navigate = useNavigate();
+  const { userInfo, clearUserInfo } = useUserStore();
+  const { maxModifier } = useExplorationStore();
+
+  const { enqueueSnackbar } = useSnackbar();
+  const [state, setState] = React.useState<CollectedImageInterface[]>([]);
+
+  React.useEffect(() => {
+    async function loadFunc() {
+      try {
+        const result = await fetchAllImages();
+        if (result.code === 0) {
+          const images = result.data!;
+          setState(
+            images.filter((image) => {
+              // Check if current user has been modify or validate current image
+              const names = image.human_labels.map((item) => item.name);
+              const isDisable =
+                names.includes(userInfo.nickname!) ||
+                image.human_labels.length >= maxModifier ||
+                image.image_id === "GuildTourSample";
+              return !isDisable;
+            })
+          );
+        }
+      } catch (e) {
+        const error = e as Error;
+        enqueueSnackbar(error.message, {
+          variant: "error",
+        });
+      }
+    }
+    loadFunc();
+  }, [enqueueSnackbar, userInfo.nickname, maxModifier]);
+
+  const onSubmit = async (image: ReactToolImageListItemType) => {
+    try {
+      const filterImageList = state.filter(
+        (item) => item.image_id === image.imageId
+      );
+      // Extract images data from response data
+      const humanLabelList = filterImageList[0].human_labels;
+      const currentImagePov = filterImageList[0].pov;
+
+      // Parse data into certain format required by database
+      const newHumanLabels = convertReactToolImageLabelsToDBImageLabels(
+        image.labels,
+        currentImagePov
+      );
+
+      // Insert new label list at the head of the array
+      humanLabelList.unshift({
+        name: userInfo.nickname || "Nobody",
+        labels: newHumanLabels,
+      });
+
+      // Send back to Database
+      const result = await updateHumanLabels(
+        {
+          imageId: image.imageId,
+          data: humanLabelList,
+        },
+        {
+          clearUserInfo,
+          navigate,
+          deleteAllLocal,
+        }
+      );
+      if (result.code === 0) {
+        // * Handle User Credits
+        // add create credit
+        await addUserCredit({ id: userInfo.id!, type: "review" });
+        // add label credit
+        await addUserLabelCredit({
+          id: userInfo.id!,
+          labelNum: newHumanLabels.filter(
+            (item) => item.labeledBy === userInfo.nickname!
+          ).length,
+        });
+
+        enqueueSnackbar("Save successfully", {
+          variant: "success",
+        });
+      }
+    } catch (e) {
+      const error = e as Error;
+      enqueueSnackbar(error.message, {
+        variant: "error",
+      });
+    }
+  };
+
+  const onFailureExit = () => {
+    navigate("/");
+  };
+
+  const onSuccessExit = () => {
+    navigate("/");
+  };
+
+  return (
+    <>
+      {state && state.length > 0 && (
+        <LabelTool
+          collectedImageList={convertHumanImageToInputImageList(state)}
+          typeConfigs={testTypeConfigs}
+          operations={{
+            onSubmitImage: onSubmit,
+            onFailureExit,
+            onSuccessExit,
+          }}
+          disableDelete={true}
+        />
+      )}
+    </>
+  );
+}

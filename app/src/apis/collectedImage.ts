@@ -189,3 +189,17 @@ export const updateHumanLabels = (
     .catch((res) => {
       throw new Error(res);
     });
+
+/* -------------------------------------------------------------------------- */
+/*                     Exploration Page - Fetch All Images                    */
+/* -------------------------------------------------------------------------- */
+export const fetchAllImages = () =>
+  baseRequest
+    .request<CollectedImageApiReturnType<CollectedImageInterface[]>>({
+      method: "GET",
+      url: `/collectImage/getAllImages`,
+    })
+    .then((res) => res.data)
+    .catch((res) => {
+      throw new Error(res);
+    });

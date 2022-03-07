@@ -505,13 +505,16 @@ export class UserService {
     try {
       const allUser = await UserModel.find().lean();
       res.json({
-        code: 4000,
-        message: "User is not existed",
+        code: 0,
+        message: "Get users successfully",
         data: allUser.map((item) => ({
           email: item.email,
           score: item.score,
           username: item.nickname,
           labels: item.label,
+          review: item.review,
+          modify: item.modify,
+          create: item.create,
         })),
       });
     } catch (e) {
