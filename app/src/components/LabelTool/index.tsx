@@ -7,11 +7,17 @@ import {
   useReactToolsStore,
 } from "./state/reactToolState";
 import LabelStage from "./LabelStage";
-import { generateReactToolImages } from "./utils";
+import {
+  calculateBoundingBox,
+  generateReactToolImages,
+  preventBoxOutOfImage,
+} from "./utils";
 import { useReactToolInternalStore } from "./state/internalState";
 import ReactToolHeader from "./ReactToolHeader";
 import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
+import { v4 as uuidv4 } from "uuid";
+import { useUserStore } from "../../global/userState";
 
 export interface InputLabel {
   x: number;
@@ -89,8 +95,16 @@ export default function LabelTool({
     deleteReactToolImageLabel,
     initOperationFunctions,
     initDisableDelete,
+    selectedImageId,
+    addReactToolImageLabel,
   } = useReactToolsStore();
-  const { selectedBoxId, resetLabelingProcess } = useReactToolInternalStore();
+  const {
+    selectedBoxId,
+    onChangeSelectedBoxId,
+    resetLabelingProcess,
+    imageAttributes,
+  } = useReactToolInternalStore();
+  const { userInfo } = useUserStore();
 
   const _onMount = React.useRef(false);
   React.useEffect(() => {
@@ -114,13 +128,51 @@ export default function LabelTool({
     initDisableDelete,
   ]);
 
+  const handleCopyBox = () => {
+    if (selectedImageId !== "" && selectedBoxId !== "") {
+      /* ---------------------------- Get current image --------------------------- */
+      const currentImage = reactToolImageList.filter(
+        (item) => item.imageId === selectedImageId
+      )[0];
+      /* ----------------------------- Get current box ---------------------------- */
+      const currentBox = currentImage.labels.filter(
+        (item) => item.id === selectedBoxId
+      )[0];
+      /* ------------------------- Duplicate selected box ------------------------- */
+      const startPoint = { x: currentBox.x + 5, y: currentBox.y + 5 };
+      const _endPoint = {
+        x: currentBox.x + currentBox.width + 5,
+        y: currentBox.y + currentBox.height + 5,
+      };
+      /* ---------------------- Prevent the box out of image ---------------------- */
+      const xRange = [imageAttributes.x, imageAttributes.width];
+      const yRange = [imageAttributes.y, imageAttributes.height];
+      const endPoint = preventBoxOutOfImage(_endPoint, xRange, yRange);
+      /* ----------------------------- Create new box ----------------------------- */
+      const newBoxId = uuidv4();
+      addReactToolImageLabel(selectedImageId, {
+        ...calculateBoundingBox(startPoint, endPoint)!,
+        fill: "rgba(255,255,255, 0.2)",
+        stroke: currentBox.stroke,
+        strokeWidth: 2,
+        type: currentBox.type,
+        subtype: currentBox.subtype,
+        isVisible: true,
+        id: newBoxId,
+        labeledBy: userInfo.nickname!,
+      });
+      onChangeSelectedBoxId(newBoxId);
+    }
+  };
+
   const handleReactToolKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "q" || e.key === "Q") {
       resetLabelingProcess();
     } else if (e.key === "d" || e.key === "D") {
       if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
+    } else if (e.key === "c" || e.key === "C") {
+      handleCopyBox();
     }
-    console.log("test ctrl -> ", e.key);
   };
 
   return (

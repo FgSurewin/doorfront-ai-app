@@ -11,6 +11,7 @@ import { login } from "../../apis/user";
 import { saveAllLocal } from "../../utils/localStorage";
 import { useUserStore } from "../../global/userState";
 import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 interface Values {
   email: string;
@@ -110,10 +111,13 @@ export default function LoginForm() {
                 variant="contained"
                 color="primary"
                 disabled={isSubmitting || !isValid}
-                sx={{ color: "white", fontWeight: "bold" }}
+                sx={{ color: "white", fontWeight: "bold", mb: 1 }}
               >
                 Submit
               </Button>
+              <Typography variant="body2" component={RouterLink} to="/reset">
+                Forget password? Please click here to reset it
+              </Typography>
             </Form>
           )}
         </Formik>

@@ -5,6 +5,11 @@ export interface LoginData {
   email: string;
   password: string;
 }
+export interface ResetData {
+  email: string;
+  newPassword: string;
+  nickname: string;
+}
 
 export interface LoginReturnData {
   code: number;
@@ -45,6 +50,18 @@ export const login = (data: LoginData) =>
     .request<LoginReturnData>({
       method: "POST",
       url: `/user/login`,
+      data,
+    })
+    .then((res) => res.data)
+    .catch((res) => {
+      throw new Error(res);
+    });
+
+export const resetPassword = (data: ResetData) =>
+  baseRequest
+    .request<SignUpReturnData>({
+      method: "POST",
+      url: `/user/reset`,
       data,
     })
     .then((res) => res.data)

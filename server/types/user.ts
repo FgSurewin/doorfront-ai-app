@@ -20,3 +20,9 @@ export interface UpdateLabelCreditBody {
 export interface GetUserScoreBody {
   id: string;
 }
+
+export interface ResetBody {
+  nickname: string;
+  newPassword: string;
+  email: string;
+}

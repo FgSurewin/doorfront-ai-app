@@ -7,6 +7,7 @@ const userController = new UserController();
 
 route.post("/addUser", userController.addUser);
 route.post("/login", userController.login);
+route.post("/reset", userController.reset);
 route.post("/getUnLabelImageList", userController.getUnLabelImageList);
 route.post("/addLabelImage", userController.addLabelImage);
 route.post("/deleteLabelImage", userController.deleteLabelImage);

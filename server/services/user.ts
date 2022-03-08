@@ -8,6 +8,7 @@ import {
   GetUserScoreBody,
   QueryImageBody,
   QueryImageListBody,
+  ResetBody,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -107,6 +108,57 @@ export class UserService {
         res.json({
           code: 2000,
           message: "Email doesn't exist.",
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async reset(ctx: AppContext, body: ResetBody) {
+    const { res } = ctx;
+    const { email, newPassword, nickname } = body;
+    try {
+      const existingUser = await UserModel.findOne({ nickname });
+      if (existingUser) {
+        if (existingUser.email === email) {
+          const result = await UserModel.findOneAndUpdate(
+            { _id: existingUser._id },
+            {
+              password: bcrypt.hashSync(newPassword, salt),
+            },
+            {
+              new: true,
+              upsert: true,
+              rawResult: true, // Return the raw result from the MongoDB driver
+            }
+          );
+          if (result.ok === 1) {
+            res.json({
+              code: 0,
+              message: "Reset password successfully",
+              data: result,
+            });
+          } else {
+            res.json({
+              code: 4000,
+              message: "Fail to reset password",
+            });
+          }
+        } else {
+          res.json({
+            code: 2000,
+            message: "Email is not correct.",
+          });
+        }
+      } else {
+        res.json({
+          code: 2000,
+          message: "Nickname does not exist.",
         });
       }
     } catch (e) {

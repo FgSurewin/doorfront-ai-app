@@ -10,6 +10,7 @@ import {
   GetUserScoreBody,
   QueryImageBody,
   QueryImageListBody,
+  ResetBody,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -31,6 +32,11 @@ export class UserController {
     // await imageService.getAllImages({ req, res, next });
     const body: LoginBody = req.body;
     await userService.login({ req, res, next }, body);
+  }
+
+  async reset(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const body: ResetBody = req.body;
+    await userService.reset({ req, res, next }, body);
   }
 
   async getUnLabelImageList(

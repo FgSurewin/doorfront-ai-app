@@ -25,6 +25,7 @@ export default function BoxPanel() {
       <ReactToolAsideTitle text="Keyboard Shortcuts" />
       <KeyText keyText="q" description="Quit the labeling mode" />
       <KeyText keyText="d" description="Delete selected bounding box" />
+      <KeyText keyText="c" description="Duplicate selected bounding box" />
       <ReactToolAsideTitle text="Bounding Box Buttons" />
       <List className="BoxButtonGroup">
         {typeConfigs.length > 0 &&

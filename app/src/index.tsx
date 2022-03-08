@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
+import ResetPage from "./pages/Login/ResetPage";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -20,6 +21,7 @@ ReactDOM.render(
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset" element={<ResetPage />} />
           <Route path="/leaderBoard" element={<LeaderBoard />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
