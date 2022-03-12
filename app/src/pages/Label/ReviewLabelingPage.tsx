@@ -36,7 +36,8 @@ export default function ReviewLabelingPage() {
               const isDisable =
                 names.includes(userInfo.nickname!) ||
                 image.human_labels.length >= maxModifier ||
-                image.image_id === "GuildTourSample";
+                image.image_id === "GuildTourSample" ||
+                image.human_labels.length === 0;
               return !isDisable;
             })
           );
