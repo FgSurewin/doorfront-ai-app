@@ -122,7 +122,7 @@ export default function ReactToolBox({ boxAttributes }: ReactToolBoxProps) {
         <Rect
           // onSelect is used to select current target
           ref={rectRef}
-          draggable
+          draggable={!labelingProcess.isLabeling}
           x={x}
           y={y}
           width={width}

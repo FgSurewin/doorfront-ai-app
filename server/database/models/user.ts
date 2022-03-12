@@ -27,6 +27,8 @@ export interface UserInterface extends Document {
   bonus: number; // Number of bonus that user has gained
   checkOld: number; // Number of old images (labelBox images) that user has reviewed
   label_images: QueryImageAttribute[];
+  modify_images: QueryImageAttribute[];
+  review_images: QueryImageAttribute[];
   unLabel_images: QueryImageAttribute[];
 }
 
@@ -89,6 +91,8 @@ const UserModel = new Schema<UserInterface>(
       required: true,
     },
     label_images: [QueryImageAttributeSchema],
+    modify_images: [QueryImageAttributeSchema],
+    review_images: [QueryImageAttributeSchema],
     unLabel_images: [QueryImageAttributeSchema],
   },
   { timestamps: true }

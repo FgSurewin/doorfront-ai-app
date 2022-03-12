@@ -12,7 +12,11 @@ import { useSnackbar } from "notistack";
 import { fetchAllImages, updateHumanLabels } from "../../apis/collectedImage";
 import { useUserStore } from "../../global/userState";
 import { useExplorationStore } from "../../global/explorationState";
-import { addUserCredit, addUserLabelCredit } from "../../apis/user";
+import {
+  addUserCredit,
+  addUserLabelCredit,
+  saveImageToDiffList,
+} from "../../apis/user";
 import { deleteAllLocal } from "../../utils/localStorage";
 
 export default function ReviewLabelingPage() {
@@ -26,7 +30,11 @@ export default function ReviewLabelingPage() {
   React.useEffect(() => {
     async function loadFunc() {
       try {
-        const result = await fetchAllImages();
+        const result = await fetchAllImages({
+          clearUserInfo,
+          navigate,
+          deleteAllLocal,
+        });
         if (result.code === 0) {
           const images = result.data!;
           setState(
@@ -50,7 +58,13 @@ export default function ReviewLabelingPage() {
       }
     }
     loadFunc();
-  }, [enqueueSnackbar, userInfo.nickname, maxModifier]);
+  }, [
+    enqueueSnackbar,
+    userInfo.nickname,
+    maxModifier,
+    navigate,
+    clearUserInfo,
+  ]);
 
   const onSubmit = async (image: ReactToolImageListItemType) => {
     try {
@@ -86,6 +100,16 @@ export default function ReviewLabelingPage() {
         }
       );
       if (result.code === 0) {
+        //TODO Add review_images property
+        await saveImageToDiffList({
+          category: "review_images",
+          id: userInfo.id!,
+          data: {
+            imageId: image.imageId,
+            fileName: image.fileName,
+            imgSrc: image.imgSrc,
+          },
+        });
         // * Handle User Credits
         // add create credit
         await addUserCredit({ id: userInfo.id!, type: "review" });

@@ -193,13 +193,25 @@ export const updateHumanLabels = (
 /* -------------------------------------------------------------------------- */
 /*                     Exploration Page - Fetch All Images                    */
 /* -------------------------------------------------------------------------- */
-export const fetchAllImages = () =>
+export const fetchAllImages = (
+  handleFailedTokenFuncs?: HandleFailedTokenFuncs
+) =>
   baseRequest
     .request<CollectedImageApiReturnType<CollectedImageInterface[]>>({
       method: "GET",
       url: `/collectImage/getAllImages`,
     })
-    .then((res) => res.data)
+    .then((res) => {
+      if (res.data.code === 2000) {
+        if (handleFailedTokenFuncs) {
+          handleFailedTokenFuncs.navigate("/login");
+          handleFailedTokenFuncs.deleteAllLocal();
+          handleFailedTokenFuncs.clearUserInfo();
+        }
+        return Promise.reject(new Error(res.data.message));
+      }
+      return res.data;
+    })
     .catch((res) => {
       throw new Error(res);
     });

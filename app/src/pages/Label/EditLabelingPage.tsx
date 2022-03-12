@@ -5,7 +5,11 @@ import {
   getMultiImageByIds,
   updateHumanLabels,
 } from "../../apis/collectedImage";
-import { addUserCredit, addUserLabelCredit } from "../../apis/user";
+import {
+  addUserCredit,
+  addUserLabelCredit,
+  saveImageToDiffList,
+} from "../../apis/user";
 import LabelTool from "../../components/LabelTool";
 import { ReactToolImageListItemType } from "../../components/LabelTool/state/reactToolState";
 import { useUserStore } from "../../global/userState";
@@ -85,6 +89,16 @@ export default function EditLabelingPage() {
         }
       );
       if (result.code === 0) {
+        //TODO Add modify_images property
+        await saveImageToDiffList({
+          category: "modify_images",
+          id: userInfo.id!,
+          data: {
+            imageId: image.imageId,
+            fileName: image.fileName,
+            imgSrc: image.imgSrc,
+          },
+        });
         // * Handle User Credits
         // add create credit
         await addUserCredit({ id: userInfo.id!, type: "modify" });

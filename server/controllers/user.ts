@@ -11,6 +11,7 @@ import {
   QueryImageBody,
   QueryImageListBody,
   ResetBody,
+  SaveActionListBody,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -55,6 +56,15 @@ export class UserController {
     const body: QueryImageBody = req.body;
     await userService.addLabelImage({ req, res, next }, body);
   }
+  async saveImageToDiffList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const body: SaveActionListBody = req.body;
+    await userService.saveImageToDiffList({ req, res, next }, body);
+  }
+
   async deleteLabelImage(
     req: Request,
     res: Response,
@@ -118,45 +128,4 @@ export class UserController {
   ): Promise<void> {
     await userService.getAllUsers({ req, res, next });
   }
-
-  // async updateImage(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const body: UpdateImageBody = req.body;
-  //   await userService.updateImage({ req, res, next }, body);
-  // }
-  // async addCreateCredit(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const body: UpdateImageBody = req.body;
-  //   await userService.addCreateCredit({ req, res, next }, body);
-  // }
-  // async addReviewCredit(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const body: UpdateImageBody = req.body;
-  //   await userService.addReviewCredit({ req, res, next }, body);
-  // }
-  // async addValidateCredit(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const body: UpdateImageBody = req.body;
-  //   await userService.addValidateCredit({ req, res, next }, body);
-  // }
-  // async addNumberByType(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<void> {
-  //   const body: UpdateUserLabelsBody = req.body;
-  //   await userService.addNumberByType({ req, res, next }, body);
-  // }
 }

@@ -9,6 +9,7 @@ import {
   QueryImageBody,
   QueryImageListBody,
   ResetBody,
+  SaveActionListBody,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -225,6 +226,51 @@ export class UserService {
           res.json({
             code: 4000,
             message: "Fail to add label image",
+          });
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User is not existed",
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async saveImageToDiffList(ctx: AppContext, body: SaveActionListBody) {
+    const { res } = ctx;
+    try {
+      const { id, data, category } = body;
+      const currentUser = await UserModel.findById(id);
+      if (currentUser) {
+        const newLabelImages = [...currentUser[category], data];
+        const result = await UserModel.findOneAndUpdate(
+          { _id: id },
+          {
+            [category]: newLabelImages,
+          },
+          {
+            new: true,
+            upsert: true,
+            rawResult: true, // Return the raw result from the MongoDB driver
+          }
+        );
+        if (result.ok === 1) {
+          res.json({
+            code: 0,
+            message: `Add ${category} successfully`,
+            data: result,
+          });
+        } else {
+          res.json({
+            code: 4000,
+            message: `Fail to add ${category}`,
           });
         }
       } else {

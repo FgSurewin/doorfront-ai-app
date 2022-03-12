@@ -10,6 +10,7 @@ route.post("/login", userController.login);
 route.post("/reset", userController.reset);
 route.post("/getUnLabelImageList", userController.getUnLabelImageList);
 route.post("/addLabelImage", userController.addLabelImage);
+route.post("/saveImageToDiffList", userController.saveImageToDiffList);
 route.post("/deleteLabelImage", userController.deleteLabelImage);
 route.post("/addUnLabelImage", userController.addUnLabelImage);
 route.post("/deleteUnLabelImage", userController.deleteUnLabelImage);

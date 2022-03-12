@@ -3,6 +3,12 @@ export interface QueryImageBody {
   data: { imageId: string; imgSrc: string; fileName: string };
 }
 
+export interface SaveActionListBody {
+  category: "label_images" | "modify_images" | "review_images";
+  id: string;
+  data: { imageId: string; imgSrc: string; fileName: string };
+}
+
 export interface QueryImageListBody {
   id: string;
 }

@@ -80,6 +80,12 @@ export interface QueryImageBodyData {
   data: { imageId: string; imgSrc: string; fileName: string };
 }
 
+export interface SaveActionListBody {
+  category: "label_images" | "modify_images" | "review_images";
+  id: string;
+  data: { imageId: string; imgSrc: string; fileName: string };
+}
+
 /* -------------------------------------------------------------------------- */
 /*                          Handle User Image Record                          */
 /* -------------------------------------------------------------------------- */
@@ -88,6 +94,18 @@ export const addLabelImage = (data: QueryImageBodyData) =>
     .request<UserReturnData<any>>({
       method: "POST",
       url: `/user/addLabelImage`,
+      data,
+    })
+    .then((res) => res.data)
+    .catch((res) => {
+      throw new Error(res);
+    });
+
+export const saveImageToDiffList = (data: SaveActionListBody) =>
+  baseRequest
+    .request<UserReturnData<any>>({
+      method: "POST",
+      url: `/user/saveImageToDiffList`,
       data,
     })
     .then((res) => res.data)
