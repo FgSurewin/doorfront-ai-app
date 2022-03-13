@@ -7,13 +7,19 @@ import { deleteAllLocal } from "../../utils/localStorage";
 import { useUserStore } from "../../global/userState";
 import { useSnackbar } from "notistack";
 import { updateHumanLabels } from "../../apis/collectedImage";
-import { getUserScoreFromDB, addUserCredit } from "../../apis/user";
+import {
+  getUserScoreFromDB,
+  addUserCredit,
+  saveImageToDiffList,
+} from "../../apis/user";
 
 export interface ImageListItemType {
   imageId: string;
   disable: boolean;
   name: string;
   human_labels: HumanLabels[];
+  fileName: string;
+  imgSrc: string;
 }
 
 export interface ImageListItemProps {
@@ -65,7 +71,17 @@ export default function ImageListItem({ imageList }: ImageListItemProps) {
               return item;
             })
           );
-
+          //TODO Add review_images property
+          await saveImageToDiffList({
+            category: "review_images",
+            id: userInfo.id!,
+            data: {
+              imageId: image.imageId,
+              fileName: image.fileName,
+              imgSrc: image.imgSrc,
+            },
+          });
+          // * Handle User Credits
           // add review credit
           await addUserCredit({ id: userInfo.id!, type: "review" });
           // Get latest user score from DB

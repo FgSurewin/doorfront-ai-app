@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface QueryImageAttribute extends Document {
+export interface QueryImageAttribute {
   imageId: string;
   imgSrc: string;
   fileName: string;

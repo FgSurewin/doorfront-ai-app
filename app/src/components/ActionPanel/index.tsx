@@ -140,6 +140,8 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
           name: imageName,
           imageId,
           human_labels: image.human_labels,
+          fileName: image.fileName,
+          imgSrc: image.url,
         });
       }
     });

@@ -249,11 +249,10 @@ export class UserService {
       const { id, data, category } = body;
       const currentUser = await UserModel.findById(id);
       if (currentUser) {
-        const newLabelImages = [...currentUser[category], data];
         const result = await UserModel.findOneAndUpdate(
           { _id: id },
           {
-            [category]: newLabelImages,
+            $push: { [category]: data },
           },
           {
             new: true,
