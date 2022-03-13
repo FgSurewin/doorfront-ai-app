@@ -81,7 +81,11 @@ export interface QueryImageBodyData {
 }
 
 export interface SaveActionListBody {
-  category: "label_images" | "modify_images" | "review_images";
+  category:
+    | "label_images"
+    | "modify_images"
+    | "review_images"
+    | "unLabel_images";
   id: string;
   data: { imageId: string; imgSrc: string; fileName: string };
 }
@@ -89,18 +93,8 @@ export interface SaveActionListBody {
 /* -------------------------------------------------------------------------- */
 /*                          Handle User Image Record                          */
 /* -------------------------------------------------------------------------- */
-export const addLabelImage = (data: QueryImageBodyData) =>
-  baseRequest
-    .request<UserReturnData<any>>({
-      method: "POST",
-      url: `/user/addLabelImage`,
-      data,
-    })
-    .then((res) => res.data)
-    .catch((res) => {
-      throw new Error(res);
-    });
 
+/* ------------------------ New Action List Functions ----------------------- */
 export const saveImageToDiffList = (data: SaveActionListBody) =>
   baseRequest
     .request<UserReturnData<any>>({
@@ -112,42 +106,69 @@ export const saveImageToDiffList = (data: SaveActionListBody) =>
     .catch((res) => {
       throw new Error(res);
     });
-
-export const deleteLabelImage = (data: QueryImageBodyData) =>
+export const deleteImageFromList = (data: SaveActionListBody) =>
   baseRequest
     .request<UserReturnData<any>>({
       method: "POST",
-      url: `/user/deleteLabelImage`,
+      url: `/user/deleteImageFromList`,
       data,
     })
     .then((res) => res.data)
     .catch((res) => {
       throw new Error(res);
     });
+/* -------------------------------------------------------------------------- */
 
-export const addUnLabelImage = (data: QueryImageBodyData) =>
-  baseRequest
-    .request<UserReturnData<any>>({
-      method: "POST",
-      url: `/user/addUnLabelImage`,
-      data,
-    })
-    .then((res) => res.data)
-    .catch((res) => {
-      throw new Error(res);
-    });
+/* ------------------------ Old Action List Functions ----------------------- */
+/* -------------------------------------------------------------------------- */
+// export const addLabelImage = (data: QueryImageBodyData) =>
+//   baseRequest
+//     .request<UserReturnData<any>>({
+//       method: "POST",
+//       url: `/user/addLabelImage`,
+//       data,
+//     })
+//     .then((res) => res.data)
+//     .catch((res) => {
+//       throw new Error(res);
+//     });
 
-export const deleteUnLabelImage = (data: QueryImageBodyData) =>
-  baseRequest
-    .request<UserReturnData<any>>({
-      method: "POST",
-      url: `/user/deleteUnLabelImage`,
-      data,
-    })
-    .then((res) => res.data)
-    .catch((res) => {
-      throw new Error(res);
-    });
+// export const deleteLabelImage = (data: QueryImageBodyData) =>
+//   baseRequest
+//     .request<UserReturnData<any>>({
+//       method: "POST",
+//       url: `/user/deleteLabelImage`,
+//       data,
+//     })
+//     .then((res) => res.data)
+//     .catch((res) => {
+//       throw new Error(res);
+//     });
+
+// export const addUnLabelImage = (data: QueryImageBodyData) =>
+//   baseRequest
+//     .request<UserReturnData<any>>({
+//       method: "POST",
+//       url: `/user/addUnLabelImage`,
+//       data,
+//     })
+//     .then((res) => res.data)
+//     .catch((res) => {
+//       throw new Error(res);
+//     });
+
+// export const deleteUnLabelImage = (data: QueryImageBodyData) =>
+//   baseRequest
+//     .request<UserReturnData<any>>({
+//       method: "POST",
+//       url: `/user/deleteUnLabelImage`,
+//       data,
+//     })
+//     .then((res) => res.data)
+//     .catch((res) => {
+//       throw new Error(res);
+//     });
+/* -------------------------------------------------------------------------- */
 
 export const getUnLabelImageList = (data: { id: string }) =>
   baseRequest

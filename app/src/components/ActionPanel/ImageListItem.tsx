@@ -6,7 +6,7 @@ import { HumanLabels } from "../../types/collectedImage";
 import { deleteAllLocal } from "../../utils/localStorage";
 import { useUserStore } from "../../global/userState";
 import { useSnackbar } from "notistack";
-import { updateHumanLabels } from "../../apis/collectedImage";
+import { updateNewHumanLabels } from "../../apis/collectedImage";
 import {
   getUserScoreFromDB,
   addUserCredit,
@@ -50,10 +50,13 @@ export default function ImageListItem({ imageList }: ImageListItemProps) {
           labels: newLabelList,
         });
         // Send back to Database
-        const result = await updateHumanLabels(
+        const result = await updateNewHumanLabels(
           {
             imageId: image.imageId,
-            data: humanLabelList,
+            data: {
+              name: userInfo.nickname || "Nobody",
+              labels: newLabelList,
+            },
           },
           {
             clearUserInfo,

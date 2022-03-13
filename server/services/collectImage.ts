@@ -5,6 +5,7 @@ import CollectImageModel, {
 } from "../database/models/collectImage";
 import {
   AddHumanLabelsBody,
+  AddNewHumanLabelsBody,
   GetMultiImageByPano,
   GetMultiImagesByIdsBody,
   UpdateImageBody,
@@ -179,14 +180,51 @@ export class CollectImageService {
     }
   }
 
-  async addHumanLabels(ctx: AppContext, body: AddHumanLabelsBody) {
+  /* ------------------------------ Old Function ------------------------------ */
+  // async addHumanLabels(ctx: AppContext, body: AddHumanLabelsBody) {
+  //   const { res } = ctx;
+  //   try {
+  //     const { imageId, data } = body;
+  //     const result = await CollectImageModel.findOneAndUpdate(
+  //       { image_id: imageId },
+  //       {
+  //         human_labels: data,
+  //       },
+  //       {
+  //         new: true,
+  //         upsert: true,
+  //         rawResult: true, // Return the raw result from the MongoDB driver
+  //       }
+  //     );
+  //     if (result.ok === 1) {
+  //       res.json({
+  //         code: 0,
+  //         message: "Modify successfully",
+  //         data: result,
+  //       });
+  //     } else {
+  //       res.json({
+  //         code: 4000,
+  //         message: "Fail to modify",
+  //       });
+  //     }
+  //   } catch (e) {
+  //     const error = new Error(`${e}`);
+  //     res.json({
+  //       code: 5000,
+  //       message: error.message,
+  //     });
+  //   }
+  // }
+  /* ------------------------------ New Function ------------------------------ */
+  async addNewHumanLabels(ctx: AppContext, body: AddNewHumanLabelsBody) {
     const { res } = ctx;
     try {
       const { imageId, data } = body;
       const result = await CollectImageModel.findOneAndUpdate(
         { image_id: imageId },
         {
-          human_labels: data,
+          $push: { human_labels: { $each: [data], $position: 0 } },
         },
         {
           new: true,

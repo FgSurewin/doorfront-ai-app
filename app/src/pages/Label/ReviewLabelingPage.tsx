@@ -9,7 +9,10 @@ import {
 import { ReactToolImageListItemType } from "../../components/LabelTool/state/reactToolState";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { fetchAllImages, updateHumanLabels } from "../../apis/collectedImage";
+import {
+  fetchAllImages,
+  updateNewHumanLabels,
+} from "../../apis/collectedImage";
 import { useUserStore } from "../../global/userState";
 import { useExplorationStore } from "../../global/explorationState";
 import {
@@ -72,7 +75,7 @@ export default function ReviewLabelingPage() {
         (item) => item.image_id === image.imageId
       );
       // Extract images data from response data
-      const humanLabelList = filterImageList[0].human_labels;
+      // const humanLabelList = filterImageList[0].human_labels;
       const currentImagePov = filterImageList[0].pov;
 
       // Parse data into certain format required by database
@@ -82,16 +85,19 @@ export default function ReviewLabelingPage() {
       );
 
       // Insert new label list at the head of the array
-      humanLabelList.unshift({
-        name: userInfo.nickname || "Nobody",
-        labels: newHumanLabels,
-      });
+      // humanLabelList.unshift({
+      //   name: userInfo.nickname || "Nobody",
+      //   labels: newHumanLabels,
+      // });
 
       // Send back to Database
-      const result = await updateHumanLabels(
+      const result = await updateNewHumanLabels(
         {
           imageId: image.imageId,
-          data: humanLabelList,
+          data: {
+            name: userInfo.nickname || "Nobody",
+            labels: newHumanLabels,
+          },
         },
         {
           clearUserInfo,

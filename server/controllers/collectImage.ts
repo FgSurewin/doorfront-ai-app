@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { CollectImageService } from "../services/collectImage";
 import {
   AddHumanLabelsBody,
+  AddNewHumanLabelsBody,
   DeleteImageBody,
   GetMultiImageByPano,
   GetMultiImagesByIdsBody,
@@ -55,15 +56,6 @@ export class CollectImageController {
     await collectImageService.getMultiImageByPano({ req, res, next }, body);
   }
 
-  async addHumanLabels(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const body: AddHumanLabelsBody = req.body;
-    await collectImageService.addHumanLabels({ req, res, next }, body);
-  }
-
   async deleteImage(
     req: Request,
     res: Response,
@@ -71,5 +63,25 @@ export class CollectImageController {
   ): Promise<void> {
     const { imageId }: DeleteImageBody = req.body;
     await collectImageService.deleteImage({ req, res, next }, imageId);
+  }
+
+  /* ------------------------------ Old Function ------------------------------ */
+  // async addHumanLabels(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const body: AddHumanLabelsBody = req.body;
+  //   await collectImageService.addHumanLabels({ req, res, next }, body);
+  // }
+
+  /* ------------------------------ New Function ------------------------------ */
+  async addNewHumanLabels(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const body: AddNewHumanLabelsBody = req.body;
+    await collectImageService.addNewHumanLabels({ req, res, next }, body);
   }
 }

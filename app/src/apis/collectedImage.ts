@@ -162,17 +162,47 @@ export const getMultiImageByIds = (
 /* -------------------------------------------------------------------------- */
 /*                       Labeling Page - Get User Labels                      */
 /* -------------------------------------------------------------------------- */
-export const updateHumanLabels = (
+/* ------------------------------ Old Function ------------------------------ */
+// export const updateHumanLabels = (
+//   data: {
+//     imageId: string;
+//     data: HumanLabels[];
+//   },
+//   handleFailedTokenFuncs?: HandleFailedTokenFuncs
+// ) =>
+//   baseRequest
+//     .request<CollectedImageApiReturnType<any>>({
+//       method: "POST",
+//       url: `/collectImage/addHumanLabels`,
+//       data,
+//     })
+//     .then((res) => {
+//       if (res.data.code === 2000) {
+//         if (handleFailedTokenFuncs) {
+//           handleFailedTokenFuncs.navigate("/login");
+//           handleFailedTokenFuncs.deleteAllLocal();
+//           handleFailedTokenFuncs.clearUserInfo();
+//         }
+//         return Promise.reject(new Error(res.data.message));
+//       }
+//       return res.data;
+//     })
+//     .catch((res) => {
+//       throw new Error(res);
+//     });
+/* -------------------------------------------------------------------------- */
+/* ------------------------------ New Function ------------------------------ */
+export const updateNewHumanLabels = (
   data: {
     imageId: string;
-    data: HumanLabels[];
+    data: HumanLabels;
   },
   handleFailedTokenFuncs?: HandleFailedTokenFuncs
 ) =>
   baseRequest
     .request<CollectedImageApiReturnType<any>>({
       method: "POST",
-      url: `/collectImage/addHumanLabels`,
+      url: `/collectImage/addNewHumanLabels`,
       data,
     })
     .then((res) => {

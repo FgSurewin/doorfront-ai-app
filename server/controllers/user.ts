@@ -48,14 +48,10 @@ export class UserController {
     const body: QueryImageListBody = req.body;
     await userService.getUnLabelImageList({ req, res, next }, body);
   }
-  async addLabelImage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const body: QueryImageBody = req.body;
-    await userService.addLabelImage({ req, res, next }, body);
-  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                          New Action List Functions                         */
+  /* -------------------------------------------------------------------------- */
   async saveImageToDiffList(
     req: Request,
     res: Response,
@@ -64,31 +60,50 @@ export class UserController {
     const body: SaveActionListBody = req.body;
     await userService.saveImageToDiffList({ req, res, next }, body);
   }
+  async deleteImageFromList(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const body: SaveActionListBody = req.body;
+    await userService.deleteImageFromList({ req, res, next }, body);
+  }
 
-  async deleteLabelImage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const body: QueryImageBody = req.body;
-    await userService.deleteLabelImage({ req, res, next }, body);
-  }
-  async addUnLabelImage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const body: QueryImageBody = req.body;
-    await userService.addUnLabelImage({ req, res, next }, body);
-  }
-  async deleteUnLabelImage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    const body: QueryImageBody = req.body;
-    await userService.deleteUnLabelImage({ req, res, next }, body);
-  }
+  /* -------------------------------------------------------------------------- */
+  // async addLabelImage(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const body: QueryImageBody = req.body;
+  //   await userService.addLabelImage({ req, res, next }, body);
+  // }
+  // async deleteLabelImage(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const body: QueryImageBody = req.body;
+  //   await userService.deleteLabelImage({ req, res, next }, body);
+  // }
+  // async addUnLabelImage(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const body: QueryImageBody = req.body;
+  //   await userService.addUnLabelImage({ req, res, next }, body);
+  // }
+  // async deleteUnLabelImage(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<void> {
+  //   const body: QueryImageBody = req.body;
+  //   await userService.deleteUnLabelImage({ req, res, next }, body);
+  // }
+
+  /* -------------------------------------------------------------------------- */
   async addCredit(
     req: Request,
     res: Response,

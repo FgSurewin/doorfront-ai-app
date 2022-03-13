@@ -21,7 +21,7 @@ import { updateDBImage } from "../../apis/collectedImage";
 import { useUserStore } from "../../global/userState";
 import { deleteAllLocal } from "../../utils/localStorage";
 import { useExplorationStore } from "../../global/explorationState";
-import { addUnLabelImage } from "../../apis/user";
+import { saveImageToDiffList } from "../../apis/user";
 import { fetchDetectedLabels } from "../../apis/model";
 import { UpdateImageData } from "../../utils/api";
 import { v4 as uuidv4 } from "uuid";
@@ -79,9 +79,10 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
         if (result.code === 0) {
           addQueryImage({ imageId, imgSrc, fileName });
           //TODO Add UnLabelImage property
-          await addUnLabelImage({
+          await saveImageToDiffList({
             id: userInfo.id!,
             data: { imageId, imgSrc, fileName },
+            category: "unLabel_images",
           });
           enqueueSnackbar(result.message, {
             variant: "success",

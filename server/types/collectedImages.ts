@@ -8,6 +8,8 @@ export type GetMultiImageByPano = { panoId: string };
 
 export type AddHumanLabelsBody = { imageId: string; data: HumanLabels[] };
 
+export type AddNewHumanLabelsBody = { imageId: string; data: HumanLabels };
+
 export type UpdateImageBody = {
   imageId: string;
   data: Partial<CollectedImageInterface>;

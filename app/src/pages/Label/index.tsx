@@ -3,7 +3,7 @@ import React from "react";
 import {
   deleteDBImage,
   getMultiImageByIds,
-  updateHumanLabels,
+  updateNewHumanLabels,
 } from "../../apis/collectedImage";
 import LabelTool from "../../components/LabelTool";
 import { ReactToolImageListItemType } from "../../components/LabelTool/state/reactToolState";
@@ -19,10 +19,10 @@ import { useNavigate } from "react-router-dom";
 import { deleteImage } from "../../firebase/uploadImage";
 import { CollectedImageInterface } from "../../types/collectedImage";
 import {
-  addLabelImage,
   addUserCredit,
   addUserLabelCredit,
-  deleteUnLabelImage,
+  deleteImageFromList,
+  saveImageToDiffList,
 } from "../../apis/user";
 
 export default function LabelPage() {
@@ -68,7 +68,7 @@ export default function LabelPage() {
         (item) => item.image_id === image.imageId
       );
       // Extract images data from response data
-      const humanLabelList = filterImageList[0].human_labels;
+      // const humanLabelList = filterImageList[0].human_labels;
       const currentImagePov = filterImageList[0].pov;
 
       // Parse data into certain format required by database
@@ -84,16 +84,19 @@ export default function LabelPage() {
       });
 
       // Insert new label list at the head of the array
-      humanLabelList.unshift({
-        name: userInfo.nickname || "Nobody",
-        labels: newHumanLabels,
-      });
+      // humanLabelList.unshift({
+      //   name: userInfo.nickname || "Nobody",
+      //   labels: newHumanLabels,
+      // });
 
       // Send back to Database
-      const result = await updateHumanLabels(
+      const result = await updateNewHumanLabels(
         {
           imageId: image.imageId,
-          data: humanLabelList,
+          data: {
+            name: userInfo.nickname || "Nobody",
+            labels: newHumanLabels,
+          },
         },
         {
           clearUserInfo,
@@ -106,22 +109,24 @@ export default function LabelPage() {
         // Delete state
         // setState(state.filter((item) => item.image_id !== image.imageId));
         //TODO Delete UnLabelImage property
-        await deleteUnLabelImage({
+        await deleteImageFromList({
           id: userInfo.id!,
           data: {
             imageId: image.imageId,
             fileName: image.fileName,
             imgSrc: image.imgSrc,
           },
+          category: "unLabel_images",
         });
         //TODO Add LabelImage property
-        await addLabelImage({
+        await saveImageToDiffList({
           id: userInfo.id!,
           data: {
             imageId: image.imageId,
             fileName: image.fileName,
             imgSrc: image.imgSrc,
           },
+          category: "label_images",
         });
 
         // * Handle User Credits
@@ -168,13 +173,14 @@ export default function LabelPage() {
         }
       );
       //TODO Delete UnLabelImage property
-      await deleteUnLabelImage({
+      await deleteImageFromList({
         id: userInfo.id!,
         data: {
           imageId: image.imageId,
           fileName: image.fileName,
           imgSrc: image.imgSrc,
         },
+        category: "unLabel_images",
       });
       // Notification
       enqueueSnackbar("Delete image successfully", {

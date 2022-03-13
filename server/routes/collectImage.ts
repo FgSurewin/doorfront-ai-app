@@ -18,25 +18,17 @@ route.post(
   checkToken,
   collectImageController.getMultiImageByPano
 );
-route.post(
-  "/addHumanLabels",
-  checkToken,
-  collectImageController.addHumanLabels
-);
-// route.get(
-//   "/getImagesByPano/:panoId",
-//   checkToken,
-//   collectImageController.getImageByPano
-// );
-// route.get("/getOneById/:Id", checkToken, collectImageController.getImageById);
-// route.post("/toggle", checkToken, collectImageController.toggle);
-// route.post("/addCount", checkToken, collectImageController.addCount);
-// route.post("/clearCount", checkToken, collectImageController.clearCount);
-// route.post("/addModifier", checkToken, collectImageController.addModifier);
+/* ------------------------------ Old Function ------------------------------ */
 // route.post(
-//   "/addMarkers",
+//   "/addHumanLabels",
 //   checkToken,
-//   collectImageController.addStreetViewMarkers
+//   collectImageController.addHumanLabels
 // );
+/* ------------------------------ New Function ------------------------------ */
+route.post(
+  "/addNewHumanLabels",
+  checkToken,
+  collectImageController.addNewHumanLabels
+);
 
 export default route;

@@ -4,7 +4,11 @@ export interface QueryImageBody {
 }
 
 export interface SaveActionListBody {
-  category: "label_images" | "modify_images" | "review_images";
+  category:
+    | "label_images"
+    | "modify_images"
+    | "review_images"
+    | "unLabel_images";
   id: string;
   data: { imageId: string; imgSrc: string; fileName: string };
 }

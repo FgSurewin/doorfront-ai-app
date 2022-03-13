@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { deleteAllLocal } from "../../utils/localStorage";
 import { deleteDBImage } from "../../apis/collectedImage";
 import { useUserStore } from "../../global/userState";
-import { deleteUnLabelImage, getUnLabelImageList } from "../../apis/user";
+import { deleteImageFromList, getUnLabelImageList } from "../../apis/user";
 
 export default function ImageDrawer() {
   /* --------------------------- Query images state --------------------------- */
@@ -153,13 +153,14 @@ function QueryImageListShowcase({
                   }
                 );
                 //TODO Delete DB UnLabelImage property
-                await deleteUnLabelImage({
+                await deleteImageFromList({
                   id: userInfo.id!,
                   data: {
                     imageId: item.imageId,
                     fileName: item.fileName,
                     imgSrc: item.imgSrc,
                   },
+                  category: "unLabel_images",
                 });
                 // * Delete user collected score
                 updateCollectedImgNum(collectedImgNum - 1);

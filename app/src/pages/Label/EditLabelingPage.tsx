@@ -3,7 +3,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   getMultiImageByIds,
-  updateHumanLabels,
+  updateNewHumanLabels,
 } from "../../apis/collectedImage";
 import {
   addUserCredit,
@@ -61,7 +61,7 @@ export default function EditLabelingPage() {
         (item) => item.image_id === image.imageId
       );
       // Extract images data from response data
-      const humanLabelList = filterImageList[0].human_labels;
+      // const humanLabelList = filterImageList[0].human_labels;
       const currentImagePov = filterImageList[0].pov;
 
       // Parse data into certain format required by database
@@ -71,16 +71,19 @@ export default function EditLabelingPage() {
       );
 
       // Insert new label list at the head of the array
-      humanLabelList.unshift({
-        name: userInfo.nickname || "Nobody",
-        labels: newHumanLabels,
-      });
+      // humanLabelList.unshift({
+      //   name: userInfo.nickname || "Nobody",
+      //   labels: newHumanLabels,
+      // });
 
       // Send back to Database
-      const result = await updateHumanLabels(
+      const result = await updateNewHumanLabels(
         {
           imageId: image.imageId,
-          data: humanLabelList,
+          data: {
+            name: userInfo.nickname || "Nobody",
+            labels: newHumanLabels,
+          },
         },
         {
           clearUserInfo,
