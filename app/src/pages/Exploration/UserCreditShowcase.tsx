@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Tooltip, Typography } from "@mui/material";
 import { useUserStore } from "../../global/userState";
 import { getUserScoreFromDB } from "../../apis/user";
+import HelpIcon from "@mui/icons-material/Help";
 
 export default function UserCreditShowcase() {
   /* ------------------------------ Global State ------------------------------ */
@@ -52,14 +53,35 @@ export default function UserCreditShowcase() {
           </Typography>
         </Box>
       </Stack>
-      <Typography
-        variant="body1"
-        color="text.primary"
-        sx={{ textAlign: "center", mt: 1 }}
-      >
-        Equivalent volunteer hours:{" "}
-        {timeConvert(userScore.review * 0.3 + userScore.label * 0.25)}
-      </Typography>
+      <Stack direction="row" alignItems="center" justifyContent="center">
+        <Tooltip
+          title={
+            <React.Fragment>
+              <Typography variant="body1" color="inherit">
+                DoorFront appreciates your generous contribution and is pleased
+                to issue you a volunteer service letter in acknowledgement of
+                your efforts. For those who would like to request a volunteer
+                service letter, please contact Dr. Hao Tang for more
+                information.
+              </Typography>
+              <Typography variant="body2">
+                (Dr. Hao Tang:{" "}
+                <a href="mailto:htang@bmcc.cuny.edu">htang@bmcc.cuny.edu</a>)
+              </Typography>
+            </React.Fragment>
+          }
+        >
+          <HelpIcon sx={{ transform: "translateY(10%)", mr: 1 }} />
+        </Tooltip>
+        <Typography
+          variant="body1"
+          color="text.primary"
+          sx={{ textAlign: "center", mt: 1 }}
+        >
+          Equivalent volunteer hours:{" "}
+          {timeConvert(userScore.review * 0.3 + userScore.label * 0.25)}
+        </Typography>
+      </Stack>
       <Divider sx={{ my: 2 }} />
     </>
   );
