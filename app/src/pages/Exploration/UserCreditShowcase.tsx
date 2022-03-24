@@ -32,26 +32,34 @@ export default function UserCreditShowcase() {
         alignItems="center"
       >
         <Box>
-          <Typography variant="h6" color="text.primary">
+          <Typography variant="body1" color="text.primary">
             Labels: {userScore.label}
           </Typography>
         </Box>
         <Box>
-          <Typography variant="h6" color="text.primary">
+          <Typography variant="body1" color="text.primary">
             Create: {userScore.create}
           </Typography>
         </Box>
         <Box>
-          <Typography variant="h6" color="text.primary">
+          <Typography variant="body1" color="text.primary">
             Modify: {userScore.modify}
           </Typography>
         </Box>
         <Box>
-          <Typography variant="h6" color="text.primary">
+          <Typography variant="body1" color="text.primary">
             Review: {userScore.review}
           </Typography>
         </Box>
       </Stack>
+      <Typography
+        variant="body1"
+        color="text.primary"
+        sx={{ textAlign: "center", mt: 1 }}
+      >
+        Equivalent volunteer hours:{" "}
+        {Number(userScore.review * 0.3 + userScore.label * 0.25).toFixed(2)}
+      </Typography>
       <Divider sx={{ my: 2 }} />
     </>
   );

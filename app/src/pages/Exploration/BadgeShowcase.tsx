@@ -73,7 +73,7 @@ export default function BadgeShowcase() {
   }, [updateUserScore, userInfo.id]);
 
   return (
-    <Stack direction="column" sx={{ mb: 2 }} className="BadgeShowcase">
+    <Stack direction="column" sx={{ pb: 2 }} className="BadgeShowcase">
       {badgeInfo.badge !== "" && (
         <>
           <Stack

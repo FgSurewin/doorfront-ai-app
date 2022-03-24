@@ -154,7 +154,7 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
     <Stack
       direction="column"
       justifyContent="space-between"
-      sx={{ height: "490px" }}
+      sx={{ height: "455px" }}
     >
       <Paper sx={{ borderRadius: 4 }}>
         <ImageListItem imageList={databaseImageList} />

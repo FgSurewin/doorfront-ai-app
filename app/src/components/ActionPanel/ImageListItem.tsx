@@ -122,7 +122,7 @@ export default function ImageListItem({ imageList }: ImageListItemProps) {
         p: 1,
         py: 2,
         overflowY: showScrollBar ? "scroll" : "visible",
-        height: "250px",
+        height: "220px",
       }}
     >
       {imageList.map((item, index) => (
