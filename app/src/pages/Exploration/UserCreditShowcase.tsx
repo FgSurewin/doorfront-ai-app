@@ -58,9 +58,17 @@ export default function UserCreditShowcase() {
         sx={{ textAlign: "center", mt: 1 }}
       >
         Equivalent volunteer hours:{" "}
-        {Number(userScore.review * 0.3 + userScore.label * 0.25).toFixed(2)}
+        {timeConvert(userScore.review * 0.3 + userScore.label * 0.25)}
       </Typography>
       <Divider sx={{ my: 2 }} />
     </>
   );
+}
+
+function timeConvert(num: number) {
+  const hours = num / 60;
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.floor(minutes);
+  return rhours + " hour(s) and " + rminutes + " minute(s)";
 }
