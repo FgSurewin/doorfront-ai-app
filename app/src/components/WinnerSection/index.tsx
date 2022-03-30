@@ -9,7 +9,7 @@ export default function WinnerSection() {
         variant="h2"
         sx={{ color: "white", textAlign: "center", pt: 6 }}
       >
-        Congraduations
+        Congratulations
       </Typography>
       <Typography
         variant="h2"
