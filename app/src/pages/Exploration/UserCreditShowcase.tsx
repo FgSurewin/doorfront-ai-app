@@ -79,7 +79,7 @@ export default function UserCreditShowcase() {
           sx={{ textAlign: "center", mt: 1 }}
         >
           Equivalent volunteer hours:{" "}
-          {timeConvert(userScore.review * 0.3 + userScore.label * 0.25)}
+          {timeConvert(userScore.review + userScore.label)}
         </Typography>
       </Stack>
       <Divider sx={{ my: 2 }} />
