@@ -5,11 +5,14 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@mapbox/mapbox-sdk": "^0.13.3",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.6",
+    "@redux-devtools/extension": "^3.2.2",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@turf/turf": "^6.5.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.17",
     "@types/react": "^17.0.38",
@@ -20,6 +23,7 @@
     "formik-mui": "^4.0.0-alpha.3",
     "konva": "^8.3.2",
     "lodash": "^4.17.21",
+    "mapbox-gl": "^2.8.2",
     "notistack": "^2.0.3",
     "react": "^17.0.2",
     "react-async-loader": "^0.1.2",
@@ -64,7 +68,9 @@
   "devDependencies": {
     "@types/google.maps": "^3.47.2",
     "@types/lodash": "^4.14.178",
+    "@types/mapbox-gl": "^2.7.3",
     "@types/react-async-script": "^1.2.1",
+    "@types/turf": "^3.5.32",
     "@types/uuid": "^8.3.4"
   }
 }

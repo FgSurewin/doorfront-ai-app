@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.sidebar {
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  font-family: monospace;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 12px;
+  border-radius: 4px;
+  }
+
+  .map-container{
+
+
+
+    width: 23vw;
+    height:87vh;
+
+  }
+  .map-overlay2{
+    background-color: rgba(255, 255, 255, 0.9);
+    color: rgb(0, 0, 0);
+    padding: 6px 12px;
+    font-family: monospace;
+    z-index: 0;
+    position:absolute;
+    margin: 12px;
+    border-radius: 4px;
+    opacity: 1;
+    left:33%;
+    top:53%;
+
+
+    display:inline-block;
+  }
+  .map-overlay{
+    background-color: rgba(255, 255, 255, 0.9);
+    color: rgb(0, 0, 0);
+    padding: 6px 12px;
+    font-family: monospace;
+    z-index: 1;
+    position: relative;
+    top: 0;
+    margin: 12px;
+    border-radius: 4px;
+    width:fit-content;
+    align-content: center;
+  }
+
+  #legend {
+    padding: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    line-height: 18px;
+    height: 150px;
+    margin-bottom: 40px;
+    width: 100px;
+    margin-right: 10px;
+  }
+  .circle{
+    display: "inline";  width: "10px"; height: "10px";
+    border-radius: "50%";margin-right:'10px';margin-top:'2px';
+  }
+  .percent{
+    display:flex;
+
+  }

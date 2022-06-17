@@ -13,6 +13,7 @@ import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
+import MapboxMap from "./components/Map";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -23,6 +24,7 @@ ReactDOM.render(
           <Route path="/login" element={<Login />} />
           <Route path="/reset" element={<ResetPage />} />
           <Route path="/leaderBoard" element={<LeaderBoard />} />
+          <Route path="/map" element={<MapboxMap />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/exploration" element={<ExplorationPage />} />
