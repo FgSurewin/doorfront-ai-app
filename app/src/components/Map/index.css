@@ -27,9 +27,9 @@ code {
 
   .map-container{
 
-
-
-    width: 23vw;
+    z-index: 0;
+    position: relative;
+    width: 100%;
     height:87vh;
 
   }
@@ -38,29 +38,33 @@ code {
     color: rgb(0, 0, 0);
     padding: 6px 12px;
     font-family: monospace;
-    z-index: 0;
+    font-size: 13px;
+    z-index: 1;
     position:absolute;
     margin: 12px;
     border-radius: 4px;
     opacity: 1;
-    left:33%;
-    top:53%;
+    bottom: 28px;
+    right: 1px;
 
 
     display:inline-block;
   }
   .map-overlay{
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.95);
     color: rgb(0, 0, 0);
-    padding: 6px 12px;
+    padding: 6px 8px;
     font-family: monospace;
+    font-size: 14px;
     z-index: 1;
-    position: relative;
-    top: 0;
-    margin: 12px;
+    position: absolute;
+    top: 0%;
+    left: 40%;
+
     border-radius: 4px;
-    width:fit-content;
-    align-content: center;
+
+    align-content:'center';
+
   }
 
   #legend {

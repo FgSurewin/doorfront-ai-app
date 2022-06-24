@@ -1,10 +1,12 @@
 
 import * as React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import readFile, { datasetsToken, datasetID } from './data'
 import './index.css';
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, Typography, Grid } from '@mui/material'
+import Item from '@mui/material/Grid'
+
 const mbxClient = require('@mapbox/mapbox-sdk');
 const mbxDatasets = require('@mapbox/mapbox-sdk/services/datasets');
 const baseClient = mbxClient({ accessToken: datasetsToken });
@@ -49,37 +51,37 @@ export default function MapboxMap() {
   if (modified !== null && modified === false) {
     readFile();
   }
-  const layers = [
-    '0%',
-    '5%',
-    '10%',
-    '20%',
-    '30%',
-    '40%',
-    '50%',
-    '60%',
-    '70%',
-    '80%',
-    '90%',
-    '100%'
-  ];
-  const colors = [
-    '#ffffffF',
-    '#fcf1cf',
-    '#f6d46f',
-    '#f3c058',
-    '#f2a840',
-    '#f08c28',
-    '#ee6d11',
-    '#ee5b11',
-    '#ee4811',
-    '#ee3611',
-    '#ee1111',
-    '#22fa1e'
-  ];
+  const legend = {
+    layers: [
+      '0%',
+      '5%',
+      '10%',
+      '20%',
+      '30%',
+      '40%',
+      '50%',
+      '60%',
+      '70%',
+      '80%',
+      '90%',
+      '100%'],
+    colors: [
+      '#ffffff',
+      '#fcf1cf',
+      '#f6d46f',
+      '#f3c058',
+      '#f2a840',
+      '#f08c28',
+      '#ee6d11',
+      '#ee5b11',
+      '#ee4811',
+      '#ee3611',
+      '#ee1111',
+      '#22fa1e']
+  }
 
   //change progress.geojson to progress.json before calling readFile()
-  const map = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<mapboxgl.Map>();
   const mapContainer = useRef<any>(null);
   //const [progress, setProgress] = useState(0);
   //const [name, setName] = useState('');
@@ -89,23 +91,18 @@ export default function MapboxMap() {
   //const [percentage, setPercentage] = useState(0);
   const defaultMessage: string = 'Welcome to Doorfront!\nHover over a neighborhood.'
   const [subtitle, setSubtitle] = useState(defaultMessage)
-  const manhattan = useRef();
+  const geojsonSource = useRef<any>();
   let llb = new mapboxgl.LngLatBounds(new mapboxgl.LngLat(-73.993432, 40.694029), new mapboxgl.LngLat(-73.930974, 40.879119));
 
   useEffect(() => {
-    if (map.current) return;
+    if (map.current !== undefined) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/tort8678/cl1om66ls000014pa3qlp6zge',
-      center: [-73.965, 40.789],
       bounds: llb,
-      zoom: 10.8,
       interactive: false
     });
-  });
-
-  useEffect(()=>{
-    map.current?.on('load', (e:any) => {
+    map.current.on('load', (e: any) => {
       if (map.current?.getSource('border') === undefined) {
         map.current?.addSource('border', {
           'type': 'geojson',
@@ -116,22 +113,28 @@ export default function MapboxMap() {
         });
       }
     })
-  })
+
+  });
+  /*
   useEffect(() => {
-    if (!map.current) return;
-    
-    map.current.on('mousemove', (e: any) => {
-      const manhattan = map.current?.queryRenderedFeatures(e.point) as any
-      const geojsonSource: any = map.current?.getSource('border');
-      if (manhattan.length > 1 && manhattan[0].layer.id === 'doorfront-map') {
-        //setName(manhattan[0].properties.name);
-        let name = manhattan[0].properties.name
-        //setProgress(manhattan[0].properties.progress);
-        let progress = manhattan[0].properties.progress;
-        //setPercentage(manhattan[0].properties.percentage);
-        let percentage = manhattan[0].properties.percentage;
-        setSubtitle(progress + ' doorfronts (' + percentage + '%) marked in ' + name);
-        geojsonSource.setData({
+    if (map.current && m1.current !== undefined) {
+      console.log(m1.current);
+      let name = m1.current.properties!.name
+      let progress = m1.current.properties!.progress;
+      let percentage = m1.current.properties!.percentage;
+      setSubtitle(progress + ' doorfronts (' + percentage + '%) marked in ' + name);
+    }
+  });
+  */
+  useEffect(() => {
+    if (map.current === undefined) return;
+
+    map.current.on('mousemove', (e: mapboxgl.MapMouseEvent) => {
+      const point = map.current?.queryRenderedFeatures(e.point) as any
+      geojsonSource.current = map.current?.getSource('border');
+      if (point !== undefined && point[0] && point[0].layer.id === 'doorfront-map') {
+        setSubtitle(point[0].properties.progress + ' doorfronts (' + point[0].properties.percentage + '%) marked in ' + point[0].properties.name);
+        geojsonSource.current.setData({
           "type": "FeatureCollection",
           'features': [{
             "properties": {
@@ -140,7 +143,7 @@ export default function MapboxMap() {
             },
             "geometry": {
               'type': 'Polygon',
-              'coordinates': manhattan[0].geometry.coordinates
+              'coordinates': point[0].geometry.coordinates
             }
           }]
         });
@@ -153,15 +156,9 @@ export default function MapboxMap() {
           })
         }
       }
-      else if (manhattan.length > 1 && manhattan[1].layer.id === 'doorfront-map') {
-        //setName(manhattan[1].properties.name);
-        let name = manhattan[1].properties.name
-        //setProgress(manhattan[1].properties.progress);
-        //setPercentage(manhattan[1].properties.percentage);
-        let progress = manhattan[1].properties.progress;
-        let percentage = manhattan[1].properties.percentage;
-        setSubtitle(progress + ' doorfronts (' + percentage + '%) marked in ' + name);
-        geojsonSource.setData({
+      else if (point !== undefined && point[1] && point[1].layer.id === 'doorfront-map') {
+        setSubtitle(point[1].properties.progress + ' doorfronts (' + point[1].properties.percentage + '%) marked in ' + point[1].properties.name);
+        geojsonSource.current.setData({
           "type": "FeatureCollection",
           'features': [{
             "properties": {
@@ -170,11 +167,10 @@ export default function MapboxMap() {
             },
             "geometry": {
               'type': 'Polygon',
-              'coordinates': manhattan[1].geometry.coordinates
+              'coordinates': point[1].geometry.coordinates
             }
           }]
         });
-
         if (!map.current?.getLayer('border')) {
           map.current?.addLayer({
             'id': 'border',
@@ -183,32 +179,48 @@ export default function MapboxMap() {
             "paint": { "line-color": "#000000" }
           })
         }
-
       }
       else {
         //setName('');
         setSubtitle(defaultMessage)
+        //m1.current = undefined
         if (map.current?.getLayer('border')) {
           map.current?.removeLayer('border')
         }
       }
     });
+  }, [subtitle]);
 
-  });
 
   return (
-    <Container maxWidth = 'xs'>
-      <Box
+    <Container maxWidth='xl' sx={{backgroundColor: '#333D58', position:{md:'relative'}}}>
+      <Box 
         sx={{
-          position: {
-            sm: "relative",
-          },
+          //backgroundColor: '#ee1111',
+          pt: '20px',
+          pb: '20px',
+          
         }}
       >
-        <Typography>
-          {subtitle}
-        </Typography>
-        <div ref={mapContainer} className='map-container' />
+        <div>
+        <div className='map-overlay'>{subtitle}</div>
+          <div ref={mapContainer} className='map-container'>
+
+          <div className='map-overlay2'>
+            <Grid container spacing={2} maxWidth={85} rowSpacing={.005}>
+              <Grid item xs={12}><div><b>Percentage</b></div></Grid>
+              {Array.from(Array(legend.colors.length)).map((_, index) => (
+              <Grid item xs = {12} key={index}>
+                <Item ><Item sx={{ display: "inline",  width: "200px", height: "200px", backgroundColor: legend.colors[index], 
+            borderRadius: "50%",marginRight:'10px',marginTop:'2px',color:legend.colors[index] }}>oo</Item>      {legend.layers[index]}</Item>
+              </Grid>
+            ))}
+            
+            </Grid>
+          </div>
+          </ div>
+        </div>
+
       </Box>
     </Container>
   )
