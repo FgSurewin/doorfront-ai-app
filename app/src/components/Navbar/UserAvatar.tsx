@@ -15,7 +15,7 @@ import { useHandleMenu } from "../../hooks/useHandleMenu";
 import { Link as RouterLink } from "react-router-dom";
 import { useUserStore } from "../../global/userState";
 import { deleteAllLocal } from "../../utils/localStorage";
-
+import PersonIcon from '@mui/icons-material/Person';
 const paperProps: PaperProps = {
   elevation: 0,
   sx: {
@@ -42,7 +42,14 @@ const paperProps: PaperProps = {
     },
   },
 };
-
+const ProfileItem = React.memo(function () {
+  return (
+    <MenuItem component={RouterLink} to="/profile">
+      <ListItemIcon><PersonIcon /></ListItemIcon>
+      Profile
+    </MenuItem>
+  );
+});
 const LoginItem = React.memo(function () {
   return (
     <MenuItem component={RouterLink} to="/login">
@@ -122,7 +129,7 @@ export default function UserAvatar() {
           Leader Board
         </MenuItem>
         <Divider />
-        {!userInfo.nickname ? <LoginItem /> : <LogoutItem />}
+        {!userInfo.nickname ? <LoginItem /> : <div><ProfileItem /><LogoutItem /></div>}
       </Menu>
     </Box>
   );

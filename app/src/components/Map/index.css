@@ -26,12 +26,10 @@ code {
   }
 
   .map-container{
-
     z-index: 0;
     position: relative;
     width: 100%;
     height:87vh;
-
   }
   .map-overlay2{
     background-color: rgba(255, 255, 255, 0.9);
@@ -46,8 +44,6 @@ code {
     opacity: 1;
     bottom: 28px;
     right: 1px;
-
-
     display:inline-block;
   }
   .map-overlay{
@@ -59,12 +55,8 @@ code {
     z-index: 1;
     position: absolute;
     top: 0%;
-    left: 40%;
-
+    left: 41%;
     border-radius: 4px;
-
-    align-content:'center';
-
   }
 
   #legend {

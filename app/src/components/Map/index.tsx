@@ -1,11 +1,12 @@
 
 import * as React from 'react';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect} from 'react';
 import mapboxgl from 'mapbox-gl';
 import readFile, { datasetsToken, datasetID } from './data'
 import './index.css';
-import { Box, Container, Typography, Grid } from '@mui/material'
+import { Box, Container,Grid } from '@mui/material'
 import Item from '@mui/material/Grid'
+import CircleIcon from '@mui/icons-material/Circle';
 
 const mbxClient = require('@mapbox/mapbox-sdk');
 const mbxDatasets = require('@mapbox/mapbox-sdk/services/datasets');
@@ -47,7 +48,6 @@ function CheckModified(): boolean | null {
 
 export default function MapboxMap() {
   let modified: boolean | null = CheckModified();
-  //console.log(modified)
   if (modified !== null && modified === false) {
     readFile();
   }
@@ -82,13 +82,7 @@ export default function MapboxMap() {
 
   //change progress.geojson to progress.json before calling readFile()
   const map = useRef<mapboxgl.Map>();
-  const mapContainer = useRef<any>(null);
-  //const [progress, setProgress] = useState(0);
-  //const [name, setName] = useState('');
-  //let progress:number = 0;
-  //let name:string = '';
-  //let percentage:number = 0;
-  //const [percentage, setPercentage] = useState(0);
+  const mapContainer = useRef<any>();
   const defaultMessage: string = 'Welcome to Doorfront!\nHover over a neighborhood.'
   const [subtitle, setSubtitle] = useState(defaultMessage)
   const geojsonSource = useRef<any>();
@@ -102,6 +96,7 @@ export default function MapboxMap() {
       bounds: llb,
       interactive: false
     });
+    
     map.current.on('load', (e: any) => {
       if (map.current?.getSource('border') === undefined) {
         map.current?.addSource('border', {
@@ -111,21 +106,10 @@ export default function MapboxMap() {
             'features': []
           }
         });
+        
       }
     })
-
   });
-  /*
-  useEffect(() => {
-    if (map.current && m1.current !== undefined) {
-      console.log(m1.current);
-      let name = m1.current.properties!.name
-      let progress = m1.current.properties!.progress;
-      let percentage = m1.current.properties!.percentage;
-      setSubtitle(progress + ' doorfronts (' + percentage + '%) marked in ' + name);
-    }
-  });
-  */
   useEffect(() => {
     if (map.current === undefined) return;
 
@@ -181,9 +165,7 @@ export default function MapboxMap() {
         }
       }
       else {
-        //setName('');
         setSubtitle(defaultMessage)
-        //m1.current = undefined
         if (map.current?.getLayer('border')) {
           map.current?.removeLayer('border')
         }
@@ -211,8 +193,7 @@ export default function MapboxMap() {
               <Grid item xs={12}><div><b>Percentage</b></div></Grid>
               {Array.from(Array(legend.colors.length)).map((_, index) => (
               <Grid item xs = {12} key={index}>
-                <Item ><Item sx={{ display: "inline",  width: "200px", height: "200px", backgroundColor: legend.colors[index], 
-            borderRadius: "50%",marginRight:'10px',marginTop:'2px',color:legend.colors[index] }}>oo</Item>      {legend.layers[index]}</Item>
+                <Item ><CircleIcon htmlColor={legend.colors[index]} sx={{fontSize:15}}></CircleIcon>      {legend.layers[index]}</Item>
               </Grid>
             ))}
             

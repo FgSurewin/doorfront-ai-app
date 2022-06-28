@@ -14,6 +14,7 @@ import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
 import Map from "./pages/Map";
+import Profile from "./pages/Profile"
 
 ReactDOM.render(
   <React.StrictMode>
@@ -27,6 +28,7 @@ ReactDOM.render(
           <Route path="/map" element={<Map />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
             <Route path="/reviewLabels" element={<ReviewLabelingPage />} />
