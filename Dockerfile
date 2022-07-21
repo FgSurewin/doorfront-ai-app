@@ -10,11 +10,11 @@ RUN npm ci
 
 COPY . /doorfront/
 
-RUN cd /doorfront/app
+# RUN cd /doorfront/app
 
-RUN npm ci
+# RUN npm ci
 
-RUN cd ..
+# RUN cd ..
 
 # Development Mode
 # -----------------------------------------------------------------------------
@@ -33,7 +33,9 @@ RUN cd ..
 # -----------------------------------------------------------------------------
 # Uncomment the following statement(s) if you run on production mode
 
-RUN npm run linux-build
+# RUN npm run linux-build
+
+RUN npm server-build
 
 ENV NODE_ENV=production
 
