@@ -35,7 +35,7 @@ COPY . /doorfront/
 
 # RUN npm run linux-build
 
-RUN npm server-build
+RUN npm run server-build
 
 ENV NODE_ENV=production
 
