@@ -1,9 +1,13 @@
 import axios from "axios";
 
+const MODE = process.env.NODE_ENV;
+console.log("react app mode -> ", MODE)
+export const DETECTION_LINK = MODE === 'development'? 
+  "http://localhost:5000/model/detect" :
+  "https://model-server-v1-paw2roelga-uc.a.run.app/model/detect"
+
 // export const DETECTION_LINK =
-//   "https://index-version-two-b7ovn6nbsq-uc.a.run.app/detect";
-export const DETECTION_LINK =
-  "https://model-server-v1-paw2roelga-uc.a.run.app/model/detect";
+//   "https://model-server-v1-paw2roelga-uc.a.run.app/model/detect";
 
 export interface ModelDetectionLabel {
   bbox: number[];
