@@ -42,17 +42,18 @@ export interface ExplorationState {
 }
 
 const guildTourLocation = {
-  lat: 40.74779659105191,
-  lng: -73.97710788928774,
+  lat: 40.76053914888549,
+  lng: -73.97417372824286,
 };
 
 const guildTourPov = {
-  heading: 247,
+  heading: 214,
   pitch: 8,
   zoom: 1,
 };
 
-const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
+// const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
+const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
 
 export const useExplorationStore = create<ExplorationState>(
   devtools(

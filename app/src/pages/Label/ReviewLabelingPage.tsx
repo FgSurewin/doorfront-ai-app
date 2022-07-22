@@ -40,18 +40,28 @@ export default function ReviewLabelingPage() {
         });
         if (result.code === 0) {
           const images = result.data!;
-          setState(
-            images.filter((image) => {
-              // Check if current user has been modify or validate current image
-              const names = image.human_labels.map((item) => item.name);
-              const isDisable =
-                names.includes(userInfo.nickname!) ||
-                image.human_labels.length >= maxModifier ||
-                image.image_id === "GuildTourSample" ||
-                image.human_labels.length === 0;
-              return !isDisable;
-            })
-          );
+          const final_images = images.filter((image) => {
+            // Check if current user has been modify or validate current image
+            const names = image.human_labels.map((item) => item.name);
+            const isDisable =
+              names.includes(userInfo.nickname!) ||
+              image.human_labels.length >= maxModifier ||
+              image.image_id === "GuildTourSample" ||
+              image.human_labels.length === 0;
+            return !isDisable;
+          });
+          if (final_images.length > 0) {
+            setState(final_images);
+          } else {
+            console.log("TEST HERE");
+            navigate("/");
+            enqueueSnackbar(
+              "Sorry, there is no available images to review now.",
+              {
+                variant: "error",
+              }
+            );
+          }
         }
       } catch (e) {
         const error = e as Error;
