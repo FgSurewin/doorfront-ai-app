@@ -30,5 +30,10 @@ route.post(
   checkToken,
   collectImageController.addNewHumanLabels
 );
+route.post(
+  "/addMultiModelLabels",
+  checkToken,
+  collectImageController.updateMultiImagesLabels
+);
 
 export default route;

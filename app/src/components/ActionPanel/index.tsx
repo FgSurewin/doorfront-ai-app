@@ -26,6 +26,7 @@ import { fetchDetectedLabels } from "../../apis/model";
 import { UpdateImageData } from "../../utils/api";
 import { v4 as uuidv4 } from "uuid";
 
+
 export default function ActionPanel({ onNext }: { onNext: () => void }) {
   /* ------------------------------ Notification ------------------------------ */
   const { enqueueSnackbar } = useSnackbar();
@@ -51,6 +52,7 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
           nms: 0.2,
           url: imgSrc,
         });
+        console.log(modelLabels);
         const updateImageData: { imageId: string; data: UpdateImageData } = {
           imageId,
           data: {
@@ -77,7 +79,7 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
           deleteAllLocal,
         });
         if (result.code === 0) {
-          addQueryImage({ imageId, imgSrc, fileName });
+          addQueryImage({ imageId, imgSrc, fileName, isPrelabeled: true });
           //TODO Add UnLabelImage property
           await saveImageToDiffList({
             id: userInfo.id!,

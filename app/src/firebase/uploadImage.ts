@@ -9,7 +9,7 @@ import {
 import { storage } from ".";
 
 /* ---------- Using environment variable to determine the root path --------- */
-const devPath = "Development_v1"; // 2022/2/14 - v1 for beta-test-2
+const devPath = "Auto_walk"; // 2022/2/14 - v1 for beta-test-2
 const rootPath =
   process.env.NODE_ENV === "development" ? devPath : "Production";
 

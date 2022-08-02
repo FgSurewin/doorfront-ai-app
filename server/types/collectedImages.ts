@@ -18,3 +18,5 @@ export type UpdateImageBody = {
 export type DeleteImageBody = {
   imageId: string;
 };
+
+export type AddMultiImagesLabelsBody = Partial<CollectedImageInterface>[];

@@ -5,6 +5,7 @@ import {
   CreateImageData,
   HandleFailedTokenFuncs,
   UpdateImageData,
+  UpdateMultiImagesModelData,
 } from "../utils/api";
 
 export function generateNewImage(
@@ -203,6 +204,31 @@ export const updateNewHumanLabels = (
     .request<CollectedImageApiReturnType<any>>({
       method: "POST",
       url: `/collectImage/addNewHumanLabels`,
+      data,
+    })
+    .then((res) => {
+      if (res.data.code === 2000) {
+        if (handleFailedTokenFuncs) {
+          handleFailedTokenFuncs.navigate("/login");
+          handleFailedTokenFuncs.deleteAllLocal();
+          handleFailedTokenFuncs.clearUserInfo();
+        }
+        return Promise.reject(new Error(res.data.message));
+      }
+      return res.data;
+    })
+    .catch((res) => {
+      throw new Error(res);
+    });
+
+export const updateMultiImagesModelLabels = (
+  data: UpdateMultiImagesModelData,
+  handleFailedTokenFuncs?: HandleFailedTokenFuncs
+) =>
+  baseRequest
+    .request<CollectedImageApiReturnType<any>>({
+      method: "POST",
+      url: `/collectImage/addMultiModelLabels`,
       data,
     })
     .then((res) => {

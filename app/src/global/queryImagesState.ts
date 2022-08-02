@@ -5,6 +5,7 @@ export interface QueryImageType {
   imageId: string;
   imgSrc: string;
   fileName: string;
+  isPrelabeled: boolean;
 }
 
 export interface QueryImagesState {

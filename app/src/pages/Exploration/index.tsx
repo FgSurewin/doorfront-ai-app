@@ -4,6 +4,7 @@ import GoogleMap from "../../components/GoogleMap";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
+import autowalk from "../../images/giphy.gif";
 import { Container, Grid, Paper, Stack, Typography } from "@mui/material";
 import { generateInfo } from "../../components/GoogleMap/utils/streetViewTool";
 import { debouncedStreetViewImageChange } from "./utils/debounceFunc";
@@ -13,6 +14,18 @@ import { useTourStore } from "../../global/tourState";
 import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import TreasureShowcase from "./TreasureShowcase";
 import UserCreditShowcase from "./UserCreditShowcase";
+import Switch from "@mui/material/Switch";
+import { useUserStore } from "../../global/userState";
+import { useFetchGoogleStreetView } from "../../apis/queryStreetView";
+import { useQueryImagesStore } from "../../global/queryImagesState";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { saveImageToDiffList } from "../../apis/user";
+import { deleteAllLocal } from "../../utils/localStorage";
+
+let count = 0;
+
+// const label = { inputProps: { "aria-label": "Switch demo" } };
 
 export default function ExplorationPage() {
   const {
@@ -31,7 +44,48 @@ export default function ExplorationPage() {
     updateStreetViewImageConfig,
     panoramaMarkerList,
     setIsNextPosition,
+    isAutoWalk,
+    setIsAutoWalk,
   } = useExplorationStore();
+  /* ------------------------------ Notification ------------------------------ */
+  const { enqueueSnackbar } = useSnackbar();
+
+  /* ------------------------------ React router ------------------------------ */
+  const navigate = useNavigate();
+  /* -------------------------------------------------------------------------- */
+  /*                     Query image and upload to firebase                     */
+  /* -------------------------------------------------------------------------- */
+  // const [uploadProgress, setUploadProgress] = React.useState(0);
+  const { clearUserInfo, userInfo, collectedImgNum, updateCollectedImgNum } =
+    useUserStore();
+  const { addQueryImage, setIsUploading } = useQueryImagesStore();
+  const { refetch } = useFetchGoogleStreetView({
+    onSuccess: async (imageId, imgSrc, fileName) => {
+      try {
+        addQueryImage({ imageId, imgSrc, fileName, isPrelabeled: false });
+        //TODO Add UnLabelImage property
+        await saveImageToDiffList({
+          id: userInfo.id!,
+          data: { imageId, imgSrc, fileName },
+          category: "unLabel_images",
+        });
+        enqueueSnackbar("Upload image successfully!", {
+          variant: "success",
+        });
+        setIsUploading(false);
+        // setUploadProgress(0);
+      } catch (e) {
+        const error = e as Error;
+        console.log(error.message);
+        enqueueSnackbar(error.message, {
+          variant: "error",
+        });
+        clearUserInfo();
+        navigate("/");
+        deleteAllLocal();
+      }
+    },
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                                 Custom Hook                                */
@@ -45,19 +99,25 @@ export default function ExplorationPage() {
     debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
   };
 
-  const onPositionChanged = (
+  const onPositionChanged = async (
     result: ReturnType<typeof generateInfo>,
     map: google.maps.Map
   ) => {
-    // console.log("onPositionChanged -> ", result);
     debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
     if (result.position && result.pov) {
+      console.log("onPositionChanged -> ", isAutoWalk);
       setIsNextPosition(false);
       updateGoogleMapConfig({
         panoId: result.pano,
         position: result.position,
         povConfig: { ...result.pov, zoom: result.zoom },
       });
+      if (isAutoWalk) {
+        console.log("query image", count++);
+        setIsUploading(true);
+        await refetch();
+        updateCollectedImgNum(collectedImgNum + 1);
+      }
     }
   };
 
@@ -145,6 +205,18 @@ export default function ExplorationPage() {
                 <Typography variant="h6">
                   Zoom: {Math.round(streetViewImageConfig.imagePov.zoom)}
                 </Typography>
+                <Typography variant="h6">
+                  Auto walk:{" "}
+                  <Switch
+                    checked={isAutoWalk}
+                    onChange={() => {
+                      setIsAutoWalk(!isAutoWalk);
+                      // Set isNextPosition to true to force to refresh the map. (Because the map will not update when the auto walk is on)
+                      setIsNextPosition(true);
+                    }}
+                  />
+                </Typography>
+                {/* <Switch {...label} /> */}
               </Stack>
             </Grid>
             <Grid item xs={4}>
@@ -157,6 +229,21 @@ export default function ExplorationPage() {
       </Paper>
       <ImageDrawer />
       <TreasureShowcase />
+      {isAutoWalk && (
+        <img
+          style={{
+            position: "absolute",
+            top: "20%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 100,
+          }}
+          src={autowalk}
+          alt="autowalk"
+        />
+      )}
     </div>
   );
 }
+
+

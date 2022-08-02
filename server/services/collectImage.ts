@@ -4,7 +4,7 @@ import CollectImageModel, {
   CollectedImageInterface,
 } from "../database/models/collectImage";
 import {
-  AddHumanLabelsBody,
+  AddMultiImagesLabelsBody,
   AddNewHumanLabelsBody,
   GetMultiImageByPano,
   GetMultiImagesByIdsBody,
@@ -252,4 +252,52 @@ export class CollectImageService {
       });
     }
   }
+
+  async updateMultiImagesLabels(
+    ctx: AppContext,
+    body: AddMultiImagesLabelsBody
+  ) {
+    const { res } = ctx;
+    try {
+      console.log("updateMultiImagesLabels -> START");
+      const imageList = body;
+      const bulkOps = imageList.map((image) => {
+        return {
+          updateOne: {
+            filter: {
+              image_id: image.image_id,
+            },
+            // If you were using the MongoDB driver directly, you'd need to do
+            // `update: { $set: { field: ... } }` but mongoose adds $set for you
+            update: {
+              fileName: image.fileName,
+              url: image.url,
+              model_labels: image.model_labels,
+            },
+          },
+        };
+      });
+      const result = await CollectImageModel.bulkWrite(bulkOps);
+      console.log("updateMultiImagesLabels -> ", result);
+      if (result.ok === 1) {
+        res.json({
+          code: 0,
+          message: `Modify successfully -> Documents Updated ${result.modifiedCount}`,
+          data: result,
+        });
+      } else {
+        res.json({
+          code: 4000,
+          message: "Fail to modify",
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
 }
+

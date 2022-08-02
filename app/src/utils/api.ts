@@ -19,6 +19,16 @@ export interface UpdateImageData {
   model_labels: CollectedLabelInterface[];
 }
 
+// Update image model data
+export interface UpdateImageModelData {
+  image_id: string;
+  fileName: string;
+  url: string;
+  model_labels: CollectedLabelInterface[];
+}
+
+export type UpdateMultiImagesModelData = UpdateImageModelData[];
+
 export interface CollectedImageApiReturnType<T> {
   code: number;
   message: string;

@@ -31,7 +31,7 @@ export const useUpdateExplorationPage = () => {
         process.env.REACT_APP_API_KEY!,
         location
       );
-      // console.log("Action One - Not Changed");
+      // console.log("handleNextPosition -> Action One - Not Changed");
       if (newMetaData.status === "OK") {
         if (googleMapConfig.panoId !== newMetaData.pano_id) {
           // console.log("Action Two- Changed -> Update Map");

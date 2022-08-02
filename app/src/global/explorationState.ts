@@ -39,6 +39,10 @@ export interface ExplorationState {
 
   /* ------------- Global state to control the number of modifier ------------- */
   maxModifier: number;
+
+  /* ----------------------------- Control AutoWalk ---------------------------- */
+  isAutoWalk: boolean;
+  setIsAutoWalk: (update: boolean) => void;
 }
 
 const guildTourLocation = {
@@ -167,6 +171,15 @@ export const useExplorationStore = create<ExplorationState>(
         );
       },
       maxModifier: 3,
+
+      isAutoWalk: false,
+      setIsAutoWalk: (update) => {
+        set(
+          (state) => ({ ...state, isAutoWalk: update }),
+          false,
+          "ExplorationState/setIsAutoWalk"
+        );
+      },
     }),
     { name: "ExplorationState" }
   )

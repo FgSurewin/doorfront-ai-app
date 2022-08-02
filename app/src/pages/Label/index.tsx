@@ -3,6 +3,7 @@ import React from "react";
 import {
   deleteDBImage,
   getMultiImageByIds,
+  updateMultiImagesModelLabels,
   updateNewHumanLabels,
 } from "../../apis/collectedImage";
 import LabelTool from "../../components/LabelTool";
@@ -24,8 +25,12 @@ import {
   deleteImageFromList,
   saveImageToDiffList,
 } from "../../apis/user";
+import { fetchDetectedLabelsOfAllImages } from "../../apis/model";
+import { UpdateMultiImagesModelData } from "../../utils/api";
+import { v4 as uuidv4 } from "uuid";
 
 export default function LabelPage() {
+  const [isLabeling, setIsLabeling] = React.useState(true);
   const [state, setState] = React.useState<CollectedImageInterface[]>([]);
   const { queryImageList } = useQueryImagesStore();
   const { userInfo, clearUserInfo } = useUserStore();
@@ -36,18 +41,62 @@ export default function LabelPage() {
     async function loadFunc() {
       try {
         if (queryImageList.length > 0) {
-          const result = await getMultiImageByIds(
-            {
-              idList: queryImageList.map((item) => item.imageId),
-            },
+          const resultWithLabels = await fetchDetectedLabelsOfAllImages({
+            nms: 0.2,
+            image_list: queryImageList.filter((Image) => !Image.isPrelabeled),
+          });
+          const updateMultiModelLablesData: UpdateMultiImagesModelData =
+            resultWithLabels.map((result) => {
+              return {
+                image_id: result.image_id,
+                fileName: queryImageList.filter(
+                  (item) => item.imageId === result.image_id
+                )[0].fileName,
+                url: queryImageList.filter(
+                  (item) => item.imageId === result.image_id
+                )[0].imgSrc,
+                model_labels: result.labels
+                  .filter((item) => item.score >= 0.3)
+                  .map((item) => {
+                    return {
+                      label_id: uuidv4(),
+                      box: {
+                        x: item.bbox[0],
+                        y: item.bbox[1],
+                        width: item.bbox[2] - item.bbox[0],
+                        height: item.bbox[3] - item.bbox[1],
+                      },
+                      label: item.type,
+                      labeledBy: "model",
+                    };
+                  }),
+              };
+            });
+          console.log(updateMultiModelLablesData);
+          const updateResult = await updateMultiImagesModelLabels(
+            updateMultiModelLablesData,
             {
               clearUserInfo,
               navigate,
               deleteAllLocal,
             }
           );
-          if (result.code === 0) {
-            setState(result.data!);
+          console.log("updateResult -> ", updateResult);
+          if (updateResult.code === 0) {
+            const result = await getMultiImageByIds(
+              {
+                idList: queryImageList.map((item) => item.imageId),
+              },
+              {
+                clearUserInfo,
+                navigate,
+                deleteAllLocal,
+              }
+            );
+            if (result.code === 0) {
+              setIsLabeling(false);
+              setState(result.data!);
+            }
           }
         } else {
           navigate("/exploration");
@@ -199,7 +248,7 @@ export default function LabelPage() {
 
   return (
     <>
-      {state && state.length > 0 && (
+      {state && state.length > 0 && !isLabeling ? (
         <LabelTool
           collectedImageList={convertInitImageToInputImageList(state)}
           typeConfigs={testTypeConfigs}
@@ -210,6 +259,8 @@ export default function LabelPage() {
             onDeleteImage,
           }}
         />
+      ) : (
+        <h1>AI is Labeling...</h1>
       )}
     </>
   );
