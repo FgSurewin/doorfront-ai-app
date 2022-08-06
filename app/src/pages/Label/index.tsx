@@ -41,62 +41,65 @@ export default function LabelPage() {
     async function loadFunc() {
       try {
         if (queryImageList.length > 0) {
-          const resultWithLabels = await fetchDetectedLabelsOfAllImages({
-            nms: 0.2,
-            image_list: queryImageList.filter((Image) => !Image.isPrelabeled),
-          });
-          const updateMultiModelLablesData: UpdateMultiImagesModelData =
-            resultWithLabels.map((result) => {
-              return {
-                image_id: result.image_id,
-                fileName: queryImageList.filter(
-                  (item) => item.imageId === result.image_id
-                )[0].fileName,
-                url: queryImageList.filter(
-                  (item) => item.imageId === result.image_id
-                )[0].imgSrc,
-                model_labels: result.labels
-                  .filter((item) => item.score >= 0.3)
-                  .map((item) => {
-                    return {
-                      label_id: uuidv4(),
-                      box: {
-                        x: item.bbox[0],
-                        y: item.bbox[1],
-                        width: item.bbox[2] - item.bbox[0],
-                        height: item.bbox[3] - item.bbox[1],
-                      },
-                      label: item.type,
-                      labeledBy: "model",
-                    };
-                  }),
-              };
-            });
-          console.log(updateMultiModelLablesData);
-          const updateResult = await updateMultiImagesModelLabels(
-            updateMultiModelLablesData,
-            {
-              clearUserInfo,
-              navigate,
-              deleteAllLocal,
-            }
+          const unlabeledImages = queryImageList.filter(
+            (Image) => !Image.isPrelabeled
           );
-          console.log("updateResult -> ", updateResult);
-          if (updateResult.code === 0) {
-            const result = await getMultiImageByIds(
-              {
-                idList: queryImageList.map((item) => item.imageId),
-              },
+          if (unlabeledImages.length > 0) {
+            const resultWithLabels = await fetchDetectedLabelsOfAllImages({
+              nms: 0.2,
+              image_list: unlabeledImages,
+            });
+            const updateMultiModelLablesData: UpdateMultiImagesModelData =
+              resultWithLabels.map((result) => {
+                return {
+                  image_id: result.image_id,
+                  fileName: queryImageList.filter(
+                    (item) => item.imageId === result.image_id
+                  )[0].fileName,
+                  url: queryImageList.filter(
+                    (item) => item.imageId === result.image_id
+                  )[0].imgSrc,
+                  model_labels: result.labels
+                    .filter((item) => item.score >= 0.3)
+                    .map((item) => {
+                      return {
+                        label_id: uuidv4(),
+                        box: {
+                          x: item.bbox[0],
+                          y: item.bbox[1],
+                          width: item.bbox[2] - item.bbox[0],
+                          height: item.bbox[3] - item.bbox[1],
+                        },
+                        label: item.type,
+                        labeledBy: "model",
+                      };
+                    }),
+                };
+              });
+            // console.log(updateMultiModelLablesData);
+            const updateResult = await updateMultiImagesModelLabels(
+              updateMultiModelLablesData,
               {
                 clearUserInfo,
                 navigate,
                 deleteAllLocal,
               }
             );
-            if (result.code === 0) {
-              setIsLabeling(false);
-              setState(result.data!);
+            // console.log("updateResult -> ", updateResult);
+          }
+          const result = await getMultiImageByIds(
+            {
+              idList: queryImageList.map((item) => item.imageId),
+            },
+            {
+              clearUserInfo,
+              navigate,
+              deleteAllLocal,
             }
+          );
+          if (result.code === 0) {
+            setIsLabeling(false);
+            setState(result.data!);
           }
         } else {
           navigate("/exploration");

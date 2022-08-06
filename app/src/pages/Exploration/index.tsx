@@ -23,8 +23,6 @@ import { useNavigate } from "react-router-dom";
 import { saveImageToDiffList } from "../../apis/user";
 import { deleteAllLocal } from "../../utils/localStorage";
 
-let count = 0;
-
 // const label = { inputProps: { "aria-label": "Switch demo" } };
 
 export default function ExplorationPage() {
@@ -105,7 +103,6 @@ export default function ExplorationPage() {
   ) => {
     debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
     if (result.position && result.pov) {
-      console.log("onPositionChanged -> ", isAutoWalk);
       setIsNextPosition(false);
       updateGoogleMapConfig({
         panoId: result.pano,
@@ -113,7 +110,6 @@ export default function ExplorationPage() {
         povConfig: { ...result.pov, zoom: result.zoom },
       });
       if (isAutoWalk) {
-        console.log("query image", count++);
         setIsUploading(true);
         await refetch();
         updateCollectedImgNum(collectedImgNum + 1);
