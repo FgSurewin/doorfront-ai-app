@@ -54,6 +54,10 @@ export interface InternalState {
   /* -------------------------- Current Bounding Box -------------------------- */
   selectedBoxId: string;
   onChangeSelectedBoxId: (boxId: string) => void;
+  selectedBoxType: string;
+  onChangeSelectedBoxType:(boxType:string) => void;
+  notesOpen: boolean;
+  onChangeNotesOpen:(bool:boolean) => void;
 
   /* ---------------------------- Labeling Process ---------------------------- */
   labelingProcess: LabelingProcess;
@@ -94,6 +98,22 @@ export const useReactToolInternalStore = create<InternalState>(
           (state) => ({ ...state, selectedBoxId: boxId }),
           false,
           "ReactToolInternalState/onChangeSelectedBoxId"
+        );
+      },
+      selectedBoxType:"",
+      onChangeSelectedBoxType:(boxType) => {
+        set(
+          (state) => ({ ...state, selectedBoxType: boxType }),
+          false,
+          "ReactToolInternalState/onChangeSelectedBoxType"
+        );
+      },
+      notesOpen: false,
+      onChangeNotesOpen:(bool:boolean) => {
+        set(
+          (state) => ({ ...state, notesOpen:bool}),
+          false,
+          "ReactToolInternalState/onChangeNotesOpen"
         );
       },
       labelingProcess: {

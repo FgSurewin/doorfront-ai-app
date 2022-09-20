@@ -40,6 +40,7 @@ export default function LabelStage() {
     imageAttributes,
     scaleConfig,
     onChangeSelectedBoxId,
+    onChangeSelectedBoxType,
     labelingProcess,
     onChangeLabelingProcess,
     resetLabelingProcess,
@@ -71,6 +72,7 @@ export default function LabelStage() {
     const clickedOnEmpty =
       e.target === e.target.getStage() || e.target === imgRef.current;
     if (clickedOnEmpty) {
+      onChangeSelectedBoxType("");
       onChangeSelectedBoxId("");
     }
   };
@@ -138,7 +140,13 @@ export default function LabelStage() {
 
   /* ------------------------------- Drag Events ------------------------------ */
   const handleStageDragEnd = (e: KonvaEventObject<DragEvent>) => {
+    onChangeSelectedBoxId("")
+    onChangeSelectedBoxType("")
     onChangeStageAttributes({ x: e.target.x(), y: e.target.y() });
+  };
+  const handleStageDragStart = () => {
+    onChangeSelectedBoxId("")
+    onChangeSelectedBoxType("")
   };
 
   return (
@@ -156,6 +164,7 @@ export default function LabelStage() {
           onMouseUp={handleStageMouseUp}
           onTouchStart={checkDeselect}
           onDragEnd={handleStageDragEnd}
+          onDragStart={handleStageDragStart}
           onWheel={handleStageWheel}
         >
           <Layer {...layerAttributes}>

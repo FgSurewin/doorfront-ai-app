@@ -15,6 +15,7 @@ import {
 // import { panoMarker } from "./testData";
 import { StreetViewMarkerType } from "./utils/panoMarker";
 import { useExplorationStore } from "../../global/explorationState";
+import Notes from "../Notes"
 // import asyncLoading from "react-async-loader";
 
 export interface GoogleMapProps {
@@ -43,7 +44,7 @@ function GoogleMap({
   /* -------------------------------------------------------------------------- */
   /*                                Global State                                */
   /* -------------------------------------------------------------------------- */
-  const { isNextPosition, setIsNextPosition } = useExplorationStore();
+  const { isNextPosition, setIsNextPosition, currentSelectedImage, currentSelectedImageTitle } = useExplorationStore();
 
   React.useEffect(() => {
     if (google && !_isMounted.current) {
@@ -128,6 +129,12 @@ function GoogleMap({
             className="MapContainer"
             style={MapContainerStyle}
           >
+            {
+              currentSelectedImageTitle=== 'door' && currentSelectedImage !== "" &&
+              <div style={{position:'absolute',top:'300px',width:'240px'}}>
+                <Notes page = "explore" id={currentSelectedImage} />
+              </div>
+            }
             <div
               id="Map"
               ref={_map}

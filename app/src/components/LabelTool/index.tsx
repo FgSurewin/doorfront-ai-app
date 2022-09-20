@@ -18,6 +18,7 @@ import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../global/userState";
+import { NotesInterface } from "../../types/collectedImage";
 
 export interface InputLabel {
   x: number;
@@ -28,6 +29,7 @@ export interface InputLabel {
   id: string;
   subtype: string | undefined;
   labeledBy: string;
+  notes?: NotesInterface
 }
 
 export interface InputImageList {
@@ -101,8 +103,10 @@ export default function LabelTool({
   const {
     selectedBoxId,
     onChangeSelectedBoxId,
+    onChangeSelectedBoxType,
     resetLabelingProcess,
     imageAttributes,
+    notesOpen
   } = useReactToolInternalStore();
   const { userInfo } = useUserStore();
 
@@ -160,18 +164,22 @@ export default function LabelTool({
         isVisible: true,
         id: newBoxId,
         labeledBy: userInfo.nickname!,
+        notes: currentBox.notes
       });
       onChangeSelectedBoxId(newBoxId);
+      onChangeSelectedBoxType(currentBox.type)
     }
   };
 
   const handleReactToolKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "q" || e.key === "Q") {
-      resetLabelingProcess();
-    } else if (e.key === "d" || e.key === "D") {
-      if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
-    } else if (e.key === "c" || e.key === "C") {
-      handleCopyBox();
+    if (!notesOpen) {
+      if (e.key === "q" || e.key === "Q") {
+        resetLabelingProcess();
+      } else if (e.key === "d" || e.key === "D") {
+        if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
+      } else if (e.key === "c" || e.key === "C") {
+        handleCopyBox();
+      }
     }
   };
 

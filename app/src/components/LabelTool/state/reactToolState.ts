@@ -1,5 +1,6 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
+import { NotesInterface } from "../../../types/collectedImage";
 
 export interface ReactToolBoxAttributes {
   x: number;
@@ -14,6 +15,7 @@ export interface ReactToolBoxAttributes {
   type: string;
   subtype: string | undefined;
   labeledBy: string;
+  notes?: NotesInterface;
 }
 
 export interface ReactToolImageListItemType {
@@ -71,6 +73,10 @@ export interface ReactToolState {
   typeConfigs: TypeConfig[];
   initTypeConfigs: (typeConfigs: TypeConfig[]) => void;
 
+  /* -------------------------------- get notes ------------------------------- */
+  currentNotes: NotesInterface;
+  updateCurrentNotes: (boxId:string, notes:NotesInterface) => void;
+
   // Global operation functions
   operationsFuncs: OperationFunctions;
   initOperationFunctions: (funcs: OperationFunctions) => void;
@@ -114,6 +120,23 @@ export const useReactToolsStore = create<ReactToolState>(
           "ReactToolState/changeReactToolImageLabels"
         );
       },
+      currentNotes:{
+        name:'',
+        address:'',
+        handicap: '',
+        accessible: ''
+      },
+      updateCurrentNotes:(boxId,notes) => {
+        set(
+          (state) => {
+            state.changeReactToolImageLabels(boxId,{notes:notes})
+            return{...state,currentNotes: notes}
+          },
+          false,
+          "ReactToolState/updateCurrentNotes"
+        );
+      },
+
       deleteReactToolImageLabel: (boxId) => {
         set(
           (state) => {

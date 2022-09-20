@@ -54,6 +54,7 @@ export function modelLabelToInputLabel(
     subtype: data.subtype || "",
     id: data.label_id,
     labeledBy: data.labeledBy,
+    notes: data.notes
   };
 }
 
@@ -80,5 +81,6 @@ export function reactToolLabelToDBLabel(
     subtype: label.subtype,
     labeledBy: label.labeledBy,
     markerPov: calculatePointPov(targetX, targetY, pov),
+    notes: label.notes
   };
 }

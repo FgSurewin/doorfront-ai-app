@@ -2,6 +2,7 @@ import React from "react";
 import { Button, List, ListItem, Grid } from "@mui/material";
 import { ReactToolAsideTitle } from "../General";
 import { useReactToolsStore } from "../state/reactToolState";
+import { useReactToolInternalStore } from "../state/internalState";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useUserStore } from "../../../global/userState";
 
@@ -12,8 +13,10 @@ export default function ImagePanel() {
     changeSelectedImageId,
     deleteReactToolImage,
     operationsFuncs,
-    disableDelete,
+    disableDelete
   } = useReactToolsStore();
+
+  const {onChangeSelectedBoxId,onChangeSelectedBoxType} = useReactToolInternalStore();
 
   /* -------------------------------------------------------------------------- */
   /*                              Handle User Score                             */
@@ -35,6 +38,8 @@ export default function ImagePanel() {
               divider
               onClick={() => {
                 changeSelectedImageId(item.imageId);
+                onChangeSelectedBoxId("")
+                onChangeSelectedBoxType("")
               }}
             >
               <Grid

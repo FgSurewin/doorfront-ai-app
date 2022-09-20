@@ -19,7 +19,7 @@ import { useReactToolInternalStore } from "../state/internalState";
 
 export default function LabelsShowcase() {
   /* ----------------------------- Internal State ----------------------------- */
-  const { selectedBoxId, onChangeSelectedBoxId } = useReactToolInternalStore();
+  const { selectedBoxId, onChangeSelectedBoxId, onChangeSelectedBoxType } = useReactToolInternalStore();
   /* --------------------------- Global Image State --------------------------- */
   const {
     reactToolImageList,
@@ -53,6 +53,7 @@ export default function LabelsShowcase() {
               divider
               onClick={() => {
                 onChangeSelectedBoxId(label.id);
+                onChangeSelectedBoxType(label.type);
               }}
             >
               <Stack

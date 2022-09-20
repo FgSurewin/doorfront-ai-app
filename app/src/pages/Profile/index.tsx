@@ -91,10 +91,12 @@ export default function Profile() {
                             <Grid item xs={8} sx={gridContent} textAlign='center' alignItems='center'>
                                 <ResetPasswordForm />
                             </Grid>
+                            {/*
                             <Grid item xs={4} sx={gridTitle} textAlign='center'>Change Email Address:</Grid>
                             <Grid item xs={8} sx={gridContent} textAlign='center'> 
                                 <ResetEmailForm />
                             </ Grid>
+    */}
                         </Grid>
                     </Box>
                 </TabPanel>
@@ -107,7 +109,7 @@ export default function Profile() {
                         <Box sx={{ mx: 11 }}/>
                         <TwitterShareButton url="DoorFront.org" title={"Try beating my score of " + userScore.score + '!\n\n'}><TwitterIcon /> </TwitterShareButton>
                         <Box sx={{ mx: 4 }} />
-                        <FacebookShareButton url='DoorFront.org'hashtag={'#BeatMyScoreOf'+userScore.score+'! #accessibility'}><FacebookIcon /></FacebookShareButton>
+                        <FacebookShareButton url='DoorFront.org'hashtag={'#BeatMyScoreOf'+userScore.score + '! #accessibility'}><FacebookIcon /></FacebookShareButton>
                         <Box sx={{ mx: 4}} />
                         <LinkedinShareButton url='DoorFront.org' title={"Try beating my score of " + userScore.score + '!\n\n'} source="DoorFront.org" summary="Crowdsourcing App"><LinkedinIcon /></LinkedinShareButton>
                         <Box sx={{ mx: 2}} />

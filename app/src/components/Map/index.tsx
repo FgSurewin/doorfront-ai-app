@@ -141,7 +141,7 @@ export default function MapboxMap() {
         }
       }
       else if (point !== undefined && point[1] && point[1].layer.id === 'doorfront-map') {
-        setSubtitle(point[1].properties.progress + ' doorfronts (' + point[1].properties.percentage + '%) marked in ' + point[1].properties.name);
+        setSubtitle(point[1].properties.progress + ' commercial doorfronts (' + point[1].properties.percentage + '%) marked in ' + point[1].properties.name);
         geojsonSource.current.setData({
           "type": "FeatureCollection",
           'features': [{

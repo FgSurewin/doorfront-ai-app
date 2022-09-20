@@ -1,7 +1,7 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { StreetViewMarkerType } from "../components/GoogleMap/utils/panoMarker";
-import { CollectedImageInterface } from "../types/collectedImage";
+import { CollectedImageInterface, NotesInterface } from "../types/collectedImage";
 
 export type LocationType = { lat: number; lng: number };
 export type PovType = { heading: number; pitch: number; zoom: number };
@@ -35,24 +35,26 @@ export interface ExplorationState {
   panoramaMarkerList: StreetViewMarkerType[];
   updatePanoramaMarkerList: (update: StreetViewMarkerType[]) => void;
   currentSelectedImage: string;
+  currentSelectedImageTitle: string;
   updateCurrentSelectedImage: (imageId: string) => void;
-
+  updateCurrentSelectedImageTitle: (title:string) => void;
   /* ------------- Global state to control the number of modifier ------------- */
   maxModifier: number;
 }
 
 const guildTourLocation = {
-  lat: 40.74779659105191,
-  lng: -73.97710788928774,
+  lat: 40.76053914888549,
+  lng: -73.97417372824286,
 };
 
 const guildTourPov = {
-  heading: 247,
+  heading: 214,
   pitch: 8,
   zoom: 1,
 };
 
-const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
+// const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
+const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
 
 export const useExplorationStore = create<ExplorationState>(
   devtools(
@@ -128,6 +130,7 @@ export const useExplorationStore = create<ExplorationState>(
                     isShow: false,
                     box: label.box,
                     imagePov: image.pov,
+                    notes:label.notes
                   };
                   markerList.push(marker);
                 });
@@ -158,11 +161,19 @@ export const useExplorationStore = create<ExplorationState>(
         );
       },
       currentSelectedImage: "",
+      currentSelectedImageTitle:"",
       updateCurrentSelectedImage: (imageId) => {
         set(
           (state) => ({ ...state, currentSelectedImage: imageId }),
           false,
           "ExplorationState/updateCurrentSelectedImage"
+        );
+      },
+      updateCurrentSelectedImageTitle: (title) => {
+        set(
+          (state) => ({ ...state, currentSelectedImageTitle: title}),
+          false,
+          "ExplorationState/updateCurrentSelectedImageSubtype"
         );
       },
       maxModifier: 3,

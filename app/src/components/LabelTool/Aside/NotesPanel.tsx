@@ -1,29 +1,25 @@
+import React from 'react';
 import { Typography, Container, TextField, Button } from '@mui/material'
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { ReactToolAsideTitle } from "../General";
+import Notes from "../../Notes"
 
 
 function handleChange (){
 //    const [edit,setEdit] = useState(false);
 }
 
-export default function Notes() {
-
+export default function NotesPanel({page,id}:{
+    page:string;
+    id:string;
+}) {
     return(
-        <div>
+        <>
         <ReactToolAsideTitle text="Notes" />
-        <Container  >
-        
-        <TextField variant="standard" label='Store Name?' size='small' fullWidth id='name' disabled/>
-        <TextField variant="standard" label='Store Address?' size = 'small' fullWidth id='address' disabled/>
-        <TextField variant="standard" label='Accessible?' size = 'small' fullWidth disabled/>
-        <TextField variant="standard" label='Handicap Restroom?' size = 'small' fullWidth disabled/>
-        <Box sx={{pt:'5%',pl:'80%'}}>
-        <Button size='small'>edit?</Button>
-        </Box>
-
-        </Container>
-        </ div>
+        <Notes page={page} id={id}/>
+        </>
     )
 }
+
+

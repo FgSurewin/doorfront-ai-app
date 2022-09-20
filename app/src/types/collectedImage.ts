@@ -11,6 +11,13 @@ export interface PovInterface {
   zoom: number;
 }
 
+export interface NotesInterface {
+  name: string;
+  address:string;
+  accessible: string;
+  handicap: string;
+}
+
 export interface CollectedLabelInterface {
   label_id: string;
   box: CollectedBoxInterface;
@@ -18,6 +25,7 @@ export interface CollectedLabelInterface {
   subtype?: string;
   labeledBy: string;
   markerPov?: PovInterface;
+  notes?: NotesInterface;
 }
 
 export type ImageLocation = { lat: number; lng: number };

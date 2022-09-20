@@ -31,6 +31,8 @@ export default function ExplorationPage() {
     updateStreetViewImageConfig,
     panoramaMarkerList,
     setIsNextPosition,
+    updateCurrentSelectedImage,
+    updateCurrentSelectedImageTitle
   } = useExplorationStore();
 
   /* -------------------------------------------------------------------------- */
@@ -49,7 +51,7 @@ export default function ExplorationPage() {
     result: ReturnType<typeof generateInfo>,
     map: google.maps.Map
   ) => {
-    // console.log("onPositionChanged -> ", result);
+    console.log("onPositionChanged -> ", result);
     debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
     if (result.position && result.pov) {
       setIsNextPosition(false);
@@ -58,6 +60,8 @@ export default function ExplorationPage() {
         position: result.position,
         povConfig: { ...result.pov, zoom: result.zoom },
       });
+      updateCurrentSelectedImage("");
+      updateCurrentSelectedImageTitle("");
     }
   };
 
