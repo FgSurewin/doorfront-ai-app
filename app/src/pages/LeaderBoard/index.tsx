@@ -40,7 +40,8 @@ export default function LeaderBoard() {
 					component={Paper}
 					elevation={6}
 					square
-					sx={{ p: 2 }}>
+					sx={{ p: 2 }}
+				>
 					<Typography
 						variant="h6"
 						sx={{
@@ -48,7 +49,8 @@ export default function LeaderBoard() {
 							my: 2,
 							color: "text.primary",
 							fontWeight: "bold",
-						}}>
+						}}
+					>
 						Welcome to leader board 🏆
 					</Typography>
 					<Table aria-label="simple table">
@@ -56,18 +58,20 @@ export default function LeaderBoard() {
 							<TableRow
 								sx={{
 									bgcolor: "primary.main",
-								}}>
+								}}
+							>
 								{["Rank", "Username", "Score"].map((item, index) => (
 									<TableCell
 										key={index}
-										sx={{ color: "white", fontWeight: "bold", fontSize: 16 }}>
+										sx={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+									>
 										{item}
 									</TableCell>
 								))}
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{allUsers.slice(0, 10).map((row, index) => (
+							{allUsers.slice(0, 5).map((row, index) => (
 								<TableRow
 									key={row.email}
 									sx={{
@@ -78,7 +82,8 @@ export default function LeaderBoard() {
 										"&:last-child td, &:last-child th": {
 											border: 0,
 										},
-									}}>
+									}}
+								>
 									<TableCell>{index + 1}</TableCell>
 									<TableCell>{row.username}</TableCell>
 									<TableCell>{row.score}</TableCell>
@@ -93,8 +98,9 @@ export default function LeaderBoard() {
 							my: 1,
 							color: "text.primary",
 							fontSize: 12,
-						}}>
-						Showing the first 10 users
+						}}
+					>
+						Showing the first 5 users
 					</Typography>
 				</Grid>
 				<Grid item xs={false} sm={6} sx={generateImageStyle} />
