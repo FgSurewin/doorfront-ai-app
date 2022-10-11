@@ -82,210 +82,210 @@ export const explorationSteps: Step[] = [
 		hideCloseButton: true,
 		spotlightClicks: false,
 	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🏷️ Label Marker
-				</Typography>
-				<Typography
-					variant="body1"
-					sx={{
-						mb: 2,
-						textAlign: "left",
-						color: "darkred",
-						fontWeight: "bold",
-					}}
-				>
-					😀 Please click the purple marker!
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `#${sampleMarkerId}`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: true,
-		hideFooter: true,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🗃️ Label Card
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					😀 You can check all the information within this label card
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.${sampleMarkerId}-streetViewMarkerCard`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-		hideBackButton: true,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🗃️ Preview Image
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					😀 The <strong>bounding box</strong> corresponding to the label is
-					also shown on the preview image.
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					🤪 If you found the <strong>bounding box is incorrect</strong>, you
-					can correct it by clicking <strong>view button</strong>. (I will
-					introduce this button later)
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.${sampleMarkerId}-CardMedia`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🗃️ Card Content
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					😀 You can see the <strong>image name, type and subtype</strong> of
-					current label within this section. In addition, the{" "}
-					<strong>username</strong> that annotated this label is displayed.
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.${sampleMarkerId}-CardContent`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					❌ Close Button
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					😀 Close the label card by clicking this button
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.${sampleMarkerId}-CardActions`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🎞️ Image List
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					😀 When you see a border, it means that this image corresponds to the{" "}
-					<strong>label</strong> you clicked on.
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.imageListItem`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-		hideBackButton: true,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🖱️ Image Button
-				</Typography>
-				<Typography
-					variant="body1"
-					sx={{ mb: 2, textAlign: "left", color: "darkblue" }}
-				>
-					😀 There are two status with this button
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					🔒 <strong>LOCKED</strong>: the current status indicates that you are
-					unable to modify the image. The reason may be that{" "}
-					<strong>
-						(1) you created the image, (2) you have modified the image before,
-						or (3) the image has been determined to be correct and does not need
-						to be modified.
-					</strong>
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					⭕ <strong>VIEW</strong>: the current status indicates that you can
-					modify this image to correct the incorrect labels you found.
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.imageListItemButton`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-	},
-	{
-		content: (
-			<Box>
-				<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
-					🖱️ Validate Button
-				</Typography>
-				<Typography
-					variant="body1"
-					sx={{ mb: 2, textAlign: "left", color: "darkblue" }}
-				>
-					😀When you check all labels within the same image and feel that they
-					are 100% correct, you can click this button to validate them.
-				</Typography>
-				<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
-					⭕ <strong>Reminder: </strong>: Please check all the labels carefully
-					before you click validate button.
-				</Typography>
-			</Box>
-		),
-		placement: "auto",
-		target: `.reviewImageButton`,
-		isFixed: true,
-		disableCloseOnEsc: true,
-		disableOverlayClose: true,
-		showSkipButton: true,
-		hideCloseButton: true,
-		spotlightClicks: false,
-	},
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🏷️ Label Marker
+	// 			</Typography>
+	// 			<Typography
+	// 				variant="body1"
+	// 				sx={{
+	// 					mb: 2,
+	// 					textAlign: "left",
+	// 					color: "darkred",
+	// 					fontWeight: "bold",
+	// 				}}
+	// 			>
+	// 				😀 Please click the purple marker!
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `#${sampleMarkerId}`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: true,
+	// 	hideFooter: false,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🗃️ Label Card
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				😀 You can check all the information within this label card
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.${sampleMarkerId}-streetViewMarkerCard`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// 	hideBackButton: true,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🗃️ Preview Image
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				😀 The <strong>bounding box</strong> corresponding to the label is
+	// 				also shown on the preview image.
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🤪 If you found the <strong>bounding box is incorrect</strong>, you
+	// 				can correct it by clicking <strong>view button</strong>. (I will
+	// 				introduce this button later)
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.${sampleMarkerId}-CardMedia`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🗃️ Card Content
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				😀 You can see the <strong>image name, type and subtype</strong> of
+	// 				current label within this section. In addition, the{" "}
+	// 				<strong>username</strong> that annotated this label is displayed.
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.${sampleMarkerId}-CardContent`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				❌ Close Button
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				😀 Close the label card by clicking this button
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.${sampleMarkerId}-CardActions`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🎞️ Image List
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				😀 When you see a border, it means that this image corresponds to the{" "}
+	// 				<strong>label</strong> you clicked on.
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.imageListItem`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// 	hideBackButton: true,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🖱️ Image Button
+	// 			</Typography>
+	// 			<Typography
+	// 				variant="body1"
+	// 				sx={{ mb: 2, textAlign: "left", color: "darkblue" }}
+	// 			>
+	// 				😀 There are two status with this button
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🔒 <strong>LOCKED</strong>: the current status indicates that you are
+	// 				unable to modify the image. The reason may be that{" "}
+	// 				<strong>
+	// 					(1) you created the image, (2) you have modified the image before,
+	// 					or (3) the image has been determined to be correct and does not need
+	// 					to be modified.
+	// 				</strong>
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				⭕ <strong>VIEW</strong>: the current status indicates that you can
+	// 				modify this image to correct the incorrect labels you found.
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.imageListItemButton`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// },
+	// {
+	// 	content: (
+	// 		<Box>
+	// 			<Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>
+	// 				🖱️ Validate Button
+	// 			</Typography>
+	// 			<Typography
+	// 				variant="body1"
+	// 				sx={{ mb: 2, textAlign: "left", color: "darkblue" }}
+	// 			>
+	// 				😀When you check all labels within the same image and feel that they
+	// 				are 100% correct, you can click this button to validate them.
+	// 			</Typography>
+	// 			<Typography variant="body1" sx={{ mb: 2, textAlign: "left" }}>
+	// 				⭕ <strong>Reminder: </strong>: Please check all the labels carefully
+	// 				before you click validate button.
+	// 			</Typography>
+	// 		</Box>
+	// 	),
+	// 	placement: "auto",
+	// 	target: `.reviewImageButton`,
+	// 	isFixed: true,
+	// 	disableCloseOnEsc: true,
+	// 	disableOverlayClose: true,
+	// 	showSkipButton: true,
+	// 	hideCloseButton: true,
+	// 	spotlightClicks: false,
+	// },
 	{
 		content: (
 			<Box>
