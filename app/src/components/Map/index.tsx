@@ -1,211 +1,180 @@
-
 import * as React from 'react';
-import { useState, useRef, useEffect} from 'react';
-import mapboxgl from 'mapbox-gl';
-import readFile, { datasetsToken, datasetID } from './data'
-import './index.css';
-import { Box, Container,Grid } from '@mui/material'
+import Map, { Source, Layer, MapLayerMouseEvent } from 'react-map-gl';
+import { Box, Container, Grid, Typography } from '@mui/material'
 import Item from '@mui/material/Grid'
 import CircleIcon from '@mui/icons-material/Circle';
-
-const mbxClient = require('@mapbox/mapbox-sdk');
-const mbxDatasets = require('@mapbox/mapbox-sdk/services/datasets');
-const baseClient = mbxClient({ accessToken: datasetsToken });
-const datasetsClient = mbxDatasets(baseClient);
-const accessToken = process.env.REACT_APP_MAPBOX_TOKEN
-
-
-mapboxgl.accessToken = accessToken as string
-
-function CheckModified(): boolean | null {
-  let modifiedToday: boolean | null = null;
-  const [dateModified, setDateModified] = useState<Date | undefined>()
-  let today: Date = new Date();
-
-  useEffect(() => {
-    if (modifiedToday != null) { return }
-    datasetsClient.getMetadata({
-      datasetId: datasetID
-    })
-      .send()
-      .then((response: any) => {
-        const datasetMetadata = response.body;
-        setDateModified(new Date(datasetMetadata.modified))
-      })
-  }, []);
-
-  if (dateModified !== undefined && today.getFullYear() >= dateModified.getFullYear() &&
-    today.getMonth() >= dateModified.getMonth() && today.getDay() > dateModified.getDay()) {
-    modifiedToday = false;
-  }
-  else {
-    modifiedToday = true;
-  }
-
-
-  return modifiedToday;
-}
+import type {Feature,GeoJsonProperties,Point, Geometry} from 'geojson'
+import * as turf from '@turf/turf';
+import nearestPoint from '@turf/nearest-point';
+import { useExplorationStore } from '../../global/explorationState';
+import { useNavigate} from 'react-router-dom';
+import type { LayerProps } from 'react-map-gl';
+import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, defaultMessage, llb, legend, typographySX, gridSX } from './data';
+import neighborhoods from './neighborhoods';
 
 export default function MapboxMap() {
-  let modified: boolean | null = CheckModified();
-  if (modified !== null && modified === false) {
-    readFile();
+
+  const {updateGoogleMapConfig} = useExplorationStore();
+  const navigate = useNavigate();
+
+  const [subtitle, setSubtitle] = React.useState<string>(defaultMessage)
+  const [mapClicked,setMapClicked] = React.useState<boolean>(false);
+  const [hoverInfo, setHoverInfo] = React.useState<features>(defaultHoverInfo)
+  const turfStreetPoints:turfFeatureCollection[] = React.useMemo(() => pointsToFeatureCollection(),[])
+
+  const neighborhoodCoordinates = React.useMemo(()=>{
+    if(hoverInfo.name !== ""){
+      return neighborhoods.features.filter(loc => loc.properties.name === hoverInfo.name)[0].geometry.coordinates
+    }
+    else {
+      return [[[0]]]
+    }
+  },[hoverInfo.name] )
+
+  const [layerStyle,setLayerStyle] = React.useState<LayerProps>( {
+    id:'border',
+    type: 'line',
+    paint: { "line-color": "#000000", "line-width":0 },
+    beforeId: "settlement-subdivision-label"
+  })
+
+  const [drawnFeatures,setDrawnFeatures] = React.useState<Feature<Geometry,GeoJsonProperties>>({
+    type:'Feature',
+    geometry: {
+      type:'Polygon',
+      coordinates:[]
+    },
+    properties:{
+      stroke: "#000000", 
+      strokeWidth: '1',
+      strokeOpacity: "1"
+    } 
+  })
+  
+
+
+  React.useEffect(() => {
+    if(hoverInfo.name !== ""){
+          setDrawnFeatures({...drawnFeatures, 
+            //@ts-ignore
+                geometry: {type:'Polygon', coordinates: neighborhoodCoordinates}
+            })
+      setSubtitle(hoverInfo.progress + ' commercial doorfronts (' + hoverInfo.percentage+ '%) marked in ' + hoverInfo.name + '.')
+
+        //@ts-ignore
+      setLayerStyle({ ...layerStyle, paint:{ "line-color": "#000000", "line-width":1.5 }})
+      }
+    else if (subtitle !== defaultMessage) setSubtitle(defaultMessage)
+  }, [hoverInfo.name])
+
+
+  React.useEffect(()=> {
+    if(mapClicked){
+      navigate('/exploration')
+    }
+  },[mapClicked,navigate])
+
+  function mouseMove(point: any): void {
+    if (point.features[0] !== undefined) {
+      const newPoint = point.features[0] as queriedFeatures
+      setHoverInfo({
+        name: newPoint.properties.name,
+        progress: newPoint.properties.progress,
+        total: newPoint.properties.total,
+        percentage: newPoint.properties.percentage
+      })
+
+    }
   }
-  const legend = {
-    layers: [
-      '0%',
-      '5%',
-      '10%',
-      '20%',
-      '30%',
-      '40%',
-      '50%',
-      '60%',
-      '70%',
-      '80%',
-      '90%',
-      '100%'],
-    colors: [
-      '#ffffff',
-      '#fcf1cf',
-      '#f6d46f',
-      '#f3c058',
-      '#f2a840',
-      '#f08c28',
-      '#ee6d11',
-      '#ee5b11',
-      '#ee4811',
-      '#ee3611',
-      '#ee1111',
-      '#22fa1e']
+
+  function findNearestPoint(point:MapLayerMouseEvent){
+    const turfPoint = turf.point([point.lngLat.lng,point.lngLat.lat])
+    var closePoint:any
+    if(hoverInfo.name !== ''){
+      for(var i = 0; i < turfStreetPoints.length;i++){
+       if(hoverInfo.name === turfStreetPoints[i].name){
+          closePoint = nearestPoint(turfPoint,turfStreetPoints[i].points)
+          //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
+          updateGoogleMapConfig({position:{lat:closePoint.geometry.coordinates[1],lng:closePoint.geometry.coordinates[0]}})
+          setMapClicked(true)
+          return
+        }
+      }
+    }
   }
 
-  //change progress.geojson to progress.json before calling readFile()
-  const map = useRef<mapboxgl.Map>();
-  const mapContainer = useRef<any>();
-  const defaultMessage: string = 'Welcome to Doorfront!\nHover over a neighborhood.'
-  const [subtitle, setSubtitle] = useState(defaultMessage)
-  const geojsonSource = useRef<any>();
-  let llb = new mapboxgl.LngLatBounds(new mapboxgl.LngLat(-73.993432, 40.694029), new mapboxgl.LngLat(-73.930974, 40.879119));
+  function pointsToFeatureCollection():turfFeatureCollection[]{
+    var sp = require("./output.json")
+    var turfStreetPoints:turfFeatureCollection[] = [];
+    sp.map((neighborhoods:any,index:number) => 
+      {
+        var spPoints: Feature<Point,GeoJsonProperties>[] = [];
+        neighborhoods.locations.map((locations:any)=>
+          spPoints.push(turf.point([locations.lng,locations.lat]))
+        )
 
-  useEffect(() => {
-    if (map.current !== undefined) return;
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/tort8678/cl1om66ls000014pa3qlp6zge',
-      bounds: llb,
-      interactive: false
-    });
-    
-    map.current.on('load', (e: any) => {
-      if (map.current?.getSource('border') === undefined) {
-        map.current?.addSource('border', {
-          'type': 'geojson',
-          'data': {
-            'type': 'FeatureCollection',
-            'features': []
-          }
-        });
-        
+        turfStreetPoints.push({name:neighborhoods.name,points:turf.featureCollection(spPoints)})
       }
-    })
-  });
-  useEffect(() => {
-    if (map.current === undefined) return;
+    )
+    return turfStreetPoints
+  }
 
-    map.current.on('mousemove', (e: mapboxgl.MapMouseEvent) => {
-      const point = map.current?.queryRenderedFeatures(e.point) as any
-      geojsonSource.current = map.current?.getSource('border');
-      if (point !== undefined && point[0] && point[0].layer.id === 'doorfront-map') {
-        setSubtitle(point[0].properties.progress + ' doorfronts (' + point[0].properties.percentage + '%) marked in ' + point[0].properties.name);
-        geojsonSource.current.setData({
-          "type": "FeatureCollection",
-          'features': [{
-            "properties": {
-              "stroke": "#000000", "stroke-width": 2,
-              "stroke-opacity": "1"
-            },
-            "geometry": {
-              'type': 'Polygon',
-              'coordinates': point[0].geometry.coordinates
-            }
-          }]
-        });
-        if (!map.current?.getLayer('border')) {
-          map.current?.addLayer({
-            'id': 'border',
-            'type': 'line',
-            'source': 'border',
-            "paint": { "line-color": "#000000" }
-          })
-        }
-      }
-      else if (point !== undefined && point[1] && point[1].layer.id === 'doorfront-map') {
-        setSubtitle(point[1].properties.progress + ' commercial doorfronts (' + point[1].properties.percentage + '%) marked in ' + point[1].properties.name);
-        geojsonSource.current.setData({
-          "type": "FeatureCollection",
-          'features': [{
-            "properties": {
-              "stroke": "#000000", "stroke-width": 2,
-              "stroke-opacity": "1"
-            },
-            "geometry": {
-              'type': 'Polygon',
-              'coordinates': point[1].geometry.coordinates
-            }
-          }]
-        });
-        if (!map.current?.getLayer('border')) {
-          map.current?.addLayer({
-            'id': 'border',
-            'type': 'line',
-            'source': 'border',
-            "paint": { "line-color": "#000000" }
-          })
-        }
-      }
-      else {
-        setSubtitle(defaultMessage)
-        if (map.current?.getLayer('border')) {
-          map.current?.removeLayer('border')
-        }
-      }
-    });
-  }, [subtitle]);
+  function onMouseLeave(){
+    setHoverInfo(defaultHoverInfo)
+    //@ts-ignore
+    setLayerStyle({ ...layerStyle, paint:{ "line-color": "#000000", "line-width":0 }})
+  }
 
+  function renderMap() {
+
+    return (
+      <Map
+        initialViewState={{
+          bounds: llb
+        }}
+        style={{ width: '100%', height: '87vh', zIndex: 0 }}
+        mapStyle="mapbox://styles/tort8678/cl1om66ls000014pa3qlp6zge"
+        styleDiffing
+        mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
+        interactive={false}
+        interactiveLayerIds={["doorfront-map"]}
+        onClick={(e) => findNearestPoint(e)}
+        onMouseMove={(e) => mouseMove(e)}
+        onMouseLeave={onMouseLeave}
+      >
+
+        <Source id='border' type='geojson' data={drawnFeatures}>
+          <Layer {...layerStyle} />
+        </Source>
+      
+        <Typography sx ={typographySX}>{subtitle}</Typography>
+        <Grid container spacing={2} maxWidth={100} rowSpacing={.005} sx={gridSX}>
+          <Grid item xs={12}><div><b>Percentage</b></div></Grid>
+          {Array.from(Array(legend.colors.length)).map((_, index) => (
+            <Grid item xs={12} key={index}>
+              <Item ><CircleIcon htmlColor={legend.colors[index]} sx={{ fontSize: 15, top: 0 }}></CircleIcon> {legend.layers[index]}</Item>
+            </Grid>
+          ))}
+        </Grid>
+      </Map>
+    )
+  }
 
   return (
-    <Container maxWidth='xl' sx={{backgroundColor: '#333D58', position:{md:'relative'}}}>
-      <Box 
-        sx={{
-          //backgroundColor: '#ee1111',
-          pt: '20px',
-          pb: '20px',
-          
-        }}
-      >
-        <div>
-        <div className='map-overlay'>{subtitle}</div>
-          <div ref={mapContainer} className='map-container'>
-
-          <div className='map-overlay2'>
-            <Grid container spacing={2} maxWidth={85} rowSpacing={.005}>
-              <Grid item xs={12}><div><b>Percentage</b></div></Grid>
-              {Array.from(Array(legend.colors.length)).map((_, index) => (
-              <Grid item xs = {12} key={index}>
-                <Item ><CircleIcon htmlColor={legend.colors[index]} sx={{fontSize:15}}></CircleIcon>      {legend.layers[index]}</Item>
-              </Grid>
-            ))}
-            
-            </Grid>
-          </div>
-          </ div>
-        </div>
-
-      </Box>
-    </Container>
+    <div>
+      <Container maxWidth= 'xl' sx={{pt:4,pb:4}}>
+      <Container maxWidth='xl' sx={{ backgroundColor: '#333D58', position: { md: 'relative' }}}>
+        <Box
+          sx={{
+            //backgroundColor: '#ee1111',
+            pt: '20px',
+            pb: '20px',
+          }}
+        >
+          {renderMap()}
+        </Box>
+      </Container>
+      </Container>
+    </div>
   )
-
-
-
 }

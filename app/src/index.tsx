@@ -13,7 +13,7 @@ import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
-import Map from "./pages/Map";
+import Contest from "./pages/Contest";
 import Profile from "./pages/Profile"
 
 ReactDOM.render(
@@ -25,7 +25,7 @@ ReactDOM.render(
           <Route path="/login" element={<Login />} />
           <Route path="/reset" element={<ResetPage />} />
           <Route path="/leaderBoard" element={<LeaderBoard />} />
-          <Route path="/map" element={<Map />} />
+          <Route path="/contest" element={<Contest />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />

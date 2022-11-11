@@ -1,7 +1,7 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { StreetViewMarkerType } from "../components/GoogleMap/utils/panoMarker";
-import { CollectedImageInterface, NotesInterface } from "../types/collectedImage";
+import { CollectedImageInterface} from "../types/collectedImage";
 
 export type LocationType = { lat: number; lng: number };
 export type PovType = { heading: number; pitch: number; zoom: number };

@@ -11,6 +11,13 @@ const QueryImageAttributeSchema = new Schema<QueryImageAttribute>(
   { timestamps: true }
 );
 
+/*
+const PreviousScoresSchema = new Schema<number>(
+  {previousScore: Number},
+  {timestamps: true}
+)
+*/
+
 export interface UserInterface extends Document {
   nickname: string;
   password: string;
@@ -30,6 +37,7 @@ export interface UserInterface extends Document {
   modify_images: QueryImageAttribute[];
   review_images: QueryImageAttribute[];
   unLabel_images: QueryImageAttribute[];
+  //previousScores: number[]; //store 12 previous months scores
 }
 
 const UserModel = new Schema<UserInterface>(
@@ -94,6 +102,7 @@ const UserModel = new Schema<UserInterface>(
     modify_images: [QueryImageAttributeSchema],
     review_images: [QueryImageAttributeSchema],
     unLabel_images: [QueryImageAttributeSchema],
+   // previousScores: [PreviousScoresSchema]
   },
   { timestamps: true }
 );

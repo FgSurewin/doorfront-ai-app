@@ -1,9 +1,5 @@
-import React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import LockResetIcon from "@mui/icons-material/LockReset";
-import Typography from "@mui/material/Typography";
 import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
 import { useSnackbar } from "notistack";

@@ -39,8 +39,7 @@ function a11yProps(index: number) {
     };
 }
 export default function Profile() {
-    const { userInfo } = useUserStore();
-    const { userScore } = useUserStore();
+    const { userInfo, userScore } = useUserStore();
     const [value, setValue] = useState(0);
     //const update = useUserStore().updateUserScore(testScores);
     const gridTitle: SxProps = { borderBottom: 1, borderColor: 'divider', fontWeight: 'bold' }
