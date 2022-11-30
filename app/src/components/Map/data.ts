@@ -76,6 +76,7 @@ export const typographySX:SxProps = {
   fontSize: "14px",
   zIndex: 1,
   position: "absolute",
-  left: "41%",
+  textAlign:"center",
+  left:'39%',
   borderRadius: "4px",
 };

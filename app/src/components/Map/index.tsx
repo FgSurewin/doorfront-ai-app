@@ -163,6 +163,7 @@ export default function MapboxMap() {
   return (
     <div>
       <Container maxWidth= 'xl' sx={{pt:4,pb:4}}>
+        <Typography variant='h6'align='center'  sx={{ color: "text.primary", mb: 2 }}> Hover over the map to display the percentage of doors marked in a neighborhood<br/>Click within Manhattan to navigate straight there on the Explore page!</Typography>
       <Container maxWidth='xl' sx={{ backgroundColor: '#333D58', position: { md: 'relative' }}}>
         <Box
           sx={{

@@ -25,9 +25,9 @@ ReactDOM.render(
           <Route path="/login" element={<Login />} />
           <Route path="/reset" element={<ResetPage />} />
           <Route path="/leaderBoard" element={<LeaderBoard />} />
-          <Route path="/contest" element={<Contest />} />
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
+            <Route path="/contest" element={<Contest />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
