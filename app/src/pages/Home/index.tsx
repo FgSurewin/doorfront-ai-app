@@ -2,7 +2,7 @@ import React from "react";
 import Content from "../../components/Content";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import WinnerSection from "../../components/WinnerSection";
+// import WinnerSection from "../../components/WinnerSection";
 import MapboxMap from "../../components/Map";
 
 export default function Home() {
@@ -21,8 +21,7 @@ export default function Home() {
       <Header />
       <Content />
       <MapboxMap />
-      { //<WinnerSection />
-}
+      {/* {<WinnerSection />} */}
       <Footer />
     </div>
   );
