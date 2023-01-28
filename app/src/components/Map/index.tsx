@@ -24,6 +24,7 @@ import neighborhoods from "./neighborhoods";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 
+
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
 // @ts-ignore
@@ -68,7 +69,7 @@ export default function MapboxMap() {
 }
 
 function MapRender() {
-  const { updateGoogleMapConfig } = useExplorationStore();
+  const { updateClickedLocation } = useExplorationStore();
   const navigate = useNavigate();
 
   const [subtitle, setSubtitle] = React.useState<string>(defaultMessage);
@@ -162,19 +163,20 @@ function MapRender() {
     }
   }
 
-  function findNearestPoint(point: MapLayerMouseEvent) {
+  async function findNearestPoint(point: MapLayerMouseEvent) {
     const turfPoint = turf.point([point.lngLat.lng, point.lngLat.lat]);
-    var closePoint: any;
+    let closePoint: any;
     if (hoverInfo.name !== "") {
       for (var i = 0; i < turfStreetPoints.length; i++) {
         if (hoverInfo.name === turfStreetPoints[i].name) {
           closePoint = nearestPoint(turfPoint, turfStreetPoints[i].points);
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
-          updateGoogleMapConfig({
-            position: {
-              lat: closePoint.geometry.coordinates[1],
-              lng: closePoint.geometry.coordinates[0],
-            },
+
+          /* ---------------------------- Handle navigation --------------------------- */
+          // TODO: Update clicked location in global state
+          updateClickedLocation({
+            lat: closePoint.geometry.coordinates[1] as number,
+            lng: closePoint.geometry.coordinates[0] as number,
           });
           setMapClicked(true);
           return;
