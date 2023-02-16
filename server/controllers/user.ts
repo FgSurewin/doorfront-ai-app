@@ -12,6 +12,8 @@ import {
   QueryImageListBody,
   ResetBody,
   SaveActionListBody,
+  UpdateContestScore,
+  UpdateContestStats,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -143,4 +145,40 @@ export class UserController {
   ): Promise<void> {
     await userService.getAllUsers({ req, res, next });
   }
+
+  async getContestScore(   
+     req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const body: GetUserScoreBody = req.body;
+    await userService.getContestScore({req,res,next},body)
+  }
+
+  async updateContestScore(   
+    req: Request,
+   res: Response,
+   next: NextFunction
+ ): Promise<void> {
+   const body: UpdateContestScore = req.body;
+   await userService.updateContestScore({req,res,next},body)
+ }
+
+ async updateContestStats(
+  req: Request,
+  res: Response,
+  next: NextFunction
+ ): Promise<void> {
+  const body: UpdateContestStats = req.body;
+  await userService.updateContestStats({req,res,next},body)
+}
+
+async resetContestScore(
+  req: Request,
+  res: Response,
+  next: NextFunction
+ ): Promise<void> {
+  const body: GetUserScoreBody = req.body;
+  await userService.resetContestScore({req,res,next},body)
+}
 }

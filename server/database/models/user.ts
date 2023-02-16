@@ -6,6 +6,16 @@ export interface QueryImageAttribute {
   fileName: string;
 }
 
+export interface areaScores{
+  areaName:string;
+  userScore: number;
+}
+
+const areaSchema = new Schema<areaScores> ({
+  areaName: {type:String, required:true},
+  userScore: {type:Number, required:true}
+})
+
 const QueryImageAttributeSchema = new Schema<QueryImageAttribute>(
   { imageId: String, imgSrc: String, fileName: String },
   { timestamps: true }
@@ -37,6 +47,8 @@ export interface UserInterface extends Document {
   modify_images: QueryImageAttribute[];
   review_images: QueryImageAttribute[];
   unLabel_images: QueryImageAttribute[];
+  contestScore: number;
+  areaScores: areaScores[];
   //previousScores: number[]; //store 12 previous months scores
 }
 
@@ -102,6 +114,11 @@ const UserModel = new Schema<UserInterface>(
     modify_images: [QueryImageAttributeSchema],
     review_images: [QueryImageAttributeSchema],
     unLabel_images: [QueryImageAttributeSchema],
+    contestScore: {
+      type: Number,
+      required: false
+    },
+    areaScores: [areaSchema]
    // previousScores: [PreviousScoresSchema]
   },
   { timestamps: true }

@@ -31,6 +31,17 @@ export interface GetUserScoreBody {
   id: string;
 }
 
+export interface UpdateContestStats {
+  id:string;
+  areaName:string;
+  areaScore:number;
+}
+
+export interface UpdateContestScore {
+  id:string;
+  contestScore: number;
+}
+
 export interface ResetBody {
   nickname: string;
   newPassword: string;

@@ -1,6 +1,7 @@
 import { SECRET } from "./../database/index";
 import { LoginBody } from "./../types/index";
 import { AppContext, UserBody } from "../types";
+
 import UserModel, { UserInterface } from "../database/models/user";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -12,6 +13,8 @@ import {
   SaveActionListBody,
   UpdateCreditBody,
   UpdateLabelCreditBody,
+  UpdateContestStats,
+  UpdateContestScore
 } from "../types/user";
 
 // Bcrypt Configuration
@@ -665,6 +668,142 @@ export class UserService {
         code: 5000,
         message: error.message,
       });
+    }
+  }
+
+  async getContestScore(ctx:AppContext, body: GetUserScoreBody){
+    const {res} = ctx;
+    try{
+      const {id} = body;
+      const user = await UserModel.findById(id);
+      if (user){
+        const contestScore = user.contestScore;
+        res.json({
+          code:0,
+          message: "Get User Contest Score Successful!",
+          data:contestScore
+        })
+      }
+      else {
+        res.json({
+          code: 4000,
+          message: "User does not exist",
+        });
+      }
+
+    } catch(e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+    
+  }
+
+  async updateContestStats(ctx:AppContext, body:UpdateContestStats) {
+    const {res} = ctx;
+
+    try{
+      const {id, areaName, areaScore} = body;
+      const user = await UserModel.findById(id);
+      if(user) {
+        const result = await UserModel.findOneAndUpdate(
+          {_id: id, areaScores: {$elemMatch: {areaName:areaName}}},
+          {$set: {areaScore:areaScore}},
+          {upsert:true, new:true, rawResult:true}
+        )
+        if(result.ok){
+          res.json({
+            code:0,
+            message: "User contest stats update successfully!",
+            data:result
+          })
+        }
+        else {
+          res.json({
+            code:500,
+            message: "User contest stats update failed!"
+          })
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User does not exist",
+        });
+      }
+
+    } catch(e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async updateContestScore(ctx:AppContext,body:UpdateContestScore) {
+    const {res} = ctx;
+    try{
+      const {id,contestScore} = body;
+      const user = await UserModel.findById(id);
+      if(user){
+        const result = await UserModel.findOneAndUpdate(
+          {_id:id},
+          {$inc: {contestScore:contestScore}},
+          {new:true,}
+        )
+        res.json({
+          code:0,
+          message: "User contest score update successfully!",
+          data:result
+        })
+
+      }
+      else{
+        res.json({
+          code: 4000,
+          message: "User does not exist",
+        });
+      }
+    } catch(e) {
+        const error = new Error(`${e}`);
+        res.json({
+          code: 5000,
+          message: error.message,
+        });
+    }
+  }
+
+  async resetContestScore(ctx:AppContext,body:GetUserScoreBody){
+    const {res} = ctx;
+    try{
+      const {id} = body;
+      const user = await UserModel.findById(id);
+      if(user){
+        const result = await UserModel.findOneAndUpdate(
+          {_id:id},
+          {contestScore:0},
+          {new:true,}
+        )
+        res.json({
+          code:0,
+          message: "User contest score cleared successfully!",
+          data:result
+        })
+
+      } else{
+        res.json({
+          code: 4000,
+          message: "User does not exist",
+        });
+      }
+    } catch(e){
+        const error = new Error(`${e}`);
+        res.json({
+          code: 5000,
+          message: error.message,
+        });
     }
   }
 }
