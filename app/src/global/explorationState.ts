@@ -2,6 +2,8 @@ import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { StreetViewMarkerType } from "../components/GoogleMap/utils/panoMarker";
 import { CollectedImageInterface} from "../types/collectedImage";
+import { getActiveContest } from "../apis/contest";
+import { useEffect } from "react";
 
 export type LocationType = { lat: number; lng: number };
 export type PovType = { heading: number; pitch: number; zoom: number };
@@ -38,6 +40,9 @@ export interface ExplorationState {
   currentSelectedImageTitle: string;
   updateCurrentSelectedImage: (imageId: string) => void;
   updateCurrentSelectedImageTitle: (title:string) => void;
+    /* -------------------------- Used with Mapbox map -------------------------- */
+    clickedLocation: { lat: number; lng: number } | null;
+    updateClickedLocation: (update: { lat: number; lng: number } | null) => void;
   /* ------------- Global state to control the number of modifier ------------- */
   maxModifier: number;
 }
@@ -177,7 +182,16 @@ export const useExplorationStore = create<ExplorationState>(
         );
       },
       maxModifier: 3,
+      clickedLocation: null,
+      updateClickedLocation: (update) => {
+        set(
+          (state) => ({ ...state, clickedLocation: update }),
+          false,
+          "ExplorationState/updateClickedLocation"
+        );
+      },
     }),
+
     { name: "ExplorationState" }
   )
 );

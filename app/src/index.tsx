@@ -14,6 +14,7 @@ import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
 import Contest from "./pages/Contest";
+import Test from "./pages/Contest/test"
 import Profile from "./pages/Profile"
 
 ReactDOM.render(
@@ -28,6 +29,7 @@ ReactDOM.render(
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/contest" element={<Contest />} />
+            <Route path="/contestTest" element = {<Test />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />

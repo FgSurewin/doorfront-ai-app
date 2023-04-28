@@ -1,10 +1,11 @@
 import ContestMap from '../../components/Map/ContestMap'
 import { Typography, Grid, Container, Paper, List, ListItem, ListItemText, ListItemIcon } from '@mui/material'
 import Item from '@mui/material/Grid'
-import LeaderBoard from '../../components/Leaderboard'
+import ContestLeaderBoard from '../../components/Leaderboard/contest'
 import Navbar from '../../components/Navbar'
 import CircleIcon from '@mui/icons-material/Circle';
 import Footer from "../../components/Footer";
+import Button from '@mui/material/Button/Button'
 
 export default function Contest() {
 
@@ -54,12 +55,13 @@ export default function Contest() {
                         <Grid item xs={5}>
                             <Item >
                                 <Typography variant="subtitle1" color="text.primary" align='center'>Current Contest Leaders</Typography>
-                                <LeaderBoard />
+                                <ContestLeaderBoard />
                             </Item>
                         </Grid>
                     </Grid>
                 </Container>
                 <ContestMap />
+                
             </Paper>
             <Footer/>
 

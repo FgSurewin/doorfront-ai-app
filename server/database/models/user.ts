@@ -8,12 +8,12 @@ export interface QueryImageAttribute {
 
 export interface areaScores{
   areaName:string;
-  userScore: number;
+  areaScore: number;
 }
 
 const areaSchema = new Schema<areaScores> ({
   areaName: {type:String, required:true},
-  userScore: {type:Number, required:true}
+  areaScore: {type:Number, required:true}
 })
 
 const QueryImageAttributeSchema = new Schema<QueryImageAttribute>(

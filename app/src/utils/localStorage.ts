@@ -1,8 +1,9 @@
 export const ID = "id";
 export const TOKEN = "token";
 export const NICKNAME = "nickname";
+export const CONTEST = "contest"
 
-export type LocalStorageKeyType = typeof ID | typeof TOKEN | typeof NICKNAME;
+export type LocalStorageKeyType = typeof ID | typeof TOKEN | typeof NICKNAME | typeof CONTEST;
 
 export const saveLocal = (key: LocalStorageKeyType, value: string) => {
   sessionStorage.setItem(key, value);

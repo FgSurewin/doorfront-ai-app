@@ -10,14 +10,19 @@ import { useExplorationStore } from '../../global/explorationState';
 import { useNavigate } from 'react-router-dom';
 import type { LayerProps } from 'react-map-gl';
 import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, defaultMessage, llb, legend, typographySX, gridSX } from './data';
-import neighborhoods from './neighborhoods';
+import {contestNeighborhoods} from './contest';
+import Button from '@mui/material/Button/Button';
+import { updateContestScore, getContestScore } from '../../apis/user';
+import { getActiveContest } from '../../apis/contest';
+import { ContestAreaInfo } from '../Contest';
+import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
+
 
 export default function ContestMap() {
 
   const contestNotes = [
     "Neighborhood Name:","Area Score:","Percent Owned:","Current Owener:","Ownership Bonus:"
   ]
-
 
   const { updateGoogleMapConfig } = useExplorationStore();
   const navigate = useNavigate();
@@ -26,10 +31,19 @@ export default function ContestMap() {
   const [mapClicked, setMapClicked] = React.useState<boolean>(false);
   const [hoverInfo, setHoverInfo] = React.useState<features>(defaultHoverInfo)
   const turfStreetPoints: turfFeatureCollection[] = React.useMemo(() => pointsToFeatureCollection(), [])
-
+  const [contestScore,setContestScore] =React.useState(0)
+   React.useEffect(()=>{
+    async function retrieveContestScore(){
+      console.log(readLocal("id"))
+      const res = await getContestScore({id:readLocal("id") as string})
+      console.log(res)
+      setContestScore(res.data)
+    }
+    retrieveContestScore()
+  },[])
   const neighborhoodCoordinates = React.useMemo(() => {
     if (hoverInfo.name !== "") {
-      return neighborhoods.features.filter(loc => loc.properties.name === hoverInfo.name)[0].geometry.coordinates
+      return contestNeighborhoods.features.filter(loc => loc.properties.name === hoverInfo.name)[0].geometry.coordinates
     }
     else {
       return [[[0]]]
@@ -98,8 +112,10 @@ export default function ContestMap() {
     var closePoint: any
     if (hoverInfo.name !== '') {
       for (var i = 0; i < turfStreetPoints.length; i++) {
-        if (hoverInfo.name === turfStreetPoints[i].name) {
+        //console.log(hoverInfo)
+        if (hoverInfo.name == turfStreetPoints[i].name) {
           closePoint = nearestPoint(turfPoint, turfStreetPoints[i].points)
+          console.log(closePoint)
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
           updateGoogleMapConfig({ position: { lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } })
           setMapClicked(true)
@@ -110,7 +126,7 @@ export default function ContestMap() {
   }
 
   function pointsToFeatureCollection(): turfFeatureCollection[] {
-    var sp = require("./output.json")
+    var sp = require("./contestStreets.json")
     var turfStreetPoints: turfFeatureCollection[] = [];
     sp.map((neighborhoods: any, index: number) => {
       var spPoints: Feature<Point, GeoJsonProperties>[] = [];
@@ -121,6 +137,7 @@ export default function ContestMap() {
       turfStreetPoints.push({ name: neighborhoods.name, points: turf.featureCollection(spPoints) })
     }
     )
+    console.log(turfStreetPoints)
     return turfStreetPoints
   }
 
@@ -138,20 +155,20 @@ export default function ContestMap() {
           bounds: llb
         }}
         style={{ width: '100%', height: '87vh', zIndex: 0 }}
-        mapStyle="mapbox://styles/tort8678/cl1om66ls000014pa3qlp6zge"
+        mapStyle="mapbox://styles/tort8678/clei1xklm001z01p1ififm6hx"
         styleDiffing
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
         interactive={false}
-        interactiveLayerIds={["doorfront-map"]}
+        interactiveLayerIds={["contest-map1"]}
         onClick={(e) => findNearestPoint(e)}
         onMouseMove={(e) => mouseMove(e)}
-        onMouseLeave={onMouseLeave}
+        //onMouseLeave={onMouseLeave}
       >
 
         <Source id='border' type='geojson' data={drawnFeatures}>
           <Layer {...layerStyle} />
         </Source>
-        <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1}>Your Total Score: 0</Typography>
+        <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1}>Your Total Score: {contestScore}</Typography>
 
         <Grid container spacing={2} maxWidth={100} rowSpacing={.005} sx={gridSX}>
           <Grid item xs={12}><div><b>Percentage</b></div></Grid>
@@ -170,6 +187,9 @@ export default function ContestMap() {
       <Grid container>
 
         <Grid item xs={4}>
+        <Typography sx={{ml:3}}><b>Current Area:</b> {hoverInfo.name}</Typography>
+          <ContestAreaInfo areaName={hoverInfo.name}></ContestAreaInfo>
+          {/*
           <Grid container spacing={0} columnSpacing={0} rowSpacing={5} sx={{pt:'10%'}}>
             <Grid item xs={8}>
               <Typography variant='subtitle1' fontWeight='bold'>Neighborhood Name:</Typography>
@@ -208,7 +228,7 @@ export default function ContestMap() {
             <Typography variant='subtitle1'>{hoverInfo.name === "" ? "" : hoverInfo.percentage+"%"}</Typography>
             </Grid>
           </Grid>
-
+  */}
         </Grid>
         <Grid item xs={8}>
           <Box sx={{ border: '3px solid grey' }}>

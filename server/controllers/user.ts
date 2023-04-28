@@ -7,6 +7,8 @@ import {
   UpdateUserLabelsBody,
 } from "../types";
 import {
+  ChallengeArea,
+  getAreaScore,
   GetUserScoreBody,
   QueryImageBody,
   QueryImageListBody,
@@ -154,7 +156,15 @@ export class UserController {
     const body: GetUserScoreBody = req.body;
     await userService.getContestScore({req,res,next},body)
   }
-
+  
+  async getNickname(   
+    req: Request,
+   res: Response,
+   next: NextFunction
+ ): Promise<void> {
+   const body: {id:string} = req.body;
+   await userService.getNickname({req,res,next},body)
+ }
   async updateContestScore(   
     req: Request,
    res: Response,
@@ -181,4 +191,14 @@ async resetContestScore(
   const body: GetUserScoreBody = req.body;
   await userService.resetContestScore({req,res,next},body)
 }
+
+async getAreaScore (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const body: getAreaScore = req.body;
+  await userService.getAreaScore({req,res,next},body)
+}
+
 }

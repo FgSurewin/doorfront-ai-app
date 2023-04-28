@@ -13,13 +13,21 @@ import {
   WebMenu,
 } from "./Navbar.style";
 import { Box, SxProps } from "@mui/material";
+import { LocalStorageKeyType, readLocal } from "../../utils/localStorage";
 
 // const menuItems = ["Start Exploring", "Validation"];
-const menuItems = [
+let menuItems = [
+  { name: "Start Exploring", path: "/exploration" },
+  { name: "Validate Labels", path: "/reviewLabels" },
+]
+if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
+menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
   { name: "Contest Page" , path: "/contest" }
 ];
+}
+
 
 export interface NavbarProps {
   position?: "static" | "fixed";

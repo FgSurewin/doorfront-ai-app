@@ -4,7 +4,7 @@ import GoogleMap from "../../components/GoogleMap";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
-import { Container, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Box, Container, Grid, Paper, Stack, Typography } from "@mui/material";
 import { generateInfo } from "../../components/GoogleMap/utils/streetViewTool";
 import { debouncedStreetViewImageChange } from "./utils/debounceFunc";
 import { useExplorationStore } from "../../global/explorationState";
@@ -13,6 +13,11 @@ import { useTourStore } from "../../global/tourState";
 import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import TreasureShowcase from "./TreasureShowcase";
 import UserCreditShowcase from "./UserCreditShowcase";
+import { contestNeighborhoods } from "../../components/Map/contest";
+import * as turf from '@turf/turf'
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { LocalStorageKeyType, readLocal } from "../../utils/localStorage";
+import { ContestAreaInfo } from "../../components/Contest";
 
 export default function ExplorationPage() {
   const {
@@ -35,10 +40,35 @@ export default function ExplorationPage() {
     updateCurrentSelectedImageTitle
   } = useExplorationStore();
 
+  const [currentArea,setCurrentArea] = React.useState("")
+  /*
+  function parseGeoinput() {
+    var neighborhoods: Feature<Polygon>[] = [];
+    for(var i = 0; i < contestNeighborhoods.features.length; i++){
+      neighborhoods.push(turf.polygon(contestNeighborhoods.features[i].geometry.coordinates,contestNeighborhoods.features[i].properties))
+    }
+    return neighborhoods;
+  }
+
+  const turfStreetPoints: Feature<Polygon>[] = React.useMemo(() => parseGeoinput(), [])
+  */
+  
+  React.useEffect(()=>{
+    const point =  turf.point([googleMapConfig.position.lng,googleMapConfig.position.lat]);
+    for( const area of contestNeighborhoods.features){
+      if(booleanPointInPolygon(point, area)){
+        console.log('update current area')
+        setCurrentArea(area.properties.name as string)
+        break
+      }
+    }
+    
+  },[googleMapConfig.position])
+  
   /* -------------------------------------------------------------------------- */
   /*                                 Custom Hook                                */
   /* -------------------------------------------------------------------------- */
-  const { handleNextPosition } = useUpdateExplorationPage();
+  const { handleNextPosition, } = useUpdateExplorationPage();
 
   const onPovChanged = (
     result: ReturnType<typeof generateInfo>,
@@ -123,7 +153,16 @@ export default function ExplorationPage() {
         }}
       >
         <Container maxWidth="xl">
-          <Grid container sx={{ pt: 10 }}>
+          <Grid container sx={{ pt: 3 }}>
+            <Grid item xs={12}>
+            {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
+              <>
+              <Typography sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
+              <ContestAreaInfo areaName={currentArea} />
+              </>
+             }
+
+            </Grid>
             <Grid item xs={8} sx={{ minHeight: "640px", minWidth: "890px" }}>
               {googleMapConfig.panoId !== "" && (
                 <GoogleMap

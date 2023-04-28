@@ -4,8 +4,16 @@ import { ReactToolAsideTitle } from "../General";
 import { useReactToolsStore } from "../state/reactToolState";
 import LabelsShowcase from "./LabelsShowcase";
 // import OperationSection from "./OperationSection";
-
+import { contestNeighborhoods } from "../../../components/Map/contest";
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import { LocationType } from "../../../global/explorationState";
+import * as turf from '@turf/turf'
+import { ContestAreaInfo } from "../../Contest";
+import { updateContestStats } from "../../../apis/user";
+import { useUserStore} from "../../../global/userState";
+import { readLocal,LocalStorageKeyType } from "../../../utils/localStorage";
 export default function LabelPanel() {
+  const {userInfo} = useUserStore();
   const {
     selectedImageId,
     reactToolImageList,
@@ -22,13 +30,45 @@ export default function LabelPanel() {
     const currentImage = filterImageList[0];
     if (operationsFuncs.onSubmitImage) {
       await operationsFuncs.onSubmitImage(currentImage);
+      const res = await updateContestStats({id: userInfo.id!,areaName: currentArea,areaScoreIncrement:1})
+      console.log(res)
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);
     }
   };
+
+  const [currentArea,setCurrentArea] = React.useState("")
+
+  const selectedLocation: LocationType = React.useMemo(()=>{
+    for(let i = 0; i< reactToolImageList.length; i++){
+      if(reactToolImageList[i].imageId === selectedImageId){
+        return reactToolImageList[i].location;
+      }
+    }
+    return {lat:0,lng:0}
+  }, [selectedImageId,reactToolImageList])
+  React.useEffect(()=>{
+    if(selectedLocation.lat !== 0){
+    const point =  turf.point([selectedLocation.lng,selectedLocation.lat]);
+    for( const area of contestNeighborhoods.features){
+      if(booleanPointInPolygon(point, area)){
+        setCurrentArea(area.properties.name as string)
+        break
+      }
+    }
+
+  }
+  },[selectedImageId, selectedLocation.lng,selectedLocation.lat])
+
   return (
     <div>
       {/* <OperationSection /> */}
+      {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && 
+      <div>
+      <ReactToolAsideTitle text= {"Contest Area " + currentArea} />
+        <ContestAreaInfo areaName= {currentArea}/>
+      </div>
+      }
       <ReactToolAsideTitle text="Submit by Clicking Button Below" />
       <Button
         fullWidth

@@ -1,6 +1,6 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
-import { NotesInterface } from "../../../types/collectedImage";
+import { ImageLocation, NotesInterface } from "../../../types/collectedImage";
 
 export interface ReactToolBoxAttributes {
   x: number;
@@ -22,6 +22,7 @@ export interface ReactToolImageListItemType {
   imageId: string;
   imgSrc: string;
   fileName: string;
+  location: ImageLocation;
   labels: ReactToolBoxAttributes[];
 }
 

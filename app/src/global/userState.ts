@@ -14,6 +14,7 @@ export interface UserCredit {
   modify: number;
   create: number;
   review: number;
+  contestScore?:number;
 }
 
 export interface UserState {

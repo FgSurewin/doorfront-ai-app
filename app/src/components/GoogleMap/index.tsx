@@ -16,6 +16,7 @@ import {
 import { StreetViewMarkerType } from "./utils/panoMarker";
 import { useExplorationStore } from "../../global/explorationState";
 import Notes from "../Notes"
+import {Box,Typography,} from "@mui/material"
 // import asyncLoading from "react-async-loader";
 
 export interface GoogleMapProps {
@@ -45,7 +46,20 @@ function GoogleMap({
   /*                                Global State                                */
   /* -------------------------------------------------------------------------- */
   const { isNextPosition, setIsNextPosition, currentSelectedImage, currentSelectedImageTitle } = useExplorationStore();
-
+  /*
+  const [currentArea,setCurrentArea] = React.useState("")
+    
+  React.useEffect(()=>{
+    const point =  turf.point([googleMapConfig.position.lng,googleMapConfig.position.lat]);
+    for( const area of contestNeighborhoods.features){
+      if(booleanPointInPolygon(point, area)){
+        setCurrentArea(area.properties.name as string)
+        break
+      }
+    }
+    
+  },[googleMapConfig.position])
+  */
   React.useEffect(() => {
     if (google && !_isMounted.current) {
       if (!map && !streetView) {
@@ -129,6 +143,24 @@ function GoogleMap({
             className="MapContainer"
             style={MapContainerStyle}
           >
+            {/*
+            {activeContest != undefined &&
+              <div>
+                  <Box sx = {{bottom:'auto'}}>
+                  <Typography>
+                    Current Area: {currentArea}
+                  </Typography>
+                  <Typography>
+                    Current Area Score:
+                  </Typography>
+                  <Typography>
+                    Current Area Owner:
+                  </Typography>
+                </Box>
+                </div>
+
+            */}
+
             {
               currentSelectedImageTitle=== 'door' && currentSelectedImage !== "" &&
               <div style={{position:'absolute',top:'300px',width:'240px'}}>

@@ -11,7 +11,7 @@ export type features = {
 };
 
 export type turfFeatureCollection = {
-  name: string;
+  name: string | number;
   points: FeatureCollection<Point, GeoJsonProperties>;
 };
 

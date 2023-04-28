@@ -1,7 +1,18 @@
-import { contestInterface } from "../database/models/contest";
+import { contestArea} from "../database/models/contest";
 
 export type updateArea = {
-    contestNumber: Number;
+    contestNumber: number;
+    area: contestArea;
+}
+
+export type getAreaInfo = {
+    contestNumber:number;
+    areaName:string;
+}
+
+
+export type updateAreaOwner = {
+    contestNumber: number;
     areaName: string;
-    data: Partial<contestInterface>;
+    owner: string | undefined;
 }

@@ -8,6 +8,7 @@ import { TwitterShareButton, TwitterIcon, FacebookIcon, FacebookShareButton, Lin
 import ResetPasswordForm from "./ResetPasswordForm";
 import ResetEmailForm from './ResetEmailForm';
 import ContributionsChart from "./ContributionsChart"
+import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -75,10 +76,17 @@ export default function Profile() {
                             <Grid item xs={8} sx={gridContent} textAlign='center'>{userScore.review}</Grid>
                             <Grid item xs={4} sx={gridTitle} textAlign='center'>Modified:</Grid>
                             <Grid item xs={8} sx={gridContent} textAlign='center'>{userScore.modify}</Grid>
+                            {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
+                            <>
+                            <Grid item xs={4} sx={gridTitle} textAlign='center'>Contest Score:</Grid>
+                            <Grid item xs={8} sx={gridContent} textAlign='center'>{userScore.contestScore}</Grid>
+                            </>
+                            }
                         </Grid>
-                        <Box>
+                        {userScore.score > 0 &&<Box>
                             <ContributionsChart />
                         </Box>
+                        }
                     </Box>
                 </TabPanel>
                 <TabPanel value={value} index={1}>

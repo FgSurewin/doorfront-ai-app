@@ -18,7 +18,7 @@ import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../global/userState";
-import { NotesInterface } from "../../types/collectedImage";
+import { ImageLocation, NotesInterface } from "../../types/collectedImage";
 
 export interface InputLabel {
   x: number;
@@ -36,6 +36,7 @@ export interface InputImageList {
   imageId: string;
   imgSrc: string;
   fileName: string;
+  location: ImageLocation;
   labels: InputLabel[];
 }
 

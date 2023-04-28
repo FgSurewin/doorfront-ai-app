@@ -34,7 +34,7 @@ export interface GetUserScoreBody {
 export interface UpdateContestStats {
   id:string;
   areaName:string;
-  areaScore:number;
+  areaScoreIncrement:number;
 }
 
 export interface UpdateContestScore {
@@ -42,8 +42,20 @@ export interface UpdateContestScore {
   contestScore: number;
 }
 
+export interface getAreaScore {
+  id:string;
+  areaName: string;
+}
+
 export interface ResetBody {
   nickname: string;
   newPassword: string;
   email: string;
+}
+
+export interface ChallengeArea{
+  id:string;
+  areaName:string;
+  areaScore:number;
+  
 }

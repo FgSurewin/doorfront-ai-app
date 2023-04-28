@@ -17,6 +17,7 @@ export function convertInitImageToInputImageList(
     imageId: item.image_id,
     imgSrc: item.url,
     fileName: item.fileName,
+    location: item.location,
     labels: modelLabelsToInputLabels(item.model_labels),
   }));
 }
@@ -28,6 +29,7 @@ export function convertHumanImageToInputImageList(
     imageId: item.image_id,
     imgSrc: item.url,
     fileName: item.fileName,
+    location: item.location,
     labels: modelLabelsToInputLabels(item.human_labels[0].labels),
   }));
 }
