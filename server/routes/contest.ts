@@ -18,5 +18,6 @@ route.post("/getEndDate", contestController.getEndDate)
 route.get("/getActiveContest",contestController.getActiveContest)
 route.get("/getAllAreas",contestController.getAllAreas)
 route.post("/getArea",contestController.getArea)
+route.post("/setAreas",contestController.setAreas)
 
 export default route

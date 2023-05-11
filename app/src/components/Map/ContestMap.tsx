@@ -137,7 +137,7 @@ export default function ContestMap() {
       turfStreetPoints.push({ name: neighborhoods.name, points: turf.featureCollection(spPoints) })
     }
     )
-    console.log(turfStreetPoints)
+    //console.log(turfStreetPoints)
     return turfStreetPoints
   }
 
@@ -168,7 +168,7 @@ export default function ContestMap() {
         <Source id='border' type='geojson' data={drawnFeatures}>
           <Layer {...layerStyle} />
         </Source>
-        <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1}>Your Total Score: {contestScore}</Typography>
+        <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1} fontSize={18}>Your Total Score: {contestScore}</Typography>
 
         <Grid container spacing={2} maxWidth={100} rowSpacing={.005} sx={gridSX}>
           <Grid item xs={12}><div><b>Percentage</b></div></Grid>
@@ -187,7 +187,7 @@ export default function ContestMap() {
       <Grid container>
 
         <Grid item xs={4}>
-        <Typography sx={{ml:3}}><b>Current Area:</b> {hoverInfo.name}</Typography>
+        <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {hoverInfo.name}</Typography>
           <ContestAreaInfo areaName={hoverInfo.name}></ContestAreaInfo>
           {/*
           <Grid container spacing={0} columnSpacing={0} rowSpacing={5} sx={{pt:'10%'}}>

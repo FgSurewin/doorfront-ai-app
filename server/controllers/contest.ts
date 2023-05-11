@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from 'mongoose';
 import contest, {contestInterface} from '../database/models/contest'
 import { ContestService } from "../services/contest";
-import { getAreaInfo, updateArea, updateAreaOwner} from "../types/contest";
+import { changeAreas, getAreaInfo, updateArea, updateAreaOwner} from "../types/contest";
 
 /*
 function createArea (req:Request,res:Response,next:NextFunction) {
@@ -78,6 +78,10 @@ export default class contestController {
     async getAllAreas(req:Request,res:Response,next:NextFunction): Promise<void> {
         const body: {contestNumber:number} = req.body
         await contestService.getAllAreas({req,res,next},body);
+    }
+    async setAreas(req:Request,res:Response,next:NextFunction): Promise<void> {
+        const body:changeAreas = req.body
+        await contestService.setAreas({req,res,next},body);
     }
     
     

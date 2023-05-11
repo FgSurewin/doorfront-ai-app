@@ -1,7 +1,7 @@
 import contest, { contestArea, contestInterface } from "../database/models/contest";
 import contestModel from "../database/models/contest"
 import { AppContext } from "../types";
-import { getAreaInfo, updateArea, updateAreaOwner } from "../types/contest";
+import { changeAreas, getAreaInfo, updateArea, updateAreaOwner } from "../types/contest";
 
 
 export class ContestService{
@@ -10,7 +10,7 @@ export class ContestService{
       const {res} = ctx;
       const newContest = body;
       try{
-          const exists = await contestModel.findOne({contestNumber: newContest.contestNumber})
+          const exists = await contestModel.findOne({contestNumber: newContest.contestNumber}).lean()
           if(exists){
               res.json({
                   code:500,
@@ -39,7 +39,7 @@ export class ContestService{
         const newArea = body.area;
 
         try{
-            const result = await contestModel.findOne({contestNumber: body.contestNumber })
+            const result = await contestModel.findOne({contestNumber: body.contestNumber }).lean()
             if(result){
              // var areaUpdate = result.areas;
               var found = false;
@@ -81,11 +81,47 @@ export class ContestService{
             })
         }
     }
+    async setAreas(ctx:AppContext, body: changeAreas){
+      const {res} = ctx;
+      const {contestNumber, areas} = body;
+
+      try{
+        const contest = await contestModel.findOne({contestNumber:contestNumber}).lean();
+        if(contest){
+          const update = await contestModel.findOneAndUpdate({contestNumber:contestNumber}, {$set:{areas:areas}} , {new:true})
+          if(update){
+            res.json({
+              code:500,
+              message: "Successfully Updated Contest Areas",
+              data:update.areas
+            })
+          } else{
+              res.json({
+                code:500,
+                message: "Failed to Update Contest Areas"
+              })
+            }
+
+        }
+        else{
+          res.json({
+            code:500,
+            message: "Contest Does Not Exist"
+        })
+        }
+      } catch(e) {
+        const error = new Error(`${e}`);
+        res.json({
+            code:500,
+            message: error.message
+        })
+    }
+    }
    
     async updateAreaOwner(ctx:AppContext, body: updateAreaOwner ){
       const {res} = ctx;
       try{
-        const result = await contestModel.findOne({contestNumber:body.contestNumber});
+        const result = await contestModel.findOne({contestNumber:body.contestNumber}).lean()
         if(result){
           var found = false;
           result.areas.forEach(element => {
@@ -128,7 +164,7 @@ export class ContestService{
             const result = await contestModel.findOne(
                 {contestNumber: contestNumber, "areas.areaName": areaName},
                 {areas: {$elemMatch:{areaName:areaName}}}
-            );
+            ).lean();
             if(result) {
               if(result.areas[0].currentOwner){
               res.json({
@@ -166,7 +202,7 @@ export class ContestService{
           const result = await contestModel.findOne(
               {contestNumber: contestNumber, "areas.areaName":areaName },
               {areas: {$elemMatch: {areaName:areaName}}}
-          );
+          ).lean();
           if(result) {
               res.json({
                 code: 0,
@@ -196,7 +232,7 @@ export class ContestService{
           const area = body;
           const result = await contestModel.findOne(
               {contestNumber: area.contestNumber}
-          );
+          ).lean();
           if(result) {
             result.areas.forEach(item=>{
               if(item.areaName === body.areaName){
@@ -226,7 +262,7 @@ export class ContestService{
     async getLeader(ctx:AppContext,body:{contestNumber:number}){
       const {res} = ctx;
       try{
-        const result = await contestModel.findOne({contestNumber:body.contestNumber})
+        const result = await contestModel.findOne({contestNumber:body.contestNumber}).lean()
         if(result){
           res.json({
             code: 0,
@@ -252,7 +288,7 @@ export class ContestService{
     async getEndDate(ctx:AppContext,body:{contestNumber:number}){
       const {res} = ctx;
       try{
-        const result = await contestModel.findOne({contestNumber:body.contestNumber})
+        const result = await contestModel.findOne({contestNumber:body.contestNumber}).lean()
         if(result){
           res.json({
             code: 0,
@@ -278,7 +314,7 @@ export class ContestService{
     async getContestState(ctx:AppContext,body:{contestNumber:number}){
       const {res} = ctx;
       try{
-        const result = await contestModel.findOne({contestNumber:body.contestNumber})
+        const result = await contestModel.findOne({contestNumber:body.contestNumber}).lean()
         if(result){
           res.json({
             code: 0,
@@ -356,7 +392,7 @@ export class ContestService{
     async getActiveContest(ctx:AppContext){
       const {res} = ctx;
       try{
-        const result = await contestModel.findOne({active:true})
+        const result = await contestModel.findOne({active:true}).lean()
         if(result){
           res.json({
             code: 0,
@@ -378,12 +414,12 @@ export class ContestService{
         });
     }
     }
-    
+
     async getAllAreas(ctx:AppContext, body: {contestNumber:number}){
       const {res} = ctx;
       const {contestNumber} = body
       try{
-        const allAreas = await contestModel.findOne({contestNumber:contestNumber}, {areas:1})
+        const allAreas = await contestModel.findOne({contestNumber:contestNumber}, {areas:1}).lean()
         if(allAreas){
           res.json({
             code:0,

@@ -10,7 +10,7 @@ import Button from '@mui/material/Button/Button'
 export default function Contest() {
 
     const helperText = [
-        "Mark doors within an area to earn points!",
+        "Create and validate labels within an area to earn points!",
         "User that has the most points in an area earns ownership of that area!",
         "Attaining ownership of an area grants a point bonus while you maintain it!",
         "Steal ownership from other users by marking more doors than them in an area!",

@@ -22,6 +22,7 @@ export interface newArea{
     contestNumber:number;
     area:contestArea
 }
+
 export const getActiveContest = ()=>
     baseRequest
         .request<contestReturnData<number>>({
@@ -109,6 +110,18 @@ baseRequest
     .request<contestReturnData<any>>({
         method:"POST",
         url: `/contest/createArea`,
+        data
+    })
+    .then((res) =>res.data)
+    .catch((res) => {
+        throw new Error(res);
+    });
+
+export const setAreas = (data:{contestNumber:number,areas:contestArea[]}) =>
+baseRequest
+    .request<contestReturnData<any>>({
+        method:"POST",
+        url: `/contest/setAreas`,
         data
     })
     .then((res) =>res.data)

@@ -157,7 +157,7 @@ export default function ExplorationPage() {
             <Grid item xs={12}>
             {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
               <>
-              <Typography sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
+              <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
               <ContestAreaInfo areaName={currentArea} />
               </>
              }

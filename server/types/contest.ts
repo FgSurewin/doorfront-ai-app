@@ -10,6 +10,10 @@ export type getAreaInfo = {
     areaName:string;
 }
 
+export type changeAreas = {
+    contestNumber: number;
+    areas: contestArea[];
+}
 
 export type updateAreaOwner = {
     contestNumber: number;

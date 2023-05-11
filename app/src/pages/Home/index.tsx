@@ -12,10 +12,10 @@ export default function Home() {
   const [endDate, updateEndDate] = React.useState<string |undefined>()
   async function ac() { 
     const res = await getActiveContest();
-    console.log(res)
+//    console.log(res)
     updateActiveContest(res.data)
     if (activeContest !== undefined) {
-      console.log(activeContest)
+      //console.log(activeContest)
       const date = await getEndDate({contestNumber:activeContest})
       updateEndDate(new Date(date.data as string).toUTCString())
       //console.log(endDate)

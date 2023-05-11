@@ -75,9 +75,12 @@ async function retrieveAreaOwner(){
           // console.log(ownerScore)
             if(ownerScore) setCurrentOwnerScore(ownerScore.data)
           }
+        } else{
+          setCurrentOwner("")
+          setCurrentOwnerScore(0)
         }
       } else {
-        //console.log("reset values")
+        console.log("reset values")
         setCurrentOwner("")
         setCurrentOwnerScore(0)
         setOwnershipBonus(0)
@@ -90,22 +93,24 @@ if(ownershipBonus > 0){
   return(
     
       <div>
-        <Typography sx={{ml:3, mt:'2px'}}>
+        {currentOwner !== "" &&
+        <Typography variant="h6" sx={{ml:3, mt:'2px'}}>
         <b>Current Owner:</b> {currentOwner}
-          
         </Typography>
-        {currentOwnerScore > 0 &&
-        <Typography sx={{ml:3, mt:'2px'}}>
+        }
+        {currentOwnerScore !== 0 &&
+        <Typography variant="h6" sx={{ml:3, mt:'2px'}}>
           <b>Current Owner Area Score:</b> {currentOwnerScore}
         </Typography>
         }
-        <Typography sx={{ml:3, mt:'2px'}}>
+        <Typography variant="h6" sx={{ml:3, mt:'2px'}}>
           <b>Ownership Bonus:</b> {ownershipBonus}
         </Typography>
-        <Typography sx={{ml:3, mt:'2px',mb:'5px'}}>
+        {myScore !== 0 &&
+        <Typography variant="h6" sx={{ml:3, mt:'2px',mb:'5px'}}>
           <b>My Area Score:</b> {myScore}
         </Typography>
-        
+        }
       </div>
   )
 }

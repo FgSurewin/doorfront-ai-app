@@ -3,10 +3,11 @@ import TextField from "@mui/material/TextField"
 import Box from "@mui/material/Box"
 import { useUserStore } from "../../global/userState"
 
-import { getActiveContest, createArea, createContest, changeContestState, deleteContest, updateAreaOwner, getAreaOwner} from "../../apis/contest"
+import { getActiveContest, createArea, createContest, changeContestState, deleteContest, updateAreaOwner, getAreaOwner, contestArea,setAreas} from "../../apis/contest"
 import {getNickname, updateContestStats, resetContestScore, getAreaScore} from "../../apis/user"
 import React from 'react'
 import { LocalStorageKeyType, readLocal } from "../../utils/localStorage"
+import { contestNeighborhoods } from "../../components/Map/contest"
 
 export default function TestPage(){
     const {userInfo} = useUserStore();
@@ -60,6 +61,15 @@ export default function TestPage(){
         const destroy = await deleteContest({contestNumber:contestNumber})
         console.log(destroy)
     }
+   async function jsonToDB(){
+    let contestAreas: contestArea[] = []
+    contestNeighborhoods.features.forEach(item=>{
+        contestAreas.push({areaName:item.properties.name as string,ownershipBonus: Math.trunc(item.properties.AREA/100000) })
+    })
+    console.log(contestAreas)
+    const update = await setAreas({contestNumber:contestNumber,areas:contestAreas})
+    console.log(update)
+   }
 
     async function activateContest(){
         const res= await getActiveContest();
@@ -100,6 +110,7 @@ export default function TestPage(){
 
     function UseMyId(){
         setUserId(readLocal("id" as LocalStorageKeyType) as string)
+        jsonToDB()
     }
 
     async function onUpdateArea(){

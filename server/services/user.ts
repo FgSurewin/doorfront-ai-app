@@ -570,7 +570,7 @@ export class UserService {
     const { res } = ctx;
     try {
       const { id } = body;
-      const currentUser = await UserModel.findById(id);
+      const currentUser = await UserModel.findById(id).lean();
       if (currentUser) {
         res.json({
           code: 0,
@@ -680,7 +680,7 @@ export class UserService {
     const { res } = ctx;
     try {
       const { id } = body;
-      const user = await UserModel.findById(id);
+      const user = await UserModel.findById(id).lean();
       if (user) {
         const contestScore = user.contestScore;
         res.json({
@@ -707,7 +707,7 @@ export class UserService {
     const { res } = ctx;
     try {
       const {id}  = body;
-      const user = await UserModel.findById(id);
+      const user = await UserModel.findById(id).lean();
       if (user) {
         const nickname = user.nickname;
         res.json({
@@ -1027,7 +1027,7 @@ export class UserService {
 
     try {
       const { id, areaName } = body;
-      const user = await UserModel.findOne({ _id: id, "areaScores:areaName": areaName }, { areaScores: {$elemMatch: {areaName:areaName}} });
+      const user = await UserModel.findOne({ _id: id, "areaScores:areaName": areaName }, { areaScores: {$elemMatch: {areaName:areaName}} }).lean();
 
       if (user) {
         res.json({
@@ -1080,7 +1080,7 @@ export class UserService {
     const { res } = ctx;
     try {
       const { id, contestScore } = body;
-      const user = await UserModel.findById(id);
+      const user = await UserModel.findById(id).lean();
       if (user) {
         const result = await UserModel.findOneAndUpdate(
           { _id: id },
