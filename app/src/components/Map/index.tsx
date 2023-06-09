@@ -29,9 +29,9 @@ import mapboxgl from "mapbox-gl";
 // notice the exclamation point in the import.
 // @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
-//mapboxgl.workerClass =
+mapboxgl.workerClass =
   // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
- // require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+ require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 export default function MapboxMap() {
   return (
