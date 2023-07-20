@@ -35,7 +35,7 @@ export default function LabelPanel() {
       const res = await updateContestStats({id: userInfo.id!,areaName: currentArea,areaScoreIncrement:1})
       //console.log(res)
       if(res.code === 1 || res.code === 10 || res.code ===5 || res.code )enqueueSnackbar(res.message)
-      
+       
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);
     }
