@@ -16,12 +16,11 @@ export default function LeaderBoard() {
         async function loadFunc() {
             const result = await getAllUsersFromDB();
             if (result.code === 0) {
-                setAllUsers(_.orderBy(result.data, ["contestScore"], ["desc"]));
+                setAllUsers(_.orderBy(result.data, ["contestScore"], ["desc"]))
             }
         }
         loadFunc();
     }, []);
-
 
     return (
         <div>
@@ -41,7 +40,7 @@ export default function LeaderBoard() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {allUsers.slice(0, 10).map((row, index) => (
+                    {allUsers.filter(item=> item.contestScore).slice(0, 10).map((row, index) => (
                         <TableRow
                             key={row.email}
                             sx={{

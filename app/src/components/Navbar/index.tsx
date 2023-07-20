@@ -20,13 +20,6 @@ let menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
 ]
-if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
-menuItems = [
-  { name: "Start Exploring", path: "/exploration" },
-  { name: "Validate Labels", path: "/reviewLabels" },
-  { name: "Contest Page" , path: "/contest" }
-];
-}
 
 
 export interface NavbarProps {
@@ -51,7 +44,15 @@ const Navbar = React.memo(function ({
     () => (isTransparent ? WhiterLogo : BlackLogo),
     [isTransparent]
   );
-
+    React.useEffect(()=>{
+      if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
+        menuItems = [
+          { name: "Start Exploring", path: "/exploration" },
+          { name: "Validate Labels", path: "/reviewLabels" },
+          { name: "Contest Page" , path: "/contest" }
+        ];
+        }
+    },[readLocal("contest" as LocalStorageKeyType)])
   return (
     <>
       <AppBar position={position} sx={backgroundStyle}>

@@ -46,6 +46,7 @@ export class UserService {
             review: 0,
             bonus: 0,
             checkOld: 0,
+            contestScore: 0,
           };
           await UserModel.create(newUser);
           res.json({
@@ -802,8 +803,11 @@ export class UserService {
       const { id, areaName, areaScoreIncrement } = body;
  
       let user = await UserModel.findOne({ _id: id }, { areaScores: true, contestScore:true });
-
-      if (user) {
+      const contest = await ContestModel.findOne(
+        { active: true, "areas.areaName": areaName },
+        { areas: { $elemMatch: { areaName: areaName } } }
+      );
+      if (user && contest) {
         let found: boolean = false;
         let newScore = 0;
         let sentResult = false;
@@ -816,7 +820,8 @@ export class UserService {
             newScore = user.areaScores[i].areaScore;
             userAreaIndex = i;
             found = true  
-            userTotal = user.contestScore + areaScoreIncrement;
+            if(user.contestScore) userTotal = user.contestScore + areaScoreIncrement;
+            else userTotal = areaScoreIncrement;
           }
         }
 
@@ -827,16 +832,14 @@ export class UserService {
           });
           userAreaIndex = user.areaScores.length - 1;
           newScore = areaScoreIncrement;
-          userTotal = user.contestScore + areaScoreIncrement;
+          if(user.contestScore) userTotal = user.contestScore + areaScoreIncrement;
+          else userTotal = areaScoreIncrement;
         }
 
         //need to check if their updated score is more than the current owner's, might need to put in seperate function
         //only recieving one contest area, need to recieve all them
-        const contest = await ContestModel.findOne(
-          { active: true, "areas.areaName": areaName },
-          { areas: { $elemMatch: { areaName: areaName } } }
-        );
-        if (contest) {
+
+        
           //look for index of area matching areaName
           const originalOwner = contest.areas[0].currentOwner;
           const areaBonus = contest.areas[0].ownershipBonus;
@@ -850,7 +853,6 @@ export class UserService {
               if (leaderScore && newScore > (leaderScore - areaBonus)) {
                 //leaderScore.areaScore - areaBonus and update to server
                 //contest.areas[i].currentOwner = id and update to server
-                //BUGS, when the takeover happens, sometimes the owner will change but the bonus will not be exchanged. happens about 1/2 the time
                 user.areaScores[userAreaIndex].areaScore += areaBonus;
                 const final = await UserModel.findByIdAndUpdate(
                   id,
@@ -878,9 +880,9 @@ export class UserService {
                 if (takeover && final && bonusLoser) {
                   sentResult = true;
                   res.json({
-                    code: 0,
+                    code: 10,
                     message:
-                      "User contest stats updated and area ownership taken! Your score ("+ newScore + ") is greater than old owner's ("+ areaLeader.id+") score ("+ leaderScore + "-" +areaBonus + "=" +(leaderScore - areaBonus)+ ")",
+                      "You took ownership of "+areaName+"!",
                     data: {
                       contest:
                         takeover.areas,
@@ -920,8 +922,7 @@ export class UserService {
                 message =
                   "Leader has " +
                   (leaderScore - areaBonus - newScore) +
-                  " more points than you. Your Score: " +
-                  newScore;
+                  " more points than you"
               }
             }
           }
@@ -947,9 +948,9 @@ export class UserService {
             if (takeover && final) {
               sentResult = true;
               res.json({
-                code: 0,
+                code: 1,
                 message:
-                  "User contest stats updated and area ownership acquired!",
+                "You took ownership of "+areaName+"!",
                 data: {
                   contest:
                     takeover.areas[
@@ -968,7 +969,7 @@ export class UserService {
               });
             }
           }
-        }
+        
 
         if (sentResult === false) {
           const finish = await UserModel.findOneAndUpdate(
@@ -981,8 +982,8 @@ export class UserService {
           );
           if (finish.ok === 1 && finish.value) {
             res.json({
-              code: 0,
-              message: "User contest stats update successfully! " + message,
+              code: 5,
+              message: "You got +1 score in area "+areaName,
               data: {
                 user: {
                   total: finish.value.contestScore,
@@ -1009,7 +1010,7 @@ export class UserService {
       else {
           res.json({
             code: 4000,
-            message: "User does not exist",
+            message: "User or contest area does not exist",
           });
       }
       

@@ -55,13 +55,16 @@ export default function ExplorationPage() {
   
   React.useEffect(()=>{
     const point =  turf.point([googleMapConfig.position.lng,googleMapConfig.position.lat]);
+    var found = false;
     for( const area of contestNeighborhoods.features){
       if(booleanPointInPolygon(point, area)){
         console.log('update current area')
-        setCurrentArea(area.properties.name as string)
+        setCurrentArea(String(area.properties.name))
+        found = true;
         break
       }
     }
+    if(!found) setCurrentArea("");
     
   },[googleMapConfig.position])
   
@@ -157,7 +160,8 @@ export default function ExplorationPage() {
             <Grid item xs={12}>
             {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
               <>
-              <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
+              {currentArea != "" && <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
+              }
               <ContestAreaInfo areaName={currentArea} />
               </>
              }

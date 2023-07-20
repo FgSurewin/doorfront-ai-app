@@ -48,7 +48,7 @@ export default function Home() {
     <div>
       {activeContest !== undefined && activeContest > 0 &&
       <AppBar position="fixed" color="primary" sx ={{top:'auto', bottom: 0}}>
-       <Typography align="center" >Contest {activeContest} is Active! Start Exploring Now to Earn Points for Prizes! Contest Ends {endDate}</Typography>
+       <Typography align="center" >Contest {activeContest} is Active! Start Exploring Now to Earn Points! Contest Ends {endDate}</Typography>
       </ AppBar>
       }
       <Header />

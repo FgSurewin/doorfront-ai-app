@@ -12,7 +12,9 @@ import { ContestAreaInfo } from "../../Contest";
 import { updateContestStats } from "../../../apis/user";
 import { useUserStore} from "../../../global/userState";
 import { readLocal,LocalStorageKeyType } from "../../../utils/localStorage";
+import { useSnackbar } from "notistack";
 export default function LabelPanel() {
+  const {enqueueSnackbar} = useSnackbar();
   const {userInfo} = useUserStore();
   const {
     selectedImageId,
@@ -31,7 +33,9 @@ export default function LabelPanel() {
     if (operationsFuncs.onSubmitImage) {
       await operationsFuncs.onSubmitImage(currentImage);
       const res = await updateContestStats({id: userInfo.id!,areaName: currentArea,areaScoreIncrement:1})
-      console.log(res)
+      //console.log(res)
+      if(res.code === 1 || res.code === 10 || res.code ===5 || res.code )enqueueSnackbar(res.message)
+      
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);
     }
@@ -48,13 +52,18 @@ export default function LabelPanel() {
     return {lat:0,lng:0}
   }, [selectedImageId,reactToolImageList])
   React.useEffect(()=>{
+    var found = false;
     if(selectedLocation.lat !== 0){
     const point =  turf.point([selectedLocation.lng,selectedLocation.lat]);
     for( const area of contestNeighborhoods.features){
       if(booleanPointInPolygon(point, area)){
-        setCurrentArea(area.properties.name as string)
+        setCurrentArea(String(area.properties.name))
+        found = true;
         break
       }
+    }
+    if(!found){
+      setCurrentArea("");
     }
 
   }
@@ -63,7 +72,7 @@ export default function LabelPanel() {
   return (
     <div>
       {/* <OperationSection /> */}
-      {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && 
+      {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && currentArea != "" && 
       <div>
       <ReactToolAsideTitle text= {"Contest Area " + currentArea} />
         <ContestAreaInfo areaName= {currentArea}/>

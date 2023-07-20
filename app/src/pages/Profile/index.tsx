@@ -8,6 +8,7 @@ import { TwitterShareButton, TwitterIcon, FacebookIcon, FacebookShareButton, Lin
 import ResetPasswordForm from "./ResetPasswordForm";
 import ResetEmailForm from './ResetEmailForm';
 import ContributionsChart from "./ContributionsChart"
+import { getUserScoreFromDB } from "../../apis/user";
 import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -40,7 +41,7 @@ function a11yProps(index: number) {
     };
 }
 export default function Profile() {
-    const { userInfo, userScore } = useUserStore();
+    const { userInfo, userScore, updateUserScore } = useUserStore();
     const [value, setValue] = useState(0);
     //const update = useUserStore().updateUserScore(testScores);
     const gridTitle: SxProps = { borderBottom: 1, borderColor: 'divider', fontWeight: 'bold' }
@@ -50,6 +51,17 @@ export default function Profile() {
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+    React.useEffect(() => {
+        async function innerFunc() {
+          const { code, data: score } = await getUserScoreFromDB({
+            id: userInfo.id!,
+          });
+          if (code === 0) {
+            updateUserScore(score);
+          }
+        }
+        innerFunc();
+      }, [updateUserScore, userInfo.id]);
     return (
         <div>
             <Navbar />

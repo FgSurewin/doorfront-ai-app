@@ -4,50 +4,18 @@ import { getArea } from "../../apis/contest"
 import { LocalStorageKeyType } from "../../utils/localStorage"
 import * as React from 'react'
 import {Typography} from '@mui/material'
-import { contestNeighborhoods } from "../../components/Map/contest";
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
-import { LocationType } from "../../global/explorationState";
-import * as turf from '@turf/turf'
 import { useReactToolsStore } from "../LabelTool/state/reactToolState";
 import { useUserStore } from "../../global/userState"
 
 export function ContestAreaInfo({ areaName }: {
   areaName: string;
 }){
-  const {
-    selectedImageId,
-    reactToolImageList,
-  } = useReactToolsStore()
-
-  const {userInfo} = useUserStore();
-
-  //const [areaName, setAreaName] = React.useState("")
+  const {userInfo} = useUserStore()
   const [currentOwner,setCurrentOwner] = React.useState("")
   const [currentOwnerScore, setCurrentOwnerScore] = React.useState(0)
   const [myScore,setMyScore] = React.useState(0)
   const [ownershipBonus, setOwnershipBonus] = React.useState(0)
-  const selectedLocation: LocationType = React.useMemo(()=>{
-    for(let i = 0; i< reactToolImageList.length; i++){
-      if(reactToolImageList[i].imageId === selectedImageId){
-        return reactToolImageList[i].location;
-      }
-    }
-    return {lat:0,lng:0}
-  }, [selectedImageId,reactToolImageList])
-  /*
-  React.useEffect(()=>{
-    if(selectedLocation.lat !== 0){
-    const point =  turf.point([selectedLocation.lng,selectedLocation.lat]);
-    for( const area of contestNeighborhoods.features){
-      if(booleanPointInPolygon(point, area)){
-        setAreaName(area.properties.name as string)
-        break
-      }
-    }
 
-  }
-  },[selectedImageId, selectedLocation.lng,selectedLocation.lat])
-*/
 React.useEffect(()=> {
   retrieveAreaOwner()
 },[areaName])
@@ -73,7 +41,7 @@ async function retrieveAreaOwner(){
             setCurrentOwner(ownerName.data)
             const ownerScore = await getAreaScore({id:result.data.currentOwner, areaName: areaName})
           // console.log(ownerScore)
-            if(ownerScore) setCurrentOwnerScore(ownerScore.data)
+            if(ownerScore) setCurrentOwnerScore(ownerScore.data - result.data.ownershipBonus)
           }
         } else{
           setCurrentOwner("")

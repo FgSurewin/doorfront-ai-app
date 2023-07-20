@@ -11,19 +11,12 @@ import { useNavigate } from 'react-router-dom';
 import type { LayerProps } from 'react-map-gl';
 import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, defaultMessage, llb, legend, typographySX, gridSX } from './data';
 import {contestNeighborhoods} from './contest';
-import Button from '@mui/material/Button/Button';
-import { updateContestScore, getContestScore } from '../../apis/user';
-import { getActiveContest } from '../../apis/contest';
+import { getContestScore } from '../../apis/user';
 import { ContestAreaInfo } from '../Contest';
-import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
+import { readLocal} from '../../utils/localStorage';
 
 
 export default function ContestMap() {
-
-  const contestNotes = [
-    "Neighborhood Name:","Area Score:","Percent Owned:","Current Owener:","Ownership Bonus:"
-  ]
-
   const { updateGoogleMapConfig } = useExplorationStore();
   const navigate = useNavigate();
 
@@ -34,16 +27,16 @@ export default function ContestMap() {
   const [contestScore,setContestScore] =React.useState(0)
    React.useEffect(()=>{
     async function retrieveContestScore(){
-      console.log(readLocal("id"))
+      //console.log(readLocal("id"))
       const res = await getContestScore({id:readLocal("id") as string})
-      console.log(res)
+      //console.log(res)
       setContestScore(res.data)
     }
     retrieveContestScore()
   },[])
   const neighborhoodCoordinates = React.useMemo(() => {
     if (hoverInfo.name !== "") {
-      return contestNeighborhoods.features.filter(loc => loc.properties.name === hoverInfo.name)[0].geometry.coordinates
+      return contestNeighborhoods.features.filter(loc => String(loc.properties.name) == hoverInfo.name)[0].geometry.coordinates
     }
     else {
       return [[[0]]]
@@ -115,7 +108,7 @@ export default function ContestMap() {
         //console.log(hoverInfo)
         if (hoverInfo.name == turfStreetPoints[i].name) {
           closePoint = nearestPoint(turfPoint, turfStreetPoints[i].points)
-          console.log(closePoint)
+          //console.log(closePoint)
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
           updateGoogleMapConfig({ position: { lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } })
           setMapClicked(true)
@@ -159,7 +152,7 @@ export default function ContestMap() {
         styleDiffing
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
         interactive={false}
-        interactiveLayerIds={["contest-map1"]}
+        interactiveLayerIds={["contest-map"]}
         onClick={(e) => findNearestPoint(e)}
         onMouseMove={(e) => mouseMove(e)}
         //onMouseLeave={onMouseLeave}
@@ -169,7 +162,7 @@ export default function ContestMap() {
           <Layer {...layerStyle} />
         </Source>
         <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1} fontSize={18}>Your Total Score: {contestScore}</Typography>
-
+        {/*}
         <Grid container spacing={2} maxWidth={100} rowSpacing={.005} sx={gridSX}>
           <Grid item xs={12}><div><b>Percentage</b></div></Grid>
           {Array.from(Array(legend.colors.length)).map((_, index) => (
@@ -177,7 +170,8 @@ export default function ContestMap() {
               <Item ><CircleIcon htmlColor={legend.colors[index]} sx={{ fontSize: 15, top: 0 }}></CircleIcon> {legend.layers[index]}</Item>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */
+      }
       </Map>
     )
   }

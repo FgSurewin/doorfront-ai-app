@@ -129,7 +129,7 @@ export default function UserAvatar() {
           Leader Board
         </MenuItem>
         <Divider />
-        {!userInfo.nickname ? <LoginItem /> : <div><ProfileItem /><LogoutItem /></div>}
+        {!userInfo.nickname ? <LoginItem /> : <div><ProfileItem /><Divider /><LogoutItem /></div>}
       </Menu>
     </Box>
   );

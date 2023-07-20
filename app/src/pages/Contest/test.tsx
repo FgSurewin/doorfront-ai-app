@@ -64,7 +64,7 @@ export default function TestPage(){
    async function jsonToDB(){
     let contestAreas: contestArea[] = []
     contestNeighborhoods.features.forEach(item=>{
-        contestAreas.push({areaName:item.properties.name as string,ownershipBonus: Math.trunc(item.properties.AREA/100000) })
+        contestAreas.push({areaName:String(item.properties.name),ownershipBonus: Math.trunc(item.properties.AREA/100000) })
     })
     console.log(contestAreas)
     const update = await setAreas({contestNumber:contestNumber,areas:contestAreas})

@@ -13,10 +13,9 @@ export default function Contest() {
         "Create and validate labels within an area to earn points!",
         "User that has the most points in an area earns ownership of that area!",
         "Attaining ownership of an area grants a point bonus while you maintain it!",
-        "Steal ownership from other users by marking more doors than them in an area!",
-        "Top three users at the end of the competition will recieve gift cards!",
-        "Competition ends on December 31st!",
-        "Hover over a neighborhood to view it's contest information!"
+        "Take ownership from other users by marking more doors than them in an area!",
+        "Hover over a neighborhood to view it's contest information!",
+        "Click within a contest area to navigate there on the Expore page!",
     ]
 
     return (
@@ -32,7 +31,7 @@ export default function Contest() {
                 }}
             >
                 <Container maxWidth='xl'>
-                    <Typography variant="h2" align="center" paddingBottom={6} pt={6}> Welcome to the first DoorRace Contest!</Typography>
+                    <Typography variant="h2" align="center" paddingBottom={6} pt={6}> Welcome to the Mapathon Beta!</Typography>
                     <Grid container maxWidth="xl" sx={{ alignItems: 'center' }} spacing={0}>
                         <Grid item xs={7}>
                             <Item>
