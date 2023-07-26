@@ -37,7 +37,7 @@ export default function ExplorationPage() {
     panoramaMarkerList,
     setIsNextPosition,
     updateCurrentSelectedImage,
-    updateCurrentSelectedImageTitle
+
   } = useExplorationStore();
 
   const [currentArea,setCurrentArea] = React.useState("")
@@ -94,7 +94,6 @@ export default function ExplorationPage() {
         povConfig: { ...result.pov, zoom: result.zoom },
       });
       updateCurrentSelectedImage("");
-      updateCurrentSelectedImageTitle("");
     }
   };
 

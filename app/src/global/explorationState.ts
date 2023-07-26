@@ -1,25 +1,23 @@
 import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { StreetViewMarkerType } from "../components/GoogleMap/utils/panoMarker";
-import { CollectedImageInterface} from "../types/collectedImage";
-import { getActiveContest } from "../apis/contest";
-import { useEffect } from "react";
+import { CollectedImageInterface } from "../types/collectedImage";
 
 export type LocationType = { lat: number; lng: number };
 export type PovType = { heading: number; pitch: number; zoom: number };
 
 export interface GoogleMapConfig {
-  panoId: string;
-  position: LocationType;
-  povConfig: PovType;
-  staticMapZoom: number;
-  collectedStreetViewImages?: any;
+	panoId: string;
+	position: LocationType;
+	povConfig: PovType;
+	staticMapZoom: number;
+	collectedStreetViewImages?: any;
 }
 
 export interface StreetViewImageConfig {
-  panoId: string;
-  imagePov: PovType;
-  imageLocation: LocationType;
+	panoId: string;
+	imagePov: PovType;
+	imageLocation: LocationType;
 }
 
 export interface ExplorationState {
@@ -37,29 +35,38 @@ export interface ExplorationState {
   panoramaMarkerList: StreetViewMarkerType[];
   updatePanoramaMarkerList: (update: StreetViewMarkerType[]) => void;
   currentSelectedImage: string;
-  currentSelectedImageTitle: string;
   updateCurrentSelectedImage: (imageId: string) => void;
-  updateCurrentSelectedImageTitle: (title:string) => void;
-    /* -------------------------- Used with Mapbox map -------------------------- */
-    clickedLocation: { lat: number; lng: number } | null;
-    updateClickedLocation: (update: { lat: number; lng: number } | null) => void;
+
+  /* -------------------------- Used with Mapbox map -------------------------- */
+  clickedLocation: { lat: number; lng: number } | null;
+  updateClickedLocation: (update: { lat: number; lng: number } | null) => void;
+
   /* ------------- Global state to control the number of modifier ------------- */
   maxModifier: number;
 }
 
+// Test location
+// 40.7299154,-73.9930226
+
+/**
+ *   lat: 40.76053914888549,
+ *   lng: -73.97417372824286,
+ */
+
 const guildTourLocation = {
-  lat: 40.76053914888549,
-  lng: -73.97417372824286,
+  lat: 40.7299154,
+  lng: -73.9930226,
 };
 
 const guildTourPov = {
-  heading: 214,
-  pitch: 8,
+  heading: 306,
+  pitch: 0,
   zoom: 1,
 };
 
 // const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
-const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
+// const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
+const guildTourImagePano = "None";
 
 export const useExplorationStore = create<ExplorationState>(
   devtools(
@@ -135,7 +142,6 @@ export const useExplorationStore = create<ExplorationState>(
                     isShow: false,
                     box: label.box,
                     imagePov: image.pov,
-                    notes:label.notes
                   };
                   markerList.push(marker);
                 });
@@ -166,7 +172,6 @@ export const useExplorationStore = create<ExplorationState>(
         );
       },
       currentSelectedImage: "",
-      currentSelectedImageTitle:"",
       updateCurrentSelectedImage: (imageId) => {
         set(
           (state) => ({ ...state, currentSelectedImage: imageId }),
@@ -174,14 +179,9 @@ export const useExplorationStore = create<ExplorationState>(
           "ExplorationState/updateCurrentSelectedImage"
         );
       },
-      updateCurrentSelectedImageTitle: (title) => {
-        set(
-          (state) => ({ ...state, currentSelectedImageTitle: title}),
-          false,
-          "ExplorationState/updateCurrentSelectedImageSubtype"
-        );
-      },
       maxModifier: 3,
+
+      /* -------------------------- Used with Mapbox map -------------------------- */
       clickedLocation: null,
       updateClickedLocation: (update) => {
         set(
@@ -191,7 +191,6 @@ export const useExplorationStore = create<ExplorationState>(
         );
       },
     }),
-
     { name: "ExplorationState" }
   )
 );

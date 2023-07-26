@@ -30,7 +30,7 @@ export default function ImageListItem({ imageList }: ImageListItemProps) {
   const { currentSelectedImage, updateCollectedImageList, collectedImageList } =
     useExplorationStore();
   // * A computed value to determine whether to show the scrollbar
-  const showScrollBar = React.useMemo(() => imageList.length > 5, [imageList]);
+  const showScrollBar = React.useMemo(() => imageList.length > 3, [imageList]);
 
   const navigate = useNavigate();
   const { userInfo, clearUserInfo, updateUserScore } = useUserStore();

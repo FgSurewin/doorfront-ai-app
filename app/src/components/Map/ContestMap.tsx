@@ -1,15 +1,13 @@
 import * as React from 'react';
 import Map, { Source, Layer, MapLayerMouseEvent } from 'react-map-gl';
 import { Box, Container, Grid, Typography, } from '@mui/material'
-import Item from '@mui/material/Grid'
-import CircleIcon from '@mui/icons-material/Circle';
 import type { Feature, GeoJsonProperties, Point, Geometry } from 'geojson'
 import * as turf from '@turf/turf';
 import nearestPoint from '@turf/nearest-point';
 import { useExplorationStore } from '../../global/explorationState';
 import { useNavigate } from 'react-router-dom';
 import type { LayerProps } from 'react-map-gl';
-import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, defaultMessage, llb, legend, typographySX, gridSX } from './data';
+import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, defaultMessage, llb } from './data';
 import {contestNeighborhoods} from './contest';
 import { getContestScore } from '../../apis/user';
 import { ContestAreaInfo } from '../Contest';

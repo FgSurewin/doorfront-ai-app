@@ -4,7 +4,6 @@ import { getArea } from "../../apis/contest"
 import { LocalStorageKeyType } from "../../utils/localStorage"
 import * as React from 'react'
 import {Typography} from '@mui/material'
-import { useReactToolsStore } from "../LabelTool/state/reactToolState";
 import { useUserStore } from "../../global/userState"
 
 export function ContestAreaInfo({ areaName }: {
@@ -57,7 +56,7 @@ async function retrieveAreaOwner(){
     }
 }
 
-if(ownershipBonus > 0){
+if(ownershipBonus > 0 && areaName !== ""){
   return(
     
       <div>

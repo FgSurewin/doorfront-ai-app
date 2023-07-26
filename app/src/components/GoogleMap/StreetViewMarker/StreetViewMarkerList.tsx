@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { useExplorationStore } from "../../../global/explorationState";
 import { useTourStore } from "../../../global/tourState";
-import { useReactToolInternalStore } from "../../LabelTool/state/internalState";
 
 export interface StreetViewMarkerListProps {
   streetViewContainer: HTMLElement;
@@ -29,10 +28,8 @@ export default function StreetViewMarkerList({
   streetViewInstance,
   streetViewContainer,
 }: StreetViewMarkerListProps) {
-  const { updatePanoramaMarkerList, updateCurrentSelectedImage, updateCurrentSelectedImageTitle } =
+  const { updatePanoramaMarkerList, updateCurrentSelectedImage } =
     useExplorationStore();
-  
-  const {onChangeSelectedBoxId} = useReactToolInternalStore()
 
   const {
     sampleMarkerId,
@@ -74,8 +71,6 @@ export default function StreetViewMarkerList({
                 })
               );
               updateCurrentSelectedImage(item.image_id);
-              updateCurrentSelectedImageTitle(item.title)
-              onChangeSelectedBoxId(item.label_id)
               if (
                 item.label_id === sampleMarkerId &&
                 explorationTour &&
@@ -97,8 +92,6 @@ export default function StreetViewMarkerList({
                     })
                   );
                   updateCurrentSelectedImage("");
-                  updateCurrentSelectedImageTitle("");
-                  onChangeSelectedBoxId("")
                 }}
               />
             )}

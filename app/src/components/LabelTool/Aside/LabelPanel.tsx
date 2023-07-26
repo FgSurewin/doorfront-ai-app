@@ -72,7 +72,7 @@ export default function LabelPanel() {
   return (
     <div>
       {/* <OperationSection /> */}
-      {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && currentArea != "" && 
+      {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && currentArea !== "" && 
       <div>
       <ReactToolAsideTitle text= {"Contest Area " + currentArea} />
         <ContestAreaInfo areaName= {currentArea}/>

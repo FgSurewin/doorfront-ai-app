@@ -19,6 +19,7 @@ import { LocalStorageKeyType, readLocal } from "../../utils/localStorage";
 let menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
+  { name: "Contest Page" , path: "/contest" }
 ]
 
 
@@ -44,6 +45,7 @@ const Navbar = React.memo(function ({
     () => (isTransparent ? WhiterLogo : BlackLogo),
     [isTransparent]
   );
+  /* this is to only show contest in navbar when a contest is active in the DB but it's buggy so disabled for now
     React.useEffect(()=>{
       if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
         menuItems = [
@@ -53,6 +55,7 @@ const Navbar = React.memo(function ({
         ];
         }
     },[readLocal("contest" as LocalStorageKeyType)])
+    */
   return (
     <>
       <AppBar position={position} sx={backgroundStyle}>

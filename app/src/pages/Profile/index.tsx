@@ -1,12 +1,11 @@
 import React from 'react'
-import { useUserStore, UserCredit } from "../../global/userState"
-import { useState, useRef } from "react";
+import { useUserStore } from "../../global/userState"
+import { useState } from "react";
 import Navbar from "../../components/Navbar";
-import { Grid, Tab, Tabs, Typography, SxProps, TextField, Button } from "@mui/material";
+import { Grid, Tab, Tabs, Typography, SxProps} from "@mui/material";
 import { Box } from "@mui/system";
 import { TwitterShareButton, TwitterIcon, FacebookIcon, FacebookShareButton, LinkedinIcon, LinkedinShareButton } from 'react-share';
 import ResetPasswordForm from "./ResetPasswordForm";
-import ResetEmailForm from './ResetEmailForm';
 import ContributionsChart from "./ContributionsChart"
 import { getUserScoreFromDB } from "../../apis/user";
 import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
@@ -34,12 +33,6 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-function a11yProps(index: number) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
 export default function Profile() {
     const { userInfo, userScore, updateUserScore } = useUserStore();
     const [value, setValue] = useState(0);
