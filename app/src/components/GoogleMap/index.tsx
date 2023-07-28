@@ -162,10 +162,10 @@ function GoogleMap({
             */}
 
             {
-              /*currentSelectedImageTitle=== 'door' && */currentSelectedImage !== "" &&
+              /*currentSelectedImageTitle=== 'door' && currentSelectedImage !== "" &&
               <div style={{position:'absolute',top:'300px',width:'240px'}}>
                 <Notes page = "explore" id={currentSelectedImage} />
-              </div>
+              </div> */
             }
             <div
               id="Map"
