@@ -1,6 +1,6 @@
 import React from "react";
 import Aside from "./Aside";
-import { Stack } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import {
   OperationFunctions,
   TypeConfig,
@@ -174,24 +174,26 @@ export default function LabelTool({
 
   const handleReactToolKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!notesOpen) {
-      if (e.key === "q" || e.key === "Q") {
-        resetLabelingProcess();
-      } else if (e.key === "d" || e.key === "D") {
-        if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
-      } else if (e.key === "c" || e.key === "C") {
-        handleCopyBox();
-      }
+    if (e.key === "q" || e.key === "Q") {
+      resetLabelingProcess();
+    } else if (e.key === "d" || e.key === "D") {
+      if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
+    } else if (e.key === "c" || e.key === "C") {
+      handleCopyBox();
     }
+  }
   };
+
+  const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+
 
   return (
     <div
       tabIndex={-1}
       onKeyPress={handleReactToolKeyPress}
-      style={{ minWidth: "1440px" }}
       className="LabelingTool"
     >
-      <Joyride
+      {/* <Joyride
         callback={handleJoyrideCallback}
         continuous={true}
         run={labelingPageTour}
@@ -204,15 +206,16 @@ export default function LabelTool({
             zIndex: 10000,
           },
         }}
-      />
+      /> */}
       <ReactToolHeader />
       <Stack
         id="LabelToolContainer"
-        direction="row"
-        sx={{ height: "calc(100vh - 64px)" }}
+        direction={isChangingDirection ? "column-reverse" : "row"}
       >
-        <Aside />
-        {reactToolImageList.length > 0 && <LabelStage />}
+      <Aside />
+       
+      {reactToolImageList.length > 0 && <LabelStage />}
+      
       </Stack>
     </div>
   );

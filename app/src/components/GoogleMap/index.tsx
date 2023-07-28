@@ -15,6 +15,8 @@ import {
 // import { panoMarker } from "./testData";
 import { StreetViewMarkerType } from "./utils/panoMarker";
 import { useExplorationStore } from "../../global/explorationState";
+import Notes from "../Notes"
+import {Box,Typography,} from "@mui/material"
 // import asyncLoading from "react-async-loader";
 
 export interface GoogleMapProps {
@@ -43,8 +45,21 @@ function GoogleMap({
   /* -------------------------------------------------------------------------- */
   /*                                Global State                                */
   /* -------------------------------------------------------------------------- */
-  const { isNextPosition, setIsNextPosition } = useExplorationStore();
-
+  const { isNextPosition, setIsNextPosition, currentSelectedImage} = useExplorationStore();
+  /*
+  const [currentArea,setCurrentArea] = React.useState("")
+    
+  React.useEffect(()=>{
+    const point =  turf.point([googleMapConfig.position.lng,googleMapConfig.position.lat]);
+    for( const area of contestNeighborhoods.features){
+      if(booleanPointInPolygon(point, area)){
+        setCurrentArea(area.properties.name as string)
+        break
+      }
+    }
+    
+  },[googleMapConfig.position])
+  */
   React.useEffect(() => {
     if (google && !_isMounted.current) {
       if (!map && !streetView) {
@@ -128,6 +143,30 @@ function GoogleMap({
             className="MapContainer"
             style={MapContainerStyle}
           >
+            {/*
+            {activeContest != undefined &&
+              <div>
+                  <Box sx = {{bottom:'auto'}}>
+                  <Typography>
+                    Current Area: {currentArea}
+                  </Typography>
+                  <Typography>
+                    Current Area Score:
+                  </Typography>
+                  <Typography>
+                    Current Area Owner:
+                  </Typography>
+                </Box>
+                </div>
+
+            */}
+
+            {
+              /*currentSelectedImageTitle=== 'door' && */currentSelectedImage !== "" &&
+              <div style={{position:'absolute',top:'300px',width:'240px'}}>
+                <Notes page = "explore" id={currentSelectedImage} />
+              </div>
+            }
             <div
               id="Map"
               ref={_map}
@@ -141,7 +180,7 @@ function GoogleMap({
 }
 
 const api = process.env.REACT_APP_API_KEY;
-const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=places&callback=Function.prototype&v=quarterly`;
+const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=&v=weekly&channel=2&libraries=places`;
 export default makeAsyncScriptLoader(url, {
   globalName: "google",
 })(GoogleMap);

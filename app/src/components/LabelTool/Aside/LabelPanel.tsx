@@ -32,9 +32,11 @@ export default function LabelPanel() {
     const currentImage = filterImageList[0];
     if (operationsFuncs.onSubmitImage) {
       await operationsFuncs.onSubmitImage(currentImage);
-      const res = await updateContestStats({id: userInfo.id!,areaName: currentArea,areaScoreIncrement:1})
+      if(currentArea !== "") {
+        const res = await updateContestStats({id: userInfo.id!,areaName: currentArea,areaScoreIncrement:1})
       //console.log(res)
-      if(res.code === 1 || res.code === 10 || res.code ===5 || res.code )enqueueSnackbar(res.message)
+        if(res.code === 1 || res.code === 10 || res.code ===5)enqueueSnackbar(res.message)
+      }
        
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);

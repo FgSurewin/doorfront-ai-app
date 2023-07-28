@@ -69,7 +69,7 @@ export default function MapboxMap() {
 }
 
 function MapRender() {
-  const { updateClickedLocation } = useExplorationStore();
+  const { updateClickedLocation, updateGoogleMapConfig } = useExplorationStore();
   const navigate = useNavigate();
 
   const [subtitle, setSubtitle] = React.useState<string>(defaultMessage);
@@ -174,6 +174,7 @@ function MapRender() {
 
           /* ---------------------------- Handle navigation --------------------------- */
           // TODO: Update clicked location in global state
+          updateGoogleMapConfig({ position: { lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } })
           updateClickedLocation({
             lat: closePoint.geometry.coordinates[1] as number,
             lng: closePoint.geometry.coordinates[0] as number,

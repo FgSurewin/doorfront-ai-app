@@ -15,7 +15,7 @@ import { readLocal} from '../../utils/localStorage';
 
 
 export default function ContestMap() {
-  const { updateGoogleMapConfig } = useExplorationStore();
+  const { updateGoogleMapConfig, updateClickedLocation } = useExplorationStore();
   const navigate = useNavigate();
 
   const [subtitle, setSubtitle] = React.useState<string>(defaultMessage)
@@ -109,6 +109,7 @@ export default function ContestMap() {
           //console.log(closePoint)
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
           updateGoogleMapConfig({ position: { lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } })
+          updateClickedLocation({ lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } )
           setMapClicked(true)
           return
         }
