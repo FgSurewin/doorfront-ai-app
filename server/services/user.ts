@@ -2,7 +2,11 @@ import { SECRET } from "./../database/index";
 import { LoginBody } from "./../types/index";
 import { AppContext, UserBody } from "../types";
 
-import UserModel, { UserInterface, areaScores } from "../database/models/user";
+import UserModel, {
+  UserInterface,
+  areaScores,
+  userReferred,
+} from "../database/models/user";
 import ContestModel from "../database/models/contest";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -18,6 +22,7 @@ import {
   UpdateContestScore,
   getAreaScore,
   ChallengeArea,
+  setReferrer,
 } from "../types/user";
 
 // Bcrypt Configuration
@@ -28,32 +33,61 @@ export class UserService {
   async addUser(ctx: AppContext, body: UserBody) {
     const { res } = ctx;
     const { email, password, nickname } = body;
+    const referrer = body.referralCode;
+    delete body.referralCode;
     try {
       const checkNickname: UserInterface[] = await UserModel.find({ nickname });
       if (checkNickname.length === 0) {
         const result: UserInterface[] = await UserModel.find({ email });
         if (result.length === 0) {
-          const encodePassword = bcrypt.hashSync(password, salt);
-          const newUser = {
-            ...body,
-            password: encodePassword,
-            isSent: false,
-            isReviewed: true,
-            label: 0,
-            score: 0,
-            modify: 0,
-            create: 0,
-            review: 0,
-            bonus: 0,
-            checkOld: 0,
-            contestScore: 0,
-          };
-          await UserModel.create(newUser);
-          res.json({
-            code: 0,
-            message: "Sign Up Successfully!",
-            data: result,
+          const checkCode: UserInterface[] = await UserModel.find({
+            referralCode: referrer,
           });
+          if (
+            checkCode.length > 0 ||
+            referrer === undefined ||
+            referrer.length === 0
+          ) {
+            const encodePassword = bcrypt.hashSync(password, salt);
+            var ref = "";
+            if (checkCode.length > 0) {
+              ref = checkCode[0]._id;
+            }
+            const newUser = {
+              ...body,
+              password: encodePassword,
+              isSent: false,
+              isReviewed: true,
+              label: 0,
+              score: 0,
+              modify: 0,
+              create: 0,
+              review: 0,
+              bonus: 0,
+              checkOld: 0,
+              contestScore: 0,
+              referrer: ref,
+            };
+            const finish = await UserModel.create(newUser);
+            if (referrer && referrer.length > 0) {
+              const newRefer = { userID: finish.id, bonusRecieved: false };
+              await UserModel.findOneAndUpdate(
+                { _id: checkCode[0]._id },
+                { $addToSet: { usersReferred: newRefer } }
+              );
+            }
+
+            res.json({
+              code: 0,
+              message: "Sign Up Successful!",
+              data: result,
+            });
+          } else {
+            res.json({
+              code: 2000,
+              message: "Referral code is invalid!",
+            });
+          }
         } else {
           res.json({
             code: 2000,
@@ -704,10 +738,10 @@ export class UserService {
     }
   }
 
-  async getNickname(ctx: AppContext, body: {id:string}) {
+  async getNickname(ctx: AppContext, body: { id: string }) {
     const { res } = ctx;
     try {
-      const {id}  = body;
+      const { id } = body;
       const user = await UserModel.findById(id).lean();
       if (user) {
         const nickname = user.nickname;
@@ -730,7 +764,7 @@ export class UserService {
       });
     }
   }
-/*
+  /*
   async assertOwnership(ctx: AppContext, body: ChallengeArea) {
     const { res } = ctx;
 
@@ -801,8 +835,11 @@ export class UserService {
 
     try {
       const { id, areaName, areaScoreIncrement } = body;
- 
-      let user = await UserModel.findOne({ _id: id }, { areaScores: true, contestScore:true });
+
+      let user = await UserModel.findOne(
+        { _id: id },
+        { areaScores: true, contestScore: true }
+      );
       const contest = await ContestModel.findOne(
         { active: true, "areas.areaName": areaName },
         { areas: { $elemMatch: { areaName: areaName } } }
@@ -819,8 +856,9 @@ export class UserService {
             user.areaScores[i].areaScore += areaScoreIncrement;
             newScore = user.areaScores[i].areaScore;
             userAreaIndex = i;
-            found = true  
-            if(user.contestScore) userTotal = user.contestScore + areaScoreIncrement;
+            found = true;
+            if (user.contestScore)
+              userTotal = user.contestScore + areaScoreIncrement;
             else userTotal = areaScoreIncrement;
           }
         }
@@ -832,149 +870,152 @@ export class UserService {
           });
           userAreaIndex = user.areaScores.length - 1;
           newScore = areaScoreIncrement;
-          if(user.contestScore) userTotal = user.contestScore + areaScoreIncrement;
+          if (user.contestScore)
+            userTotal = user.contestScore + areaScoreIncrement;
           else userTotal = areaScoreIncrement;
         }
 
         //need to check if their updated score is more than the current owner's, might need to put in seperate function
         //only recieving one contest area, need to recieve all them
 
-        
-          //look for index of area matching areaName
-          const originalOwner = contest.areas[0].currentOwner;
-          const areaBonus = contest.areas[0].ownershipBonus;
-          if (originalOwner !== undefined && originalOwner != id) {
-            const areaLeader = await UserModel.findOne(
-              { _id: originalOwner, "areaScores.areaName": areaName },
-              { areaScores: { $elemMatch: { areaName: areaName } }, contestScore:true }
-            );
-            if (areaLeader) {
-              const leaderScore = areaLeader.areaScores[0].areaScore;
-              if (leaderScore && newScore > (leaderScore - areaBonus)) {
-                //leaderScore.areaScore - areaBonus and update to server
-                //contest.areas[i].currentOwner = id and update to server
-                user.areaScores[userAreaIndex].areaScore += areaBonus;
-                const final = await UserModel.findByIdAndUpdate(
-                  id,
-                  {
-                    $set: { areaScores: user.areaScores, contestScore: userTotal+areaBonus },
-                  },
-                  { new: true }
-                );
-                const bonusLoser = await UserModel.findOneAndUpdate(
-                  { _id: originalOwner, "areaScores.areaName": areaName },
-                  {
-                    $inc: {
-                      contestScore: (-areaBonus),
-                      "areaScores.$.areaScore": (-areaBonus),
-                    } /*,$inc:{contestScore:(-areaBonus),'areaScores.$.areaScore':(-areaBonus)}*/,
-                  },
-                  { new: true }
-                );
-                //contest.areas[0].currentOwner = id;
-                const takeover = await ContestModel.findOneAndUpdate(
-                  { active: true, "areas.areaName": areaName  },
-                  { $set: { "areas.$.currentOwner": id } },
-                  { new: true }
-                );
-                if (takeover && final && bonusLoser) {
-                  sentResult = true;
-                  res.json({
-                    code: 10,
-                    message:
-                      "You took ownership of "+areaName+"!",
-                    data: {
-                      contest:
-                        takeover.areas,
-                      userTotal: final.contestScore,
-                      userArea:
-                        final.areaScores[userAreaIndex],
-                      oldOwnerUpdated: {
-                        bonusLoserid: bonusLoser.id,
-                        originalOwner: originalOwner,
-                        originalOwnerScore: leaderScore,
-                        userTotal: bonusLoser.contestScore,
-                        userArea:
-                          bonusLoser.areaScores[
-                            bonusLoser.areaScores.findIndex(
-                              (item) => item.areaName === areaName
-                            )
-                          ],
-                      },
-                      other: {
-                        myID: id,
-                        newScore: newScore,
-                        areaBonus: areaBonus,
-                        result: user,
-                        areaLeader:areaLeader
-                      },
-                    },
-                  });
-                }
-                else {
-                  res.json({
-                    code: 400,
-                    message: "User contest stats update failed!",
-                    data: final,
-                  });
-                }
-              } else if (leaderScore) {
-                message =
-                  "Leader has " +
-                  (leaderScore - areaBonus - newScore) +
-                  " more points than you"
-              }
+        //look for index of area matching areaName
+        const originalOwner = contest.areas[0].currentOwner;
+        const areaBonus = contest.areas[0].ownershipBonus;
+        if (originalOwner !== undefined && originalOwner != id) {
+          const areaLeader = await UserModel.findOne(
+            { _id: originalOwner, "areaScores.areaName": areaName },
+            {
+              areaScores: { $elemMatch: { areaName: areaName } },
+              contestScore: true,
             }
-          }
-          //else just take it over yourself
-          else if(originalOwner !== id){
-            //contest.areas[i].currentOwner = id and update to server
-            //const areaIndexUser = result.areaScores.findIndex(item=>item.areaName === areaName)
-            //const areaIndexContest = contest.areas.findIndex(item=>item.areaName ===areaName)
-            //contest.areas[0].currentOwner = id;
-            const takeover = await ContestModel.findOneAndUpdate(
-              { active: true, "areas.areaName": areaName  },
-              { $set: { "areas.$.currentOwner": id } },
-              { new: true }
-            );
-            user.areaScores[userAreaIndex].areaScore += areaBonus;
-            const final = await UserModel.findByIdAndUpdate(
-              id,
-              {
-                $set: { areaScores: user.areaScores , contestScore: userTotal+areaBonus},
-              },
-              { new: true }
-            );
-            if (takeover && final) {
-              sentResult = true;
-              res.json({
-                code: 1,
-                message:
-                "You took ownership of "+areaName+"!",
-                data: {
-                  contest:
-                    takeover.areas[
-                      takeover.areas.findIndex(
-                        (item) => item.areaName === areaName
-                      )
-                    ],
-                  userTotal: final.contestScore,
-                  userArea:
-                    final.areaScores[
-                      final.areaScores.findIndex(
-                        (item) => item.areaName === areaName
-                      )
-                    ],
+          );
+          if (areaLeader) {
+            const leaderScore = areaLeader.areaScores[0].areaScore;
+            if (leaderScore && newScore > leaderScore - areaBonus) {
+              //leaderScore.areaScore - areaBonus and update to server
+              //contest.areas[i].currentOwner = id and update to server
+              user.areaScores[userAreaIndex].areaScore += areaBonus;
+              const final = await UserModel.findByIdAndUpdate(
+                id,
+                {
+                  $set: {
+                    areaScores: user.areaScores,
+                    contestScore: userTotal + areaBonus,
+                  },
                 },
-              });
+                { new: true }
+              );
+              const bonusLoser = await UserModel.findOneAndUpdate(
+                { _id: originalOwner, "areaScores.areaName": areaName },
+                {
+                  $inc: {
+                    contestScore: -areaBonus,
+                    "areaScores.$.areaScore": -areaBonus,
+                  } /*,$inc:{contestScore:(-areaBonus),'areaScores.$.areaScore':(-areaBonus)}*/,
+                },
+                { new: true }
+              );
+              //contest.areas[0].currentOwner = id;
+              const takeover = await ContestModel.findOneAndUpdate(
+                { active: true, "areas.areaName": areaName },
+                { $set: { "areas.$.currentOwner": id } },
+                { new: true }
+              );
+              if (takeover && final && bonusLoser) {
+                sentResult = true;
+                res.json({
+                  code: 10,
+                  message: "You took ownership of " + areaName + "!",
+                  data: {
+                    contest: takeover.areas,
+                    userTotal: final.contestScore,
+                    userArea: final.areaScores[userAreaIndex],
+                    oldOwnerUpdated: {
+                      bonusLoserid: bonusLoser.id,
+                      originalOwner: originalOwner,
+                      originalOwnerScore: leaderScore,
+                      userTotal: bonusLoser.contestScore,
+                      userArea:
+                        bonusLoser.areaScores[
+                          bonusLoser.areaScores.findIndex(
+                            (item) => item.areaName === areaName
+                          )
+                        ],
+                    },
+                    other: {
+                      myID: id,
+                      newScore: newScore,
+                      areaBonus: areaBonus,
+                      result: user,
+                      areaLeader: areaLeader,
+                    },
+                  },
+                });
+              } else {
+                res.json({
+                  code: 400,
+                  message: "User contest stats update failed!",
+                  data: final,
+                });
+              }
+            } else if (leaderScore) {
+              message =
+                "Leader has " +
+                (leaderScore - areaBonus - newScore) +
+                " more points than you";
             }
           }
-        
+        }
+        //else just take it over yourself
+        else if (originalOwner !== id) {
+          //contest.areas[i].currentOwner = id and update to server
+          //const areaIndexUser = result.areaScores.findIndex(item=>item.areaName === areaName)
+          //const areaIndexContest = contest.areas.findIndex(item=>item.areaName ===areaName)
+          //contest.areas[0].currentOwner = id;
+          const takeover = await ContestModel.findOneAndUpdate(
+            { active: true, "areas.areaName": areaName },
+            { $set: { "areas.$.currentOwner": id } },
+            { new: true }
+          );
+          user.areaScores[userAreaIndex].areaScore += areaBonus;
+          const final = await UserModel.findByIdAndUpdate(
+            id,
+            {
+              $set: {
+                areaScores: user.areaScores,
+                contestScore: userTotal + areaBonus,
+              },
+            },
+            { new: true }
+          );
+          if (takeover && final) {
+            sentResult = true;
+            res.json({
+              code: 1,
+              message: "You took ownership of " + areaName + "!",
+              data: {
+                contest:
+                  takeover.areas[
+                    takeover.areas.findIndex(
+                      (item) => item.areaName === areaName
+                    )
+                  ],
+                userTotal: final.contestScore,
+                userArea:
+                  final.areaScores[
+                    final.areaScores.findIndex(
+                      (item) => item.areaName === areaName
+                    )
+                  ],
+              },
+            });
+          }
+        }
 
         if (sentResult === false) {
           const finish = await UserModel.findOneAndUpdate(
             { _id: id },
-            { $set:{areaScores: user.areaScores, contestScore:userTotal} },
+            { $set: { areaScores: user.areaScores, contestScore: userTotal } },
             {
               new: true,
               rawResult: true, // Return the raw result from the MongoDB driver
@@ -983,7 +1024,7 @@ export class UserService {
           if (finish.ok === 1 && finish.value) {
             res.json({
               code: 5,
-              message: "You got +1 score in area "+areaName,
+              message: "You got +1 score in area " + areaName,
               data: {
                 user: {
                   total: finish.value.contestScore,
@@ -1005,15 +1046,13 @@ export class UserService {
               data: user,
             });
           }
-        } 
-      } 
-      else {
-          res.json({
-            code: 4000,
-            message: "User or contest area does not exist",
-          });
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User or contest area does not exist",
+        });
       }
-      
     } catch (e) {
       const error = new Error(`${e}`);
       res.json({
@@ -1028,7 +1067,10 @@ export class UserService {
 
     try {
       const { id, areaName } = body;
-      const user = await UserModel.findOne({ _id: id, "areaScores:areaName": areaName }, { areaScores: {$elemMatch: {areaName:areaName}} }).lean();
+      const user = await UserModel.findOne(
+        { _id: id, "areaScores:areaName": areaName },
+        { areaScores: { $elemMatch: { areaName: areaName } } }
+      ).lean();
 
       if (user) {
         res.json({
@@ -1060,13 +1102,12 @@ export class UserService {
             data: user,
           });
         }*/
-      }
-      else{
+      } else {
         res.json({
           code: 400,
-          message: "Failed to get "+ areaName + " score for user " + id,
+          message: "Failed to get " + areaName + " score for user " + id,
           data: user,
-        })
+        });
       }
     } catch (e) {
       const error = new Error(`${e}`);
@@ -1148,4 +1189,209 @@ export class UserService {
       });
     }
   }
+
+  async getReferralCode(ctx: AppContext, body: { id: string }) {
+    const { res } = ctx;
+    try {
+      const { id } = body;
+      const user = await UserModel.findById(id).lean();
+      if (user) {
+        if (user.referralCode) {
+          const code = user.referralCode;
+          res.json({
+            code: 0,
+            message: "Get Referral Code Successful!",
+            data: code,
+          });
+        } else {
+          var done = false;
+          while (!done) {
+            let result = "";
+            const characters =
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let counter = 0;
+            while (counter < 5) {
+              result += characters.charAt(
+                Math.floor(Math.random() * characters.length)
+              );
+              counter += 1;
+            }
+            const found = await UserModel.findOne({ referralCode: result });
+            if (!found) {
+              done = true;
+              const finish = await UserModel.findOneAndUpdate(
+                { _id: id },
+                { $set: { referralCode: result } }
+              );
+
+              if (finish) {
+                res.json({
+                  code: 0,
+                  message: "New code created!",
+                  data: result,
+                });
+              } else {
+                res.json({
+                  code: 3000,
+                  message:
+                    "Something went wrong with code assignment! Tried " +
+                    result,
+                });
+              }
+            }
+          }
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User does not exist! Received " + id,
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async getReferrer(ctx: AppContext, body: { id: string }) {
+    const { res } = ctx;
+    try {
+      const { id } = body;
+      const user = await UserModel.findById(id).lean();
+      if (user) {
+        if (user.referrer) {
+          const name = await UserModel.findById(user.referrer).lean();
+          if (name) {
+            res.json({
+              code: 0,
+              message: "Get Referrer Successful!",
+              data: name.nickname,
+            });
+          }
+        } else {
+          res.json({
+            code: 3000,
+            message: "Referrer does not exist",
+          });
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User does not exist! Received " + id,
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async setReferrer(ctx: AppContext, body: setReferrer) {
+    const { res } = ctx;
+    try {
+      const { id } = body;
+      const user = await UserModel.findById(id).lean();
+      if (user) {
+        if (user.referrer) {
+          res.json({
+            code: 3000,
+            message: "User already has a referrer",
+          });
+        } else {
+          const end = await UserModel.findOneAndUpdate(
+            { _id: id },
+            { $set: { referrer: body.referrer } }
+          );
+          if (end) {
+            res.json({
+              code: 0,
+              message: "referrer updated",
+            });
+          }
+        }
+      } else {
+        res.json({
+          code: 4000,
+          message: "User does not exist! Received " + id,
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async getAllReferredUsers(ctx:AppContext, body:{id:string}){
+    const {id} = body
+    const {res} = ctx
+    try{
+    const user = await UserModel.findById(id).lean();
+      if (user) {
+       res.json({
+        code:0,
+        message:"Referred users found",
+        data:user.usersReferred
+       })
+      } else {
+        res.json({
+          code: 4000,
+          message: "User does not exist! Received " + id,
+        });
+      }
+    } catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async updateReferredUserBonus(ctx:AppContext, body:{referrerId:string, refereeId:string}){
+    const{referrerId,refereeId} = body
+    const {res} = ctx
+    try{
+      const OG = await UserModel.findById(referrerId).lean();
+      if(OG){
+        const update = await UserModel.findOneAndUpdate(
+          {_id:referrerId, "usersReferred.userID": refereeId},
+          {$set:{"usersReferred.$.bonusReceived":true}}
+        )
+        if(update){
+          res.json({
+            code:0,
+            message: "Successfully updated referred user bonus received",
+            data:update
+          })
+        }
+        else{
+          res.json({
+            code:5000,
+            message: "Error updating referred user bonus received",
+          })
+        }
+      } else{
+        res.json({
+          code:5000,
+          message: "User not found",
+        })
+      }
+    }catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+  
 }

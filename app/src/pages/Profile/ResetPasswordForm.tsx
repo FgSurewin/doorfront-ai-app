@@ -22,18 +22,17 @@ export default function ResetPasswordForm() {
   return (
     <Box
       sx={{
-        mx: 4,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
       }}
     >
-      <Box sx={{ mt: 1, width: "80%" }}>
+      <Box sx={{width: "70%" }}>
         <Formik
           initialValues={{
             email: "",
             newPassword: "",
-            nickname: userInfo.nickname as string,
+            nickname: "",
           }}
           validate={(values) => {
             const errors: Partial<Values> = {};

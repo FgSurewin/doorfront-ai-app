@@ -14,6 +14,7 @@ import {
   Button,
   Tooltip,
   Box,
+  useMediaQuery
 } from "@mui/material";
 import { helpResizeImage, helpSwitchImage } from "../Aside/utils";
 import { useReactToolInternalStore } from "../state/internalState";
@@ -48,15 +49,19 @@ export default function ReactToolHeader() {
     }
   };
 
+  const w895 = useMediaQuery('(max-width:885px)');
+
+
   return (
+    // Navbar
     <AppBar position="static" sx={{ py: 1, px: 6 }}>
-      <Grid container justifyContent="space-between">
-        <Grid item component="img" src={WhiterLogo} alt="DoorFront" />
+      <Grid container justifyContent="space-between" direction={w895 ? "column": "row"}>
+        <Grid item id="logoImage" component="img" src={WhiterLogo} alt="DoorFront" />
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent="space-evenly"
-          sx={{ width: "700px" }}
+          justifyContent={ w895 ? "center": "space-evenly"}
+          sx={{ width: w895 ? "100%" : "50%" }}
         >
           <Stack
             direction="row"

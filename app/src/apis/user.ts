@@ -23,6 +23,7 @@ export interface SignUpData {
   email: string;
   role: string;
   institution: string;
+  referralCode:string;
 }
 
 export interface SignUpReturnData {
@@ -30,6 +31,12 @@ export interface SignUpReturnData {
   message: string;
   data?: any;
 }
+
+export interface referredUser{
+  userID: string;
+  bonusReceived:boolean;
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                               Login & Sign Up                              */
@@ -340,6 +347,50 @@ export const getNickname = (data:{id:string}) =>
            .request<UserReturnData<string>>({
              method:"POST",
              url: `user/getNickname`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getReferrer = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<string>>({
+             method:"POST",
+             url: `user/getReferrer`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getReferralCode = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<string>>({
+             method:"POST",
+             url: `user/getReferralCode`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getAllReferredUsers = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<referredUser[]>>({
+             method:"POST",
+             url: `user/getAllReferredUsers`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const updateReferredUserBonus = (data:{referrerId:string,refereeId:string}) =>
+           baseRequest
+           .request<UserReturnData<any>>({
+             method:"POST",
+             url: `user/updateReferredUserBonus`,
              data
            })
            .then ((res)=>res.data)

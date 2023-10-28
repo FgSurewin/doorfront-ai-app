@@ -87,7 +87,7 @@ export default function LabelPanel() {
         sx={{
           width: "80%",
           display: "block",
-          margin: "0 auto",
+          margin: "1rem auto",
           color: "white",
           bgcolor: "#389e0d",
           mb: 1,

@@ -59,3 +59,8 @@ export interface ChallengeArea{
   areaScore:number;
   
 }
+
+export interface setReferrer{
+  id:string;
+  referrer:string
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import {
   GoogleMapContainerStyle,
   MapContainerStyle,
@@ -18,6 +18,9 @@ import { useExplorationStore } from "../../global/explorationState";
 import Notes from "../Notes"
 import {Box,Typography,} from "@mui/material"
 // import asyncLoading from "react-async-loader";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Button, IconButton} from "@mui/material";
 
 export interface GoogleMapProps {
   google?: typeof google;
@@ -57,9 +60,7 @@ function GoogleMap({
         break
       }
     }
-    
-  },[googleMapConfig.position])
-  */
+    */
   React.useEffect(() => {
     if (google && !_isMounted.current) {
       if (!map && !streetView) {
@@ -114,6 +115,12 @@ function GoogleMap({
     setIsNextPosition,
   ]);
 
+  const [showMap, setShowMap] = useState(false);
+
+  const handleToggleMap = () => {
+    setShowMap(!showMap);
+  };
+
   return (
     <>
       {google && (
@@ -138,35 +145,24 @@ function GoogleMap({
                 />
               )}
           </div>
-          <div
-            id="MapContainer"
-            className="MapContainer"
-            style={MapContainerStyle}
-          >
-            {/*
-            {activeContest != undefined &&
-              <div>
-                  <Box sx = {{bottom:'auto'}}>
-                  <Typography>
-                    Current Area: {currentArea}
-                  </Typography>
-                  <Typography>
-                    Current Area Score:
-                  </Typography>
-                  <Typography>
-                    Current Area Owner:
-                  </Typography>
-                </Box>
-                </div>
+          {/*  MapToggler */}
+            <div id="miniMapToggler">
+              <Button 
+                variant="contained"
+                startIcon={showMap ? <VisibilityOffIcon /> : <VisibilityIcon/>}
+                onClick={handleToggleMap}>
+                {showMap ? 'Hide Map' : 'Show Map'}
+              </Button>
+            </div>
+            {/* <IconButton aria-label="Open in new tab" component="a" href="#as-link">
+              {showMap ?<VisibilityOffIcon /> : <VisibilityIcon/>}
+            </IconButton> */}
+            <div
+              id="MapContainer"
+              className={showMap ? 'MapBlock' : 'MapNone'}
+              style={MapContainerStyle}
+            >
 
-            */}
-
-            {
-              /*currentSelectedImageTitle=== 'door' && currentSelectedImage !== "" &&
-              <div style={{position:'absolute',top:'300px',width:'240px'}}>
-                <Notes page = "explore" id={currentSelectedImage} />
-              </div> */
-            }
             <div
               id="Map"
               ref={_map}
@@ -179,8 +175,8 @@ function GoogleMap({
   );
 }
 
-const api = process.env.REACT_APP_API_KEY;
-const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=&v=weekly&channel=2&libraries=places`;
+const api = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
+const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=places&callback=Function.prototype&v=quarterly`;
 export default makeAsyncScriptLoader(url, {
   globalName: "google",
 })(GoogleMap);

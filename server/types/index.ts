@@ -36,6 +36,7 @@ export interface UserBody {
   email: string;
   role: string;
   institution: string;
+  referralCode?:string;
 }
 
 export interface LoginBody {

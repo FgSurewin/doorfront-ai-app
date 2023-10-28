@@ -201,4 +201,38 @@ async getAreaScore (
   await userService.getAreaScore({req,res,next},body)
 }
 
+async getReferralCode(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getReferralCode({req,res,next},body)
+}
+
+async getReferrer(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getReferrer({req,res,next},body)
+}
+async getAllReferredUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getAllReferredUsers({req,res,next},body)
+}
+
+async updateReferredUserBonus(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{referrerId: string,refereeId:string} = req.body;
+  await userService.updateReferredUserBonus({req,res,next},body)
+}
 }

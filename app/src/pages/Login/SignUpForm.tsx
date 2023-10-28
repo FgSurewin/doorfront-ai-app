@@ -12,6 +12,9 @@ import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
 import { useSnackbar } from "notistack";
 import { signUp } from "../../apis/user";
+import {
+  useSearchParams,
+} from "react-router-dom"
 
 type roleType = "Student" | "Faculty" | "Volunteer" | "";
 
@@ -24,6 +27,7 @@ interface Values {
   confirmPassword: string;
   role: roleType;
   institution: string;
+  referralCode?:string;
 }
 
 export default function SignUpForm({
@@ -31,6 +35,20 @@ export default function SignUpForm({
 }: {
   switchToLogin: () => void;
 }) {
+  const [ref,setRef] = React.useState("")
+  const [queryParameters] = useSearchParams()
+
+  React.useEffect(()=>{
+    const found = queryParameters.get("ref")
+    if(found !== null){
+      setRef(found)
+      console.log(ref)
+    }
+    else{
+      console.log("sad")
+    }
+  },[])
+
   const { enqueueSnackbar } = useSnackbar();
   return (
     <Box
@@ -56,7 +74,9 @@ export default function SignUpForm({
             confirmPassword: "",
             role: "",
             institution: "",
+            referralCode: ref
           }}
+          enableReinitialize
           validate={(values) => {
             const errors: Partial<Values> = {};
             if (!values.email) {
@@ -79,10 +99,12 @@ export default function SignUpForm({
           onSubmit={async (values, { setSubmitting }) => {
             try {
               const { confirmPassword, ...other } = values;
+              console.log(values)
               setSubmitting(true);
               const result = await signUp(other);
+              console.log(result)
               if (result.code === 0) {
-                enqueueSnackbar("Sign up successfully", {
+                enqueueSnackbar(result.message, {
                   variant: "success",
                 });
                 switchToLogin();
@@ -169,6 +191,15 @@ export default function SignUpForm({
                 type="text"
                 label="Institution"
                 name="institution"
+                sx={{ mb: 2 }}
+              />
+              <Field
+                fullWidth
+                
+                component={TextField}
+                type="referralCode"
+                label="Referral Code"
+                name="referralCode"
                 sx={{ mb: 2 }}
               />
               <Button

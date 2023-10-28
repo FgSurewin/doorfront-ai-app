@@ -33,6 +33,10 @@ route.post("/updateContestStats",userController.updateContestStats)
 route.post("/resetContestScore",userController.resetContestScore)
 route.post("/getAreaScore",userController.getAreaScore)
 route.post("/getNickname",userController.getNickname)
+route.post("/getReferrer",userController.getReferrer)
+route.post("/getReferralCode",userController.getReferralCode)
+route.post("/getAllReferredUsers",userController.getAllReferredUsers)
+route.post("/updateReferredUserBonus",userController.updateReferredUserBonus)
 
 // route.post("/addImages", userController.updateImage);
 // route.post("/addCreateCredit", userController.addCreateCredit);

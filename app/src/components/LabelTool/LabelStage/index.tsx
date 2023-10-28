@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useState, useEffect} from "react";
 import Konva from "konva";
 import useImage from "use-image";
 import { Stage, Layer, Image, Rect } from "react-konva";
@@ -12,6 +12,7 @@ import { calculateBoundingBox, preventBoxOutOfImage } from "../utils";
 import { isEqual } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../../global/userState";
+import { useMediaQuery } from "@mui/material";
 
 export default function LabelStage() {
   /* -------------------------------------------------------------------------- */
@@ -50,6 +51,8 @@ export default function LabelStage() {
   // Get viewport width and height dynamically
   const { height, width } = useWindowDimensions();
   const [image] = useImage(currentImage ? currentImage.imgSrc : "");
+  const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+  
 
   /* ------------------------------- Wheel Events ------------------------------ */
   const handleStageWheel = (e: KonvaEventObject<WheelEvent>) => {
@@ -144,19 +147,34 @@ export default function LabelStage() {
     onChangeSelectedBoxType("")
     onChangeStageAttributes({ x: e.target.x(), y: e.target.y() });
   };
-  const handleStageDragStart = () => {
-    onChangeSelectedBoxId("")
-    onChangeSelectedBoxType("")
-  };
+
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  // console.log(stageSize);
+  useEffect(() => {
+    function handleResize() {
+      setStageSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initialize the stage size on initial render
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  console.log(imgRef);
 
   return (
-    <div>
+ 
+    <>
       {currentImage && (
         <Stage
           className="labelStage"
           style={{ cursor: labelingProcess.isLabeling ? "crosshair" : "grab" }}
-          width={width - 101 - 400}
-          height={height - 64}
+          width={stageSize.width}
+          height={stageSize.width > 895 ? stageSize.height - 64: stageSize.height - 64}
           draggable={!labelingProcess.isLabeling}
           {...stageAttributes}
           onMouseDown={handleStageMouseDown}
@@ -164,10 +182,9 @@ export default function LabelStage() {
           onMouseUp={handleStageMouseUp}
           onTouchStart={checkDeselect}
           onDragEnd={handleStageDragEnd}
-          onDragStart={handleStageDragStart}
           onWheel={handleStageWheel}
         >
-          <Layer {...layerAttributes}>
+          <Layer>
             <Image image={image} {...imageAttributes} ref={imgRef} />
             <IndicatorLine />
             {currentImage.labels.length > 0 &&
@@ -190,6 +207,7 @@ export default function LabelStage() {
           </Layer>
         </Stage>
       )}
-    </div>
+    </>
+   
   );
 }

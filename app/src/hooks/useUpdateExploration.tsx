@@ -29,13 +29,13 @@ export const useUpdateExplorationPage = () => {
     try {
       const { data: location } = await getRandomLocationFromDB();
       const newMetaData = await fetchMetadata(
-        process.env.REACT_APP_API_KEY!,
+        process.env.REACT_APP_GOOGLE_MAP_API_KEY!,
         location
       );
-      // console.log("Action One - Not Changed");
+       //console.log("Action One - Not Changed");
       if (newMetaData.status === "OK") {
         if (googleMapConfig.panoId !== newMetaData.pano_id) {
-          // console.log("Action Two- Changed -> Update Map");
+          //console.log("Action Two- Changed -> Update Map");
           updateGoogleMapConfig({
             panoId: newMetaData.pano_id,
             position: newMetaData.location,

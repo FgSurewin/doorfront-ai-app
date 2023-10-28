@@ -69,7 +69,7 @@ export default function Aside() {
         sx={{
           borderRight: 1,
           borderColor: "divider",
-          minWidth: "100px",
+          width:"auto"
         }}
       >
         {panelData.map((item) => (

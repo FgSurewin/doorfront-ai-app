@@ -4,7 +4,7 @@ import GoogleMap from "../../components/GoogleMap";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
-import { Box, Container, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Container, Grid, Paper, Stack, Typography, IconButton,  Button } from "@mui/material";
 import { generateInfo } from "../../components/GoogleMap/utils/streetViewTool";
 import { debouncedStreetViewImageChange } from "./utils/debounceFunc";
 import { useExplorationStore } from "../../global/explorationState";
@@ -18,26 +18,29 @@ import * as turf from '@turf/turf'
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { LocalStorageKeyType, readLocal } from "../../utils/localStorage";
 import { ContestAreaInfo } from "../../components/Contest";
+import "./exploration.css";
+import SouthIcon from '@mui/icons-material/South';
+import NorthIcon from '@mui/icons-material/North';
 
 export default function ExplorationPage() {
-  const {
-    explorationTour,
-    explorationSteps,
-    explorationTourStepIndex,
-    updateExplorationTourStepIndex,
-    updateExplorationTour,
-  } = useTourStore();
+	const {
+		explorationTour,
+		explorationSteps,
+		explorationTourStepIndex,
+		updateExplorationTourStepIndex,
+		updateExplorationTour,
+	} = useTourStore();
 
-  /* ------------------------------ Global State ------------------------------ */
-  const {
+	/* ------------------------------ Global State ------------------------------ */
+	const {
     googleMapConfig,
     streetViewImageConfig,
     updateGoogleMapConfig,
     updateStreetViewImageConfig,
     panoramaMarkerList,
     setIsNextPosition,
-    updateCurrentSelectedImage,
-
+    clickedLocation,
+    updateClickedLocation,
   } = useExplorationStore();
 
   const [currentArea,setCurrentArea] = React.useState("")
@@ -71,8 +74,26 @@ export default function ExplorationPage() {
   /* -------------------------------------------------------------------------- */
   /*                                 Custom Hook                                */
   /* -------------------------------------------------------------------------- */
-  const { handleNextPosition, } = useUpdateExplorationPage();
+  const { handleNextPosition, handleClickedLocation } =
+    useUpdateExplorationPage();
 
+  /* ------------------------------ React Effect ------------------------------ */
+  React.useEffect(() => {
+    (async function () {
+      if (!explorationTour && clickedLocation) {
+        await handleClickedLocation(clickedLocation);
+        updateClickedLocation(null);
+      }
+    })();
+  }, [
+    clickedLocation,
+    explorationTour,
+    handleClickedLocation,
+    // handleNextPosition,
+    updateClickedLocation,
+  ]);
+
+  /* -------------------------------------------------------------------------- */
   const onPovChanged = (
     result: ReturnType<typeof generateInfo>,
     map: google.maps.Map
@@ -84,7 +105,7 @@ export default function ExplorationPage() {
     result: ReturnType<typeof generateInfo>,
     map: google.maps.Map
   ) => {
-    console.log("onPositionChanged -> ", result);
+    // console.log("onPositionChanged -> ", result);
     debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
     if (result.position && result.pov) {
       setIsNextPosition(false);
@@ -93,7 +114,6 @@ export default function ExplorationPage() {
         position: result.position,
         povConfig: { ...result.pov, zoom: result.zoom },
       });
-      updateCurrentSelectedImage("");
     }
   };
 
@@ -124,85 +144,115 @@ export default function ExplorationPage() {
       // console.log("over");
       updateExplorationTour(false);
       updateExplorationTourStepIndex(0);
-      await handleNextPosition();
+      if (clickedLocation) {
+        await handleClickedLocation(clickedLocation);
+      } else {
+        await handleNextPosition();
+      }
     }
   };
 
-  return (
-    <div style={{ minWidth: "1440px" }} className="ExplorationWrapper">
-      <Joyride
-        callback={handleJoyrideCallback}
-        continuous={true}
-        run={explorationTour}
-        scrollToFirstStep={true}
-        showProgress={true}
-        steps={explorationSteps}
-        stepIndex={explorationTourStepIndex}
-        styles={{
-          options: {
-            zIndex: 10000,
-            width: "500px",
-          },
-        }}
-      />
-      <Navbar position="static" isTransparent={false} />
-      <Paper
-        id="ExplorationContainer"
-        sx={{
-          minHeight: "calc(100vh - 74px)",
-          backgroundColor: "rgba(225, 207, 185, 0.15)",
-          minWidth: "1440px",
-        }}
-      >
-        <Container maxWidth="xl">
-          <Grid container sx={{ pt: 3 }}>
-            <Grid item xs={12}>
-            {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
-              <>
-              {currentArea != "" && <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
-              }
-              <ContestAreaInfo areaName={currentArea} />
-              </>
-             }
 
-            </Grid>
-            <Grid item xs={8} sx={{ minHeight: "640px", minWidth: "890px" }}>
-              {googleMapConfig.panoId !== "" && (
-                <GoogleMap
-                  streetViewEvents={{ onPovChanged, onPositionChanged }}
-                  mapConfig={{
-                    center: googleMapConfig.position,
-                    zoom: googleMapConfig.staticMapZoom,
-                  }}
-                  streetViewConfig={{
-                    pov: googleMapConfig.povConfig,
-                    position: googleMapConfig.position,
-                  }}
-                  streetViewMarkerList={panoramaMarkerList}
-                />
-              )}
-              <Stack direction="row" spacing={2}>
-                <Typography variant="h6">
-                  Heading: {Math.round(streetViewImageConfig.imagePov.heading)}
-                </Typography>
-                <Typography variant="h6">
-                  Pitch: {Math.round(streetViewImageConfig.imagePov.pitch)}
-                </Typography>
-                <Typography variant="h6">
-                  Zoom: {Math.round(streetViewImageConfig.imagePov.zoom)}
-                </Typography>
-              </Stack>
-            </Grid>
-            <Grid item xs={4}>
-              <BadgeShowcase />
-              <UserCreditShowcase />
-              <ActionPanel onNext={handleNextPosition} />
-            </Grid>
-          </Grid>
-        </Container>
-      </Paper>
-      <ImageDrawer />
-      <TreasureShowcase />
-    </div>
-  );
+  const scrollToDirection = (direction: 'top' | 'bottom') => {
+    const top = 0;
+    const bottom = document.documentElement.scrollHeight;
+  
+    const scrollToValue = direction === 'top' ? top : bottom;
+  
+    window.scrollTo({
+      top: scrollToValue,
+      behavior: 'smooth',
+    });
+  };
+  
+	return (
+		<div id="ExplorationWrapper">
+			{/* <Joyride
+				callback={handleJoyrideCallback}
+				continuous={true}
+				run={explorationTour}
+				scrollToFirstStep={true}
+				showProgress={true}
+				steps={explorationSteps}
+				stepIndex={explorationTourStepIndex}
+				styles={{
+					options: {
+						zIndex: 10000,
+						width: "500px",
+					},
+				}}
+			/> */}
+			<Navbar position="static" isTransparent={false} />
+			<Paper
+				id="ExplorationContainer"
+        elevation={4}
+				sx={{
+          paddingTop:  { xs: '0', md: '0', lg: '3em' },
+					paddingBottom: "6rem",
+					backgroundColor: "rgba(225, 207, 185, 0.15)"
+				}}
+			>
+				<Container maxWidth="xl">
+
+        <Stack 
+          sx={{ display: { xs: 'flex', md: 'flex', lg: 'none' } }}
+          padding="1rem"
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Button endIcon={<SouthIcon className='arrow-icon'/>} onClick={() => scrollToDirection('bottom')}>
+            Scroll To Bottom
+          </Button>
+        </Stack> 
+					<Grid container  sx={{ pt:{ xs: 1, lg: 3 } }}>
+						<Grid item sm={12} lg={8}  width={"100%"} sx={{ pr: { sm: 0, lg: 5 }}} id="GridBot">
+							{googleMapConfig.panoId !== "" && (
+								<GoogleMap
+									streetViewEvents={{ onPovChanged, onPositionChanged }}
+									mapConfig={{
+										center: googleMapConfig.position,
+										zoom: googleMapConfig.staticMapZoom,
+									}}
+									streetViewConfig={{
+										pov: googleMapConfig.povConfig,
+										position: googleMapConfig.position,
+									}}
+									streetViewMarkerList={panoramaMarkerList}
+								/>
+                
+							)}
+							<Stack direction="row" spacing={2}>
+								<Typography variant="h6">
+									Heading: {Math.round(streetViewImageConfig.imagePov.heading)}
+								</Typography>
+								<Typography variant="h6">
+									Pitch: {Math.round(streetViewImageConfig.imagePov.pitch)}
+								</Typography>
+								<Typography variant="h6">
+									Zoom: {Math.round(streetViewImageConfig.imagePov.zoom)}
+								</Typography>
+							</Stack>
+						</Grid>
+						<Grid item sm={12} lg={4} width={"100%"} id="GridBot">
+							<BadgeShowcase />
+							<UserCreditShowcase />
+							<ActionPanel onNext={handleNextPosition} />
+						</Grid>
+					</Grid>
+				</Container>
+        <Stack 
+          sx={{ display: { xs: 'flex', md: 'flex', lg: 'none' } }}
+          padding="1rem"
+          direction="row"
+          justifyContent="center"
+          alignItems="center">
+          <Button startIcon={<NorthIcon className='arrow-icon' />} onClick={() => scrollToDirection('top')}>
+            Scroll To Top
+          </Button>
+        </Stack>
+			</Paper>
+			<ImageDrawer />
+			<TreasureShowcase />
+		</div>
+	);
 }

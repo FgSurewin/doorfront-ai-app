@@ -11,6 +11,11 @@ export interface areaScores{
   areaScore: number;
 }
 
+export interface userReferred{
+  userID:string;
+  bonusReceived: boolean;
+}
+
 const areaSchema = new Schema<areaScores> ({
   areaName: {type:String, required:true},
   areaScore: {type:Number, required:true}
@@ -20,6 +25,11 @@ const QueryImageAttributeSchema = new Schema<QueryImageAttribute>(
   { imageId: String, imgSrc: String, fileName: String },
   { timestamps: true }
 );
+
+const UserReferredSchema = new Schema<userReferred> (
+  {userID:String, bonusReceived:Boolean},
+  {timestamps:true}
+)
 
 /*
 const PreviousScoresSchema = new Schema<number>(
@@ -50,6 +60,11 @@ export interface UserInterface extends Document {
   contestScore: number;
   areaScores: areaScores[];
   //previousScores: number[]; //store 12 previous months scores
+  //NEW all optional
+  referralCode: string;
+  usersReferred: userReferred[];
+  referrer : string;
+
 }
 
 const UserModel = new Schema<UserInterface>(
@@ -118,8 +133,17 @@ const UserModel = new Schema<UserInterface>(
       type: Number,
       required: false
     },
-    areaScores: [areaSchema]
+    areaScores: [areaSchema],
    // previousScores: [PreviousScoresSchema]
+    referralCode: {
+      type:String,
+      required:false
+    },
+    usersReferred:[UserReferredSchema],
+    referrer:{
+      type:String,
+      required:false
+    }
   },
   { timestamps: true }
 );
