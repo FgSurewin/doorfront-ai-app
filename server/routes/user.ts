@@ -37,6 +37,7 @@ route.post("/getReferrer",userController.getReferrer)
 route.post("/getReferralCode",userController.getReferralCode)
 route.post("/getAllReferredUsers",userController.getAllReferredUsers)
 route.post("/updateReferredUserBonus",userController.updateReferredUserBonus)
+route.post("/getAllContestUsersInfo",userController.getAllContestUsersInfo)
 
 // route.post("/addImages", userController.updateImage);
 // route.post("/addCreateCredit", userController.addCreateCredit);

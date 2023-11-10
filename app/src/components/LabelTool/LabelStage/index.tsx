@@ -37,7 +37,7 @@ export default function LabelStage() {
   const {
     stageAttributes,
     onChangeStageAttributes,
-    layerAttributes,
+    // layerAttributes,
     imageAttributes,
     scaleConfig,
     onChangeSelectedBoxId,
@@ -49,9 +49,9 @@ export default function LabelStage() {
 
   /* -------------------- Layout Configuration of LabelTool ------------------- */
   // Get viewport width and height dynamically
-  const { height, width } = useWindowDimensions();
+  // const { height, width } = useWindowDimensions();
   const [image] = useImage(currentImage ? currentImage.imgSrc : "");
-  const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+  // const isChangingDirection = useMediaQuery("(max-width: 1200px)");
   
 
   /* ------------------------------- Wheel Events ------------------------------ */

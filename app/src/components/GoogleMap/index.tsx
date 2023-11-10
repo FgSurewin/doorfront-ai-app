@@ -15,8 +15,8 @@ import {
 // import { panoMarker } from "./testData";
 import { StreetViewMarkerType } from "./utils/panoMarker";
 import { useExplorationStore } from "../../global/explorationState";
-import Notes from "../Notes"
-import {Box,Typography,} from "@mui/material"
+// import Notes from "../Notes"
+// import {Box,Typography,} from "@mui/material"
 // import asyncLoading from "react-async-loader";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';

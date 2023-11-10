@@ -96,6 +96,7 @@ export default function ContestMap() {
       })
 
     }
+
   }
 
   function findNearestPoint(point: MapLayerMouseEvent) {
@@ -133,11 +134,11 @@ export default function ContestMap() {
     return turfStreetPoints
   }
 
-  function onMouseLeave() {
-    setHoverInfo(defaultHoverInfo)
-    //@ts-ignore
-    setLayerStyle({ ...layerStyle, paint: { "line-color": "#000000", "line-width": 0 } })
-  }
+  // function onMouseLeave() {
+  //   setHoverInfo(defaultHoverInfo)
+  //   //@ts-ignore
+  //   setLayerStyle({ ...layerStyle, paint: { "line-color": "#000000", "line-width": 0 } })
+  // }
 
   function renderMap() {
 
@@ -151,7 +152,7 @@ export default function ContestMap() {
         styleDiffing
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
         interactive={false}
-        interactiveLayerIds={["contest-map"]}
+        interactiveLayerIds={["contest-map copy"]}
         onClick={(e) => findNearestPoint(e)}
         onMouseMove={(e) => mouseMove(e)}
         //onMouseLeave={onMouseLeave}

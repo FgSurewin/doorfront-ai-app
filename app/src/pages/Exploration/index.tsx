@@ -4,13 +4,13 @@ import GoogleMap from "../../components/GoogleMap";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
-import { Container, Grid, Paper, Stack, Typography, IconButton,  Button } from "@mui/material";
+import { Container, Grid, Paper, Stack, Typography, Button } from "@mui/material";
 import { generateInfo } from "../../components/GoogleMap/utils/streetViewTool";
 import { debouncedStreetViewImageChange } from "./utils/debounceFunc";
 import { useExplorationStore } from "../../global/explorationState";
 import { useUpdateExplorationPage } from "../../hooks/useUpdateExploration";
 import { useTourStore } from "../../global/tourState";
-import Joyride, { CallBackProps, EVENTS } from "react-joyride";
+import { CallBackProps, EVENTS } from "react-joyride";
 import TreasureShowcase from "./TreasureShowcase";
 import UserCreditShowcase from "./UserCreditShowcase";
 import { contestNeighborhoods } from "../../components/Map/contest";
@@ -25,8 +25,8 @@ import NorthIcon from '@mui/icons-material/North';
 export default function ExplorationPage() {
 	const {
 		explorationTour,
-		explorationSteps,
-		explorationTourStepIndex,
+		// explorationSteps,
+		// explorationTourStepIndex,
 		updateExplorationTourStepIndex,
 		updateExplorationTour,
 	} = useTourStore();
@@ -205,6 +205,15 @@ export default function ExplorationPage() {
           </Button>
         </Stack> 
 					<Grid container  sx={{ pt:{ xs: 1, lg: 3 } }}>
+            <Grid item xs={12}>
+            {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
+              <>
+              {currentArea != "" && <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {currentArea}</Typography>
+              }
+              <ContestAreaInfo areaName={currentArea} />
+              </>
+             }
+            </Grid>
 						<Grid item sm={12} lg={8}  width={"100%"} sx={{ pr: { sm: 0, lg: 5 }}} id="GridBot">
 							{googleMapConfig.panoId !== "" && (
 								<GoogleMap

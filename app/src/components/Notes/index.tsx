@@ -15,7 +15,7 @@ import { updateNewHumanLabels } from '../../apis/collectedImage';
 import {
     addUserCredit,
     addUserLabelCredit,
-    saveImageToDiffList,
+    // saveImageToDiffList,
   } from "../../apis/user";
 
 export default function Notes({ page, id }: {
@@ -33,9 +33,9 @@ export default function Notes({ page, id }: {
     const { userInfo, clearUserInfo } = useUserStore();
     const navigate = useNavigate();
     const [edited, setEdited] = useState(false)
-    const { currentSelectedImage, collectedImageList, panoramaMarkerList, updateCollectedImageList, updatePanoramaMarkerList } = useExplorationStore();
+    const { currentSelectedImage, collectedImageList, panoramaMarkerList,} = useExplorationStore();
     const { selectedBoxId,onChangeNotesOpen, notesOpen } = useReactToolInternalStore();
-    const { currentNotes, updateCurrentNotes, reactToolImageList, selectedImageId} = useReactToolsStore();
+    const { updateCurrentNotes, reactToolImageList, selectedImageId} = useReactToolsStore();
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [editButtonText, setEditButtonText] = useState('edit?')
     const currentBoxNotes = useMemo(() => findCurrentBoxNotes(), [selectedBoxId]);
@@ -135,10 +135,10 @@ export default function Notes({ page, id }: {
             }
         }
 
-        if(page==="explore"){
-            const id = currentSelectedImage
-        }
-        else {const id = selectedImageId}
+        // if(page==="explore"){
+        //     const id = currentSelectedImage
+        // }
+        // else {const id = selectedImageId}
         const result = await updateNewHumanLabels(
             {
                 imageId: id,

@@ -9,9 +9,9 @@ import ResetPasswordForm from "./ResetPasswordForm";
 import ContributionsChart from "./ContributionsChart"
 import { addUserBonusCredit, getNickname, getUserScoreFromDB, updateReferredUserBonus } from "../../apis/user";
 import { readLocal,LocalStorageKeyType } from '../../utils/localStorage';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { useSnackbar } from "notistack";
-import { getReferrer,getReferralCode,getAllReferredUsers, referredUser} from '../../apis/user';
+import { getReferralCode,getAllReferredUsers, referredUser} from '../../apis/user';
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -44,7 +44,7 @@ export default function Profile() {
     //const update = useUserStore().updateUserScore(testScores);
     const gridTitle: SxProps = { borderBottom: 1, borderColor: 'divider', fontWeight: 'bold' }
     const gridContent: SxProps = { borderBottom: 1, borderLeft: 1, borderColor: 'divider' }
-    const passwordSxProps: SxProps = { borderLeft: 1, borderColor: 'divider' }
+    // const passwordSxProps: SxProps = { borderLeft: 1, borderColor: 'divider' }
     const sidebar: SxProps = { borderBottom: 1, borderColor: 'divider' }
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);

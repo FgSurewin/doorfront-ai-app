@@ -5,7 +5,7 @@ import ContestLeaderBoard from '../../components/Leaderboard/contest'
 import Navbar from '../../components/Navbar'
 import CircleIcon from '@mui/icons-material/Circle';
 import Footer from "../../components/Footer";
-import Button from '@mui/material/Button/Button'
+// import Button from '@mui/material/Button/Button'
 
 export default function Contest() {
 

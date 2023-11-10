@@ -1,8 +1,8 @@
 import React ,{ useState, useEffect } from "react";
-import { Button, List, ListItem, Grid, Typography,Pagination,Stack, useMediaQuery,Theme } from "@mui/material";
+import { Pagination,Stack, useMediaQuery,Theme } from "@mui/material";
 import { ReactToolAsideTitle } from "../General";
 import { useReactToolsStore, ReactToolImageListItemType } from "../state/reactToolState";
-import DeleteIcon from "@mui/icons-material/Delete";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import { useUserStore } from "../../../global/userState";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -13,16 +13,16 @@ export default function ImagePanel() {
     reactToolImageList,
     selectedImageId,
     changeSelectedImageId,
-    deleteReactToolImage,
-    operationsFuncs,
-    disableDelete,
+    // deleteReactToolImage,
+    // operationsFuncs,
+    // disableDelete,
   
   } = useReactToolsStore();
 
   /* -------------------------------------------------------------------------- */
   /*                              Handle User Score                             */
   /* -------------------------------------------------------------------------- */
-  const { collectedImgNum, updateCollectedImgNum } = useUserStore();
+  // const { collectedImgNum, updateCollectedImgNum } = useUserStore();
 
 
   // let testArr = createDuplicateArray(40);

@@ -13,7 +13,6 @@ import {
   WebMenu,
 } from "./Navbar.style";
 import { Box, SxProps } from "@mui/material";
-import { LocalStorageKeyType, readLocal } from "../../utils/localStorage";
 
 // const menuItems = ["Start Exploring", "Validation"];
 let menuItems = [

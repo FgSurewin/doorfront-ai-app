@@ -327,191 +327,6 @@ export class UserService {
       });
     }
   }
-
-  // async addLabelImage(ctx: AppContext, body: QueryImageBody) {
-  //   const { res } = ctx;
-  //   try {
-  //     const { id, data } = body;
-  //     const currentUser = await UserModel.findById(id);
-  //     if (currentUser) {
-  //       const newLabelImages = [...currentUser.label_images, data];
-  //       const result = await UserModel.findOneAndUpdate(
-  //         { _id: id },
-  //         {
-  //           label_images: newLabelImages,
-  //         },
-  //         {
-  //           new: true,
-  //           upsert: true,
-  //           rawResult: true, // Return the raw result from the MongoDB driver
-  //         }
-  //       );
-  //       if (result.ok === 1) {
-  //         res.json({
-  //           code: 0,
-  //           message: "Add label image successfully",
-  //           data: result,
-  //         });
-  //       } else {
-  //         res.json({
-  //           code: 4000,
-  //           message: "Fail to add label image",
-  //         });
-  //       }
-  //     } else {
-  //       res.json({
-  //         code: 4000,
-  //         message: "User is not existed",
-  //       });
-  //     }
-  //   } catch (e) {
-  //     const error = new Error(`${e}`);
-  //     res.json({
-  //       code: 5000,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
-
-  // async deleteLabelImage(ctx: AppContext, body: QueryImageBody) {
-  //   const { res } = ctx;
-  //   try {
-  //     const { id, data } = body;
-  //     const currentUser = await UserModel.findById(id);
-  //     if (currentUser) {
-  //       const trimLabelImages = currentUser.label_images.filter(
-  //         (item) => item.imageId !== data.imageId
-  //       );
-  //       const result = await UserModel.findOneAndUpdate(
-  //         { _id: id },
-  //         {
-  //           label_images: trimLabelImages,
-  //         },
-  //         {
-  //           new: true,
-  //           upsert: true,
-  //           rawResult: true, // Return the raw result from the MongoDB driver
-  //         }
-  //       );
-  //       if (result.ok === 1) {
-  //         res.json({
-  //           code: 0,
-  //           message: "Delete label image successfully",
-  //           data: result,
-  //         });
-  //       } else {
-  //         res.json({
-  //           code: 4000,
-  //           message: "Fail to delete label image",
-  //         });
-  //       }
-  //     } else {
-  //       res.json({
-  //         code: 4000,
-  //         message: "User is not existed",
-  //       });
-  //     }
-  //   } catch (e) {
-  //     const error = new Error(`${e}`);
-  //     res.json({
-  //       code: 5000,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
-
-  // async addUnLabelImage(ctx: AppContext, body: QueryImageBody) {
-  //   const { res } = ctx;
-  //   try {
-  //     const { id, data } = body;
-  //     const currentUser = await UserModel.findById(id);
-  //     if (currentUser) {
-  //       const newUnLabelImages = [...currentUser.unLabel_images, data];
-  //       const result = await UserModel.findOneAndUpdate(
-  //         { _id: id },
-  //         {
-  //           unLabel_images: newUnLabelImages,
-  //         },
-  //         {
-  //           new: true,
-  //           upsert: true,
-  //           rawResult: true, // Return the raw result from the MongoDB driver
-  //         }
-  //       );
-  //       if (result.ok === 1) {
-  //         res.json({
-  //           code: 0,
-  //           message: "Add unLabel image successfully",
-  //           data: result,
-  //         });
-  //       } else {
-  //         res.json({
-  //           code: 4000,
-  //           message: "Fail to add unLabel image",
-  //         });
-  //       }
-  //     } else {
-  //       res.json({
-  //         code: 4000,
-  //         message: "User is not existed",
-  //       });
-  //     }
-  //   } catch (e) {
-  //     const error = new Error(`${e}`);
-  //     res.json({
-  //       code: 5000,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
-
-  // async deleteUnLabelImage(ctx: AppContext, body: QueryImageBody) {
-  //   const { res } = ctx;
-  //   try {
-  //     const { id, data } = body;
-  //     const currentUser = await UserModel.findById(id);
-  //     if (currentUser) {
-  //       const trimUnLabelImages = currentUser.unLabel_images.filter(
-  //         (item) => item.imageId !== data.imageId
-  //       );
-  //       const result = await UserModel.findOneAndUpdate(
-  //         { _id: id },
-  //         {
-  //           unLabel_images: trimUnLabelImages,
-  //         },
-  //         {
-  //           new: true,
-  //           upsert: true,
-  //           rawResult: true, // Return the raw result from the MongoDB driver
-  //         }
-  //       );
-  //       if (result.ok === 1) {
-  //         res.json({
-  //           code: 0,
-  //           message: "Delete unLabel image successfully",
-  //           data: result,
-  //         });
-  //       } else {
-  //         res.json({
-  //           code: 4000,
-  //           message: "Fail to delete unLabel image",
-  //         });
-  //       }
-  //     } else {
-  //       res.json({
-  //         code: 4000,
-  //         message: "User is not existed",
-  //       });
-  //     }
-  //   } catch (e) {
-  //     const error = new Error(`${e}`);
-  //     res.json({
-  //       code: 5000,
-  //       message: error.message,
-  //     });
-  //   }
-  // }
-
   async addCredit(ctx: AppContext, body: UpdateCreditBody) {
     const { res } = ctx;
     try {
@@ -764,72 +579,6 @@ export class UserService {
       });
     }
   }
-  /*
-  async assertOwnership(ctx: AppContext, body: ChallengeArea) {
-    const { res } = ctx;
-
-    try {
-      const { id, areaName, areaScore } = body;
-      const contest = await ContestModel.findOne({ active: true });
-      let findIndex = -1;
-      if (contest) {
-        for (var i = 0; i < contest.areas.length; i++) {
-          if (contest.areas[i].areaName === areaName) {
-            findIndex = i;
-            break;
-          }
-        }
-
-        if (
-          findIndex !== -1 &&
-          contest.areas[findIndex].currentOwner === undefined
-        ) {
-          const takeover = await ContestModel.findOneAndUpdate(
-            { active: true, areas: { $elemMatch: { areaName: areaName } } },
-            { $set: { "areas.$.currentOwner": id } },
-            { new: true }
-          );
-
-          // const bonusScore = await ContestModel.findOne({active:true,"areas.areaName": areaName})
-
-          if (takeover) {
-            res.json({
-              code: 0,
-              message: "Successfully attained ownership of area " + areaName,
-              data: takeover,
-            });
-          } else {
-            res.json({
-              code: 400,
-              message: "Error taking over " + areaName,
-              data: takeover,
-            });
-          }
-        } else {
-          res.json({
-            code: 400,
-            message: areaName + " already has an owner",
-            data: contest.areas.find((item) => item.areaName === areaName),
-          });
-        }
-      } else {
-        res.json({
-          code: 400,
-          message: "Contest does not have " + areaName + " as an area!",
-          data: contest,
-        });
-      }
-    } catch (e) {
-      const error = new Error(`${e}`);
-      //console.log(e)
-
-      res.json({
-        code: 5000,
-        message: error.message,
-      });
-    }
-  }
-*/
   async updateContestStats(ctx: AppContext, body: UpdateContestStats) {
     const { res } = ctx;
 
@@ -968,10 +717,6 @@ export class UserService {
         }
         //else just take it over yourself
         else if (originalOwner !== id) {
-          //contest.areas[i].currentOwner = id and update to server
-          //const areaIndexUser = result.areaScores.findIndex(item=>item.areaName === areaName)
-          //const areaIndexContest = contest.areas.findIndex(item=>item.areaName ===areaName)
-          //contest.areas[0].currentOwner = id;
           const takeover = await ContestModel.findOneAndUpdate(
             { active: true, "areas.areaName": areaName },
             { $set: { "areas.$.currentOwner": id } },
@@ -1078,30 +823,6 @@ export class UserService {
           message: "User score for " + areaName + " retrieved successfully",
           data: user.areaScores[0].areaScore,
         });
-
-        /*
-        var found = false;
-        var value = 0;
-        user.areaScores.forEach(function (area) {
-          if (area.areaName == areaName) {
-            found = true;
-            value = area.areaScore;
-          }
-        });
-
-        if (found) {
-          res.json({
-            code: 0,
-            message: "User score for " + areaName + " retrieved successfully",
-            data: value,
-          });
-        } else {
-          res.json({
-            code: 400,
-            message: "User has no value for area " + areaName,
-            data: user,
-          });
-        }*/
       } else {
         res.json({
           code: 400,
@@ -1386,6 +1107,33 @@ export class UserService {
         })
       }
     }catch (e) {
+      const error = new Error(`${e}`);
+      res.json({
+        code: 5000,
+        message: error.message,
+      });
+    }
+  }
+
+  async getAllContestUsersInfo(ctx:AppContext){
+    const {res} = ctx;
+    try{
+      const allUsers = await UserModel.find({contestScore:{$gt:0}},{id:true,nickname:true,contestScore:true,areaScores:true})
+      if(allUsers){
+        res.json({
+          code:0,
+          message:"Users found",
+          data: allUsers
+        })
+      }
+      else{
+        res.json({
+          code:400,
+          message:"No users found!"
+        })
+      }
+
+    }catch(e){
       const error = new Error(`${e}`);
       res.json({
         code: 5000,

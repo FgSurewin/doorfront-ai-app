@@ -235,4 +235,11 @@ async updateReferredUserBonus(
   const body:{referrerId: string,refereeId:string} = req.body;
   await userService.updateReferredUserBonus({req,res,next},body)
 }
+async getAllContestUsersInfo(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  await userService.getAllContestUsersInfo({req,res,next})
+}
 }

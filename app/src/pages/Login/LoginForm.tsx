@@ -60,7 +60,6 @@ export default function LoginForm() {
             try {
               setSubmitting(true);
               const result = await login(values);
-              console.log(result)
               if (result.code === 0) {
                 enqueueSnackbar("Login successfully", {
                   variant: "success",

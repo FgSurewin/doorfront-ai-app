@@ -37,6 +37,18 @@ export interface referredUser{
   bonusReceived:boolean;
 }
 
+export interface userAreaScore{
+  areaName:string,
+  areaScore:number
+}
+
+export interface contestUserReturn{
+  _id:string,
+  nickname:string,
+  contestScore?:number,
+  areaScores: userAreaScore[]
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                               Login & Sign Up                              */
@@ -392,6 +404,16 @@ export const updateReferredUserBonus = (data:{referrerId:string,refereeId:string
              method:"POST",
              url: `user/updateReferredUserBonus`,
              data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getAllContestUsersInfo = () =>
+           baseRequest
+           .request<UserReturnData<contestUserReturn[]>>({
+             method:"POST",
+             url: `user/getAllContestUsersInfo`
            })
            .then ((res)=>res.data)
            .catch((res)=> {

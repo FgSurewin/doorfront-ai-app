@@ -14,7 +14,7 @@ import {
 } from "./utils";
 import { useReactToolInternalStore } from "./state/internalState";
 import ReactToolHeader from "./ReactToolHeader";
-import Joyride, { CallBackProps, EVENTS } from "react-joyride";
+import  { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../global/userState";
@@ -57,9 +57,9 @@ export default function LabelTool({
   /*                        Guild Tour Callback Function                        */
   /* -------------------------------------------------------------------------- */
   const {
-    labelingPageTour,
-    labelingSteps,
-    labelingTourStepIndex,
+    // labelingPageTour,
+    // labelingSteps,
+    // labelingTourStepIndex,
     updateLabelingTourStepIndex,
     updateLabelingPageTour,
   } = useTourStore();
