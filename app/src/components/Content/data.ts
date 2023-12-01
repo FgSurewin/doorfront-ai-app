@@ -14,8 +14,8 @@ export const FirstSectionData = {
 };
 
 export const SecondSectionData = {
-  title: "What we do with your labels",
-  content: `The way we do that is we virtually drop you into the scene in Google Streetview. Users label door area and identity different types of doors, as well as stairs and ramps. We aim to collect information to improve accessibility. 
+  title: "How you can help",
+  content: `This application allows you to collect accessibility data by virtually exploring New York City using Google Streetview. Users label the door area and identity different types of doors, as well as stairs and ramps. We aim to collect information to improve accessibility. 
     `,
   whole: Whole,
   comma: Comma,

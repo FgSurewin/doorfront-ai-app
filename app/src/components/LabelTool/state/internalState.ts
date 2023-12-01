@@ -87,7 +87,7 @@ export const useReactToolInternalStore = create<InternalState>(
       layerAttributes: { x: 300, y: 150 },
       imageAttributes: { x: 0, y: 0, width: 640, height: 640 },
       scaleConfig: {
-        minValue: 1,
+        minValue: .5,
         maxValue: 2,
         wheelStep: 1.01,
         buttonStep: 0.1,

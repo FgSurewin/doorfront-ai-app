@@ -180,7 +180,7 @@ export default function ContestMap() {
     <Container maxWidth='xl' sx={{ pt: 4, pb: 4 }}>
       <Grid container>
 
-        <Grid item xs={4}>
+        <Grid item xs={12} md={3}>
         <Typography variant="h6" sx={{ml:3}}><b>Current Area:</b> {hoverInfo.name}</Typography>
           <ContestAreaInfo areaName={hoverInfo.name}></ContestAreaInfo>
           {/*
@@ -224,7 +224,7 @@ export default function ContestMap() {
           </Grid>
   */}
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12} md={9}>
           <Box sx={{ border: '3px solid grey' }}>
             {renderMap()}
           </Box>

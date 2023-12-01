@@ -4,7 +4,7 @@ import useImage from "use-image";
 import { Stage, Layer, Image, Rect } from "react-konva";
 import { useWindowDimensions } from "../ReactToolHooks/useWindowDimensions";
 import { useReactToolsStore } from "../state/reactToolState";
-import { useReactToolInternalStore } from "../state/internalState";
+import { LabelingPoint, useReactToolInternalStore } from "../state/internalState";
 import { KonvaEventObject } from "konva/lib/Node";
 import ReactToolBox from "../Box";
 import IndicatorLine from "../IndicatorLine";
@@ -22,6 +22,11 @@ export default function LabelStage() {
 
   /* -------------------------------- Image Ref ------------------------------- */
   const imgRef = React.useRef<Konva.Image>(null);
+  React.useEffect(()=>{
+    if(window.innerWidth < 895){
+      onChangeStageAttributes({ scaleX: .65, scaleY: .65});
+    }
+  },[])
 
   /* --------------------------- Global Image State --------------------------- */
   const { reactToolImageList, selectedImageId, addReactToolImageLabel } =
@@ -96,6 +101,30 @@ export default function LabelStage() {
       });
     }
   };
+
+  const handleStageTouchEnd= (e: KonvaEventObject<TouchEvent>) => {
+
+    if(labelingProcess.isLabeling){
+      const point:LabelingPoint = e.target.getRelativePointerPosition()
+      const end:LabelingPoint = {x:point.x+40, y:point.y+80}
+      addReactToolImageLabel(selectedImageId, {
+        ...calculateBoundingBox(
+          point,
+          end
+        )!,
+        fill: "rgba(255,255,255, 0.2)",
+        stroke: labelingProcess.labelingColor,
+        strokeWidth: 2,
+        type: labelingProcess.labelingType,
+        subtype: "",
+        isVisible: true,
+        id: uuidv4(),
+        labeledBy: userInfo.nickname!,
+      });
+      resetLabelingProcess();
+    }
+  }
+
   const handleStageMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     if (labelingProcess.endPoint && labelingProcess.startPoint) {
       if (!isEqual(labelingProcess.endPoint, labelingProcess.startPoint)) {
@@ -164,7 +193,7 @@ export default function LabelStage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  console.log(imgRef);
+  //console.log(imgRef);
 
   return (
  
@@ -174,7 +203,7 @@ export default function LabelStage() {
           className="labelStage"
           style={{ cursor: labelingProcess.isLabeling ? "crosshair" : "grab" }}
           width={stageSize.width}
-          height={stageSize.width > 895 ? stageSize.height - 64: stageSize.height - 64}
+          height={stageSize.width > 895 ? stageSize.height - 64: stageSize.height - 256}
           draggable={!labelingProcess.isLabeling}
           {...stageAttributes}
           onMouseDown={handleStageMouseDown}
@@ -183,9 +212,10 @@ export default function LabelStage() {
           onTouchStart={checkDeselect}
           onDragEnd={handleStageDragEnd}
           onWheel={handleStageWheel}
+          onTouchEnd={handleStageTouchEnd}
         >
           <Layer>
-            <Image image={image} {...imageAttributes} ref={imgRef} />
+            <Image image={image}  {...imageAttributes} ref={imgRef} />
             <IndicatorLine />
             {currentImage.labels.length > 0 &&
               currentImage.labels.map((label) => (

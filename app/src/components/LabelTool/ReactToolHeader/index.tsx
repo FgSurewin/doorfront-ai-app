@@ -68,12 +68,18 @@ export default function ReactToolHeader() {
             alignItems="center"
             className="switchImageButton"
           >
-            <Typography
-              variant="subtitle2"
+            <Button
               sx={{ color: "white", textTransform: "uppercase", mr: 1 }}
+              onClick={()=>{
+                window.scrollTo({
+                  top: document.documentElement.scrollHeight,
+                  behavior: 'smooth',
+                });
+              }}
+              
             >
               Change Image
-            </Typography>
+            </Button>
             <Tooltip title="Previous Image" arrow>
               <Box>
                 <IconButton

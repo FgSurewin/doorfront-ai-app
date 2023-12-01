@@ -27,13 +27,12 @@ export default function Contest() {
                 sx={{
                     minHeight: "calc(100vh - 74px)",
                     backgroundColor: "rgba(225, 207, 185, 0.15)",
-                    minWidth: "1440px",
                 }}
             >
                 <Container maxWidth='xl'>
                     <Typography variant="h2" align="center" paddingBottom={6} pt={6}> Welcome to the Mapathon Beta!</Typography>
                     <Grid container maxWidth="xl" sx={{ alignItems: 'center' }} spacing={0}>
-                        <Grid item xs={7}>
+                        <Grid item xs={12} md={7}>
                             <Item>
                                 <List>
 
@@ -51,7 +50,7 @@ export default function Contest() {
                                 </List>
                             </Item>
                         </Grid>
-                        <Grid item xs={5}>
+                        <Grid item xs={12} md ={5}>
                             <Item >
                                 <Typography variant="subtitle1" color="text.primary" align='center'>Current Contest Leaders</Typography>
                                 <ContestLeaderBoard />

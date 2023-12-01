@@ -10,15 +10,34 @@ import {
 } from "./Content.style";
 
 export default function Content() {
+  const videoLink = process.env.REACT_APP_TUTORIAL_VIDEO 
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   return (
     <>
       <div style={{ backgroundColor: "rgba(225, 207, 185, 0.15)" }}>
         <Container maxWidth="xl">
+        <Box
+                sx={{
+                  position: {
+                    sm: "relative",
+                    xs: "static",
+                  },
+                  mt:"5%"
+                }}
+              >
+              <video
+                src={videoLink}
+                ref={videoRef}
+                controls
+                style={{width:"100%", height:"100%"}}
+              />
+              </Box>
           <Grid
             container
             sx={{ pt: { sm: 10, xs: 5 } }}
             rowSpacing={{ sm: 15, xs: 5 }}
           >
+
             <GridItem>
               <Box
                 sx={{
