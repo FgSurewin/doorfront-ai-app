@@ -29,7 +29,7 @@ ReactDOM.render(
           <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/contest" element={<Contest />} />
-            {<Route path="/contestTest" element = {<Test />} /> }
+            {/*<Route path="/contestTest" element = {<Test />} /> */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
