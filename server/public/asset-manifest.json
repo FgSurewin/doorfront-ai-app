@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.6032416e.css",
-    "main.js": "/static/js/main.7dae564c.js",
+    "main.js": "/static/js/main.7a9fddc2.js",
     "static/js/787.b95d21ec.chunk.js": "/static/js/787.b95d21ec.chunk.js",
     "static/media/dog_T.jpg": "/static/media/dog_T.4f4654ed9e178d190d2c.jpg",
-    "static/js/mapbox-gl-csp-worker.ac4b3c4d.worker.js": "/static/js/mapbox-gl-csp-worker.ac4b3c4d.worker.js",
+    "static/js/mapbox-gl-csp-worker.ffd2d765.worker.js": "/static/js/mapbox-gl-csp-worker.ffd2d765.worker.js",
     "static/media/NSF_LOGO.png": "/static/media/NSF_LOGO.1098d1a243a3ffeaa668.png",
     "static/media/CUNY_LOGO.jpg": "/static/media/CUNY_LOGO.609f5abe9f517a57f750.jpg",
     "static/media/whole.svg": "/static/media/whole.6e3e4c4d2a66206d6497ed8436b0ba5b.svg",
@@ -30,11 +30,11 @@
     "static/media/Badge_1.svg": "/static/media/Badge_1.e043e828b206899fe591ee15b3de6632.svg",
     "static/media/curve.svg": "/static/media/curve.78513b22462e85fbcd6f272016b3a990.svg",
     "main.6032416e.css.map": "/static/css/main.6032416e.css.map",
-    "main.7dae564c.js.map": "/static/js/main.7dae564c.js.map",
+    "main.7a9fddc2.js.map": "/static/js/main.7a9fddc2.js.map",
     "787.b95d21ec.chunk.js.map": "/static/js/787.b95d21ec.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6032416e.css",
-    "static/js/main.7dae564c.js"
+    "static/js/main.7a9fddc2.js"
   ]
 }
