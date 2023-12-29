@@ -1,10 +1,14 @@
 import axios from "axios";
 
+const old_model_link =
+  "https://doorfront-model-server-zo7id6rtfa-uc.a.run.app//model/detect";
+const new_model_link =
+  "https://doorfront-model-server-v1-fv2jh7djwq-uc.a.run.app/detect";
 const MODE = process.env.NODE_ENV;
 export const DETECTION_LINK =
-	MODE === "development"
-		? "http://localhost:5000/model/detect"
-		: "https://doorfront-model-server-zo7id6rtfa-uc.a.run.app//model/detect";
+  MODE === "development"
+    ? "http://localhost:5000/model/detect"
+    : new_model_link;
 
 // export const DETECTION_LINK =
 // 	"https://doorfront-model-server-zo7id6rtfa-uc.a.run.app//model/detect";
