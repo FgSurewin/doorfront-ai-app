@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import imageRoute from "./routes/image";
 import userRoute from "./routes/user";
 import contestRoute from "./routes/contest"
+import mailerRoute from "./routes/mailer"
 import collectImageRoute from "./routes/collectImage";
 import locationRoute from "./routes/location";
 import mongoose from "mongoose";
@@ -35,6 +36,7 @@ import { config, databaseLink } from "./database";
   app.use("/api/collectImage", collectImageRoute);
   app.use("/api/location", locationRoute);
   app.use("/api/contest",contestRoute)
+  app.use("/api/mailer",mailerRoute)
 
   // MongoDB Connection
   try {

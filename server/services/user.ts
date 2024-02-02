@@ -515,6 +515,7 @@ export class UserService {
           modify: item.modify,
           create: item.create,
           contestScore: item.contestScore,
+          updatedAt: item.updatedAt
         })),
       });
     } catch (e) {

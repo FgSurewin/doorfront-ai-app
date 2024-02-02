@@ -64,6 +64,7 @@ export interface UserInterface extends Document {
   referralCode: string;
   usersReferred: userReferred[];
   referrer : string;
+  updatedAt: Date
 
 }
 
@@ -143,6 +144,10 @@ const UserModel = new Schema<UserInterface>(
     referrer:{
       type:String,
       required:false
+    },
+    updatedAt:{
+      type:Date,
+      required: false
     }
   },
   { timestamps: true }
