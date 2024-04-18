@@ -2,15 +2,14 @@ import Container from "@mui/material/Container"
 import TextField from "@mui/material/TextField"
 import Box from "@mui/material/Box"
 import { useUserStore } from "../../global/userState"
-import {sendMail} from "../../apis/mailer"
 
 import { getActiveContest, createArea, createContest, changeContestState, deleteContest, updateAreaOwner, getAreaOwner, contestArea,setAreas} from "../../apis/contest"
-import {getNickname, updateContestStats, resetContestScore, getAreaScore} from "../../apis/user"
+import {getNickname, updateContestStats, resetContestScore, getAreaScore, AllUserScores, getAllUsersFromDB} from "../../apis/user"
+import _ from "lodash"
 import React from 'react'
-import { AllUserScores, getAllUsersFromDB } from "../../apis/user"
 import { LocalStorageKeyType, readLocal } from "../../utils/localStorage"
 import { contestNeighborhoods } from "../../components/Map/contest"
-import _ from "lodash"
+import Mailer from "../../components/Mailer"
 
 export default function TestPage(){
     const {userInfo} = useUserStore();
@@ -21,31 +20,33 @@ export default function TestPage(){
     const [areaScoreIncrement, setAreaScoreIncrement] = React.useState<number>(0)
     const [contestNumber,setContestNumber] = React.useState<number>(0)
     const [userId,setUserId] = React.useState<string>("")
-    const [recEmail,setRecEmail] = React.useState<string>("tortiz003@citymail.cuny.edu")
-    const [subject,setSubject] = React.useState<string>("Test")
-    const [body,setBody] = React.useState<string>("<b>Hello World!</b>")
-
     const [allUsers, setAllUsers] = React.useState<AllUserScores[]>([]);
-    React.useEffect(() => {
-        async function loadFunc() {
-            const result = await getAllUsersFromDB();
-            if (result.code === 0) {
-                setAllUsers(_.orderBy(result.data, ["updatedAt"], ["desc"]));
-            }
-        }
-        loadFunc();
-    },[]);
+    const [averageScore, setAverageScore] = React.useState<number>(0);
 
-    function showRecentUsers(){
-        var emails = ""
-        const length = Math.min(allUsers.length,10)
-        for(var i = 0; i < length; i++){
-            if(i === length-1) emails += allUsers[i].email
-            else emails += allUsers[i].email + ", "
+    React.useEffect(()=>{
+        async function loadFunc() {
+          const result = await getAllUsersFromDB();
+          if (result.code === 0) {
+            setAllUsers(_.orderBy(result.data, ["updatedAt"], ["desc"]));
+          }
         }
-        setRecEmail(emails)
+        loadFunc()
+      },[])
+
+    function getAverageScore(){
         console.log(allUsers)
+        let count;
+        let total = 0;
+        for(count = 0; count < allUsers.length; count++){
+            console.log(allUsers[count].score)
+            total += allUsers[count].score;
+        }
+        setAverageScore(total/count)
+        console.log(averageScore)
     }
+
+    
+    
 
     async function onSubmitArea(){
         const res= await getActiveContest();
@@ -109,11 +110,6 @@ export default function TestPage(){
             setActiveContest(contestNumber)   
         }
         console.log(activate)
-    }
-
-    async function Mailer(){
-        const res = await sendMail({recipient:recEmail,html:body,subject:subject})
-        console.log(res)
     }
 
     async function deactivateContest(){
@@ -196,15 +192,10 @@ export default function TestPage(){
             <button onClick={()=>UseMyId()} > Use My Id</button>
             <button onClick={()=> onGetNickname()}>Get Nickname from Id</button>
             </Box>
-            <Box sx= {{marginTop:5}}>
-                <TextField label="recipient email" size="small" value={recEmail} onChange={(e)=>setRecEmail(e.target.value)}></TextField>   
-                <TextField label="subject" size="small" value={subject} onChange={(e)=>setSubject(e.target.value)}></TextField>   
-                <TextField multiline label="Email Body" size="small" value={body} onChange={(e)=>setBody(e.target.value)} fullWidth margin="normal"></TextField> 
-
-                
-                <button onClick={()=>Mailer()}>Send Email</button>
+            <Mailer />
+            <Box sx = {{marginTop:5}}>
+                <button onClick={()=> getAverageScore()}> Get average score</button>
             </Box>
-            <button onClick={()=> showRecentUsers()}>Get recently modified users</button>
             
         </Container>
         </>

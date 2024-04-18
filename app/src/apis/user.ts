@@ -282,6 +282,7 @@ export interface AllUserScores {
   create: number;
   contestScore?:number;
   updatedAt:Date;
+  institution:string;
 }
 
 export const getAllUsersFromDB = () =>

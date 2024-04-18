@@ -44,9 +44,15 @@ export default function ReviewLabelingPage() {
             images.filter((image) => {
               // Check if current user has been modify or validate current image
               const names = image.human_labels.map((item) => item.name);
+              let incompleteDoor = false;
+              for(let i = 0; i < image.human_labels[0].labels.length;i++)
+                if(image.human_labels[0].labels[i].label === "door" && image.human_labels[0].labels[i].subtype === "") incompleteDoor = true
+          
               const isDisable =
                 names.includes(userInfo.nickname!) ||
-                image.human_labels.length >= maxModifier ||
+                //alter to check each label in human_labels[0].labels for door with subtype that is not ""
+                //if door has subtype "", do not disable
+                (image.human_labels.length >= maxModifier && !incompleteDoor) ||
                 image.image_id === "GuildTourSample" ||
                 image.human_labels.length === 0;
               return !isDisable;

@@ -1,13 +1,13 @@
 import { AppContext,} from "../types";
 import * as nodemailer from "nodemailer"
 import { SendMailBody } from "../types/mailer";
+import {OAuth2Client} from "google-auth-library"
 
 export class MailerService{
   async sendMail(ctx: AppContext, body: SendMailBody){
     const { res } = ctx;
     const {recipient,subject,html} = body;
     try{
-
     const account = {
       user: "doorfront.info@gmail.com",
       clientId: process.env.OAUTH2_CLIENTID,
@@ -15,18 +15,27 @@ export class MailerService{
       refreshToken: process.env.OAUTH2_REFRESHTOKEN,
       accessToken: process.env.OAUTH2_ACCESSTOKEN
     }
+    const myOAuth2Client = new OAuth2Client(
+      account.clientId,
+      account.clientSecret,
+      "https://developers.google.com/oauthplayground"
+      )
+      myOAuth2Client.setCredentials({
+        refresh_token:account.refreshToken
+      });
+      console.log(myOAuth2Client)
+      const myAccessToken = await myOAuth2Client.getAccessToken()
+      
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      service: "gmail",
         auth: {
           type:"OAuth2",
           user: account.user,
           clientId: account.clientId,
           clientSecret: account.clientSecret,
           refreshToken: account.refreshToken,
-          accessToken:account.accessToken
+          accessToken: account.accessToken
         }
       });
 
@@ -41,16 +50,17 @@ export class MailerService{
         from:"Doorfront <doorfront.info@gmail.com>",
         to:recipient,
         subject:subject,
-        html:html,
+        html:html, 
       }, 
       function(error,info){
         transporter.close()
         if(error)
-        res.json({
-          code: 500,
-          message: "Mail failed",
-          data: {error:error, recipient: recipient},
-        });
+          res.json({
+            code: 500,
+            message: "Mail failed",
+            data: {error:error, recipient: recipient, myAccessToken:myAccessToken},
+          });
+      
         else res.json({
           code: 0,
           message: "Mail Success",
