@@ -141,7 +141,7 @@ function GoogleMap({
 }
 
 const api = process.env.REACT_APP_API_KEY;
-const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=&v=weekly&channel=2&libraries=places`;
+const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=places&callback=Function.prototype&v=quarterly`;
 export default makeAsyncScriptLoader(url, {
   globalName: "google",
 })(GoogleMap);

@@ -10,6 +10,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@turf/turf": "^6.5.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.17",
     "@types/react": "^17.0.38",
@@ -20,6 +21,7 @@
     "formik-mui": "^4.0.0-alpha.3",
     "konva": "^8.3.2",
     "lodash": "^4.17.21",
+    "mapbox-gl": "^2.12.0",
     "notistack": "^2.0.3",
     "react": "^17.0.2",
     "react-async-loader": "^0.1.2",
@@ -27,6 +29,7 @@
     "react-dom": "^17.0.2",
     "react-joyride": "^2.3.2",
     "react-konva": "^17.0.2-5",
+    "react-map-gl": "^7.0.21",
     "react-query": "^3.34.7",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
@@ -34,6 +37,7 @@
     "use-image": "^1.0.8",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.2",
+    "worker-loader": "^3.0.8",
     "zustand": "^3.6.9"
   },
   "scripts": {

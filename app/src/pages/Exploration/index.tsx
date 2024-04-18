@@ -25,72 +25,96 @@ export default function ExplorationPage() {
 
 	/* ------------------------------ Global State ------------------------------ */
 	const {
-		googleMapConfig,
-		streetViewImageConfig,
-		updateGoogleMapConfig,
-		updateStreetViewImageConfig,
-		panoramaMarkerList,
-		setIsNextPosition,
-	} = useExplorationStore();
+    googleMapConfig,
+    streetViewImageConfig,
+    updateGoogleMapConfig,
+    updateStreetViewImageConfig,
+    panoramaMarkerList,
+    setIsNextPosition,
+    clickedLocation,
+    updateClickedLocation,
+  } = useExplorationStore();
 
-	/* -------------------------------------------------------------------------- */
-	/*                                 Custom Hook                                */
-	/* -------------------------------------------------------------------------- */
-	const { handleNextPosition } = useUpdateExplorationPage();
+  /* -------------------------------------------------------------------------- */
+  /*                                 Custom Hook                                */
+  /* -------------------------------------------------------------------------- */
+  const { handleNextPosition, handleClickedLocation } =
+    useUpdateExplorationPage();
 
-	const onPovChanged = (
-		result: ReturnType<typeof generateInfo>,
-		map: google.maps.Map
-	) => {
-		debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
-	};
+  /* ------------------------------ React Effect ------------------------------ */
+  React.useEffect(() => {
+    (async function () {
+      if (!explorationTour && clickedLocation) {
+        await handleClickedLocation(clickedLocation);
+        updateClickedLocation(null);
+      }
+    })();
+  }, [
+    clickedLocation,
+    explorationTour,
+    handleClickedLocation,
+    // handleNextPosition,
+    updateClickedLocation,
+  ]);
 
-	const onPositionChanged = (
-		result: ReturnType<typeof generateInfo>,
-		map: google.maps.Map
-	) => {
-		// console.log("onPositionChanged -> ", result);
-		debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
-		if (result.position && result.pov) {
-			setIsNextPosition(false);
-			updateGoogleMapConfig({
-				panoId: result.pano,
-				position: result.position,
-				povConfig: { ...result.pov, zoom: result.zoom },
-			});
-		}
-	};
+  /* -------------------------------------------------------------------------- */
+  const onPovChanged = (
+    result: ReturnType<typeof generateInfo>,
+    map: google.maps.Map
+  ) => {
+    debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
+  };
 
-	/* -------------------------------------------------------------------------- */
-	/*                        Guild Tour Callback Function                        */
-	/* -------------------------------------------------------------------------- */
-	const handleJoyrideCallback = async (data: CallBackProps) => {
-		const { action, index, type } = data;
+  const onPositionChanged = (
+    result: ReturnType<typeof generateInfo>,
+    map: google.maps.Map
+  ) => {
+    // console.log("onPositionChanged -> ", result);
+    debouncedStreetViewImageChange(result, updateStreetViewImageConfig);
+    if (result.position && result.pov) {
+      setIsNextPosition(false);
+      updateGoogleMapConfig({
+        panoId: result.pano,
+        position: result.position,
+        povConfig: { ...result.pov, zoom: result.zoom },
+      });
+    }
+  };
 
-		// * Handle error situation
-		if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
-			await handleNextPosition();
-			updateExplorationTour(false);
-			updateExplorationTourStepIndex(0);
-		}
-		// * Handle next situation
-		if (action === "next" && type === EVENTS.STEP_AFTER) {
-			// console.log("next");
-			updateExplorationTourStepIndex(index + 1);
-		}
-		// * Handle prev situation
-		if (action === "prev" && type === EVENTS.STEP_AFTER) {
-			// console.log("prev");
-			updateExplorationTourStepIndex(index - 1);
-		}
-		// * Handle over situation (even skip will trigger "over" so I just comment skip situation)
-		if (type === "tour:end") {
-			// console.log("over");
-			updateExplorationTour(false);
-			updateExplorationTourStepIndex(0);
-			await handleNextPosition();
-		}
-	};
+  /* -------------------------------------------------------------------------- */
+  /*                        Guild Tour Callback Function                        */
+  /* -------------------------------------------------------------------------- */
+  const handleJoyrideCallback = async (data: CallBackProps) => {
+    const { action, index, type } = data;
+
+    // * Handle error situation
+    if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
+      await handleNextPosition();
+      updateExplorationTour(false);
+      updateExplorationTourStepIndex(0);
+    }
+    // * Handle next situation
+    if (action === "next" && type === EVENTS.STEP_AFTER) {
+      // console.log("next");
+      updateExplorationTourStepIndex(index + 1);
+    }
+    // * Handle prev situation
+    if (action === "prev" && type === EVENTS.STEP_AFTER) {
+      // console.log("prev");
+      updateExplorationTourStepIndex(index - 1);
+    }
+    // * Handle over situation (even skip will trigger "over" so I just comment skip situation)
+    if (type === "tour:end") {
+      // console.log("over");
+      updateExplorationTour(false);
+      updateExplorationTourStepIndex(0);
+      if (clickedLocation) {
+        await handleClickedLocation(clickedLocation);
+      } else {
+        await handleNextPosition();
+      }
+    }
+  };
 
 	return (
 		<div style={{ minWidth: "1440px" }} className="ExplorationWrapper">

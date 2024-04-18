@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { Step } from "react-joyride";
 
-const sampleMarkerId = "sampleMarker";
+// const sampleMarkerId = "sampleMarker";
 
 export const explorationSteps: Step[] = [
 	{

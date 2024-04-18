@@ -4,6 +4,7 @@ dotenv.config();
 
 const localLink = "mongodb://0.0.0.0:27017/crsp_docker_dev";
 
+// export const databaseLink = process.env.WEB_LINK
 export const databaseLink =
   process.env.NODE_ENV === "production" ? process.env.WEB_LINK : localLink;
 // process.env.NODE_ENV === "production" ? prod_link : localLink;
