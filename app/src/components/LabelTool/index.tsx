@@ -1,6 +1,6 @@
 import React from "react";
 import Aside from "./Aside";
-import { Stack } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import {
   OperationFunctions,
   TypeConfig,
@@ -14,10 +14,11 @@ import {
 } from "./utils";
 import { useReactToolInternalStore } from "./state/internalState";
 import ReactToolHeader from "./ReactToolHeader";
-import Joyride, { CallBackProps, EVENTS } from "react-joyride";
+import  { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../global/userState";
+import { ImageLocation } from "../../types/collectedImage";
 
 export interface InputLabel {
   x: number;
@@ -34,6 +35,7 @@ export interface InputImageList {
   imageId: string;
   imgSrc: string;
   fileName: string;
+  location: ImageLocation;
   labels: InputLabel[];
 }
 
@@ -54,9 +56,9 @@ export default function LabelTool({
   /*                        Guild Tour Callback Function                        */
   /* -------------------------------------------------------------------------- */
   const {
-    labelingPageTour,
-    labelingSteps,
-    labelingTourStepIndex,
+    // labelingPageTour,
+    // labelingSteps,
+    // labelingTourStepIndex,
     updateLabelingTourStepIndex,
     updateLabelingPageTour,
   } = useTourStore();
@@ -160,29 +162,35 @@ export default function LabelTool({
         isVisible: true,
         id: newBoxId,
         labeledBy: userInfo.nickname!,
+        // notes: currentBox.notes
       });
       onChangeSelectedBoxId(newBoxId);
+      // onChangeSelectedBoxType(currentBox.type)
     }
   };
 
   const handleReactToolKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "q" || e.key === "Q") {
-      resetLabelingProcess();
-    } else if (e.key === "d" || e.key === "D") {
-      if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
-    } else if (e.key === "c" || e.key === "C") {
-      handleCopyBox();
-    }
+  //   if (!notesOpen) {
+  //   if (e.key === "q" || e.key === "Q") {
+  //     resetLabelingProcess();
+  //   } else if (e.key === "d" || e.key === "D") {
+  //     if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
+  //   } else if (e.key === "c" || e.key === "C") {
+  //     handleCopyBox();
+  //   }
+  // }
   };
+
+  const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+
 
   return (
     <div
       tabIndex={-1}
       onKeyPress={handleReactToolKeyPress}
-      style={{ minWidth: "1440px" }}
       className="LabelingTool"
     >
-      <Joyride
+      {/* <Joyride
         callback={handleJoyrideCallback}
         continuous={true}
         run={labelingPageTour}
@@ -195,15 +203,16 @@ export default function LabelTool({
             zIndex: 10000,
           },
         }}
-      />
+      /> */}
       <ReactToolHeader />
       <Stack
         id="LabelToolContainer"
-        direction="row"
-        sx={{ height: "calc(100vh - 64px)" }}
+        direction={isChangingDirection ? "column-reverse" : "row"}
       >
-        <Aside />
-        {reactToolImageList.length > 0 && <LabelStage />}
+      <Aside />
+       
+      {reactToolImageList.length > 0 && <LabelStage />}
+      
       </Stack>
     </div>
   );

@@ -13,30 +13,32 @@ import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
-import TestExploration from "./pages/Exploration/TestExploration";
+import Tutorial from "./pages/Tutorial/Form"
+import Contest from "./pages/Contest";
 
 ReactDOM.render(
-	<React.StrictMode>
-		<Router>
-			<Routes>
-				<Route path="/" element={<App />}>
-					<Route index element={<Home />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/reset" element={<ResetPage />} />
-					<Route path="/leaderBoard" element={<LeaderBoard />} />
-					<Route path="*" element={<NotFound />} />
-					<Route element={<ProtectedRoute />}>
-						<Route path="/exploration" element={<ExplorationPage />} />
-						<Route path="/test_exploration" element={<TestExploration />} />
-						<Route path="/label" element={<LabelPage />} />
-						<Route path="/reviewLabels" element={<ReviewLabelingPage />} />
-						<Route path="/editLabel/:id" element={<EditLabelingPage />} />
-					</Route>
-				</Route>
-			</Routes>
-		</Router>
-	</React.StrictMode>,
-	document.getElementById("root")
+  <React.StrictMode>
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />}>
+          <Route index element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset" element={<ResetPage />} />
+          <Route path="/leaderBoard" element={<LeaderBoard />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/tutorial" element={<Tutorial/>} />
+          <Route element={<ProtectedRoute />}>
+            <Route path= "/contest" element={<Contest />} />
+            <Route path="/exploration" element={<ExplorationPage />} />
+            <Route path="/label" element={<LabelPage />} />
+            <Route path="/reviewLabels" element={<ReviewLabelingPage />} />
+            <Route path="/editLabel/:id" element={<EditLabelingPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
+  </React.StrictMode>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

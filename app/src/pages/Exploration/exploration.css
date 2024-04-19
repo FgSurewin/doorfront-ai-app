@@ -1,0 +1,105 @@
+#ExplorationWrapper {
+  position: relative;
+}
+
+#GoogleMapContainer {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+#StreetViewContainer  {
+  width: 100% !important;
+}
+
+#StreetViewContainer #StreetView{
+  border-radius: 4px;
+  z-index: 9 !important;
+}
+
+#MapContainer {
+  position: absolute !important;
+  z-index: 99 !important;
+  border-radius: 4px;
+  top: 3rem;
+  right: 1rem;
+  max-width: 250px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#MapContainer #Map {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.MuiBadge-root > button {
+  z-index: 9 !important;
+}
+
+.MuiBadge-root > span{
+  z-index: 99 !important;
+}
+
+@media (max-width: 599px) {
+  .MuiStack-root {
+    padding: 0 !important;
+  }
+  #MapContainer {
+    top: 3rem;
+    right: 1rem;
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+
+/* update width for visibility */
+@media (max-width: 450px) {
+ #ExDrawer > .MuiPaper-root{
+    width: 80% !important;
+  }
+  #ExDrawerStack > div {
+    width: 100%;
+  }
+}
+
+/* Mini MapToggle */
+#miniMapToggler {
+  position: absolute;
+  display: block;
+  text-align: right;
+  top: 0.5rem;
+  right: 1rem;
+  z-index: 999;
+}
+
+#miniMapToggler > button {
+  background-color: #222222;
+  color: #B3B3B3;
+}
+
+#miniMapToggler > button:hover {
+  color: #FFF;
+}
+
+
+.MapBlock {
+  display: block !important;
+}
+.MapNone {
+  display: none !important;
+}
+
+/* arrow-icon animation */
+.arrow-icon {
+  display: inline-block;
+  animation: blinkArrow 1s infinite linear;
+}
+@keyframes blinkArrow {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+

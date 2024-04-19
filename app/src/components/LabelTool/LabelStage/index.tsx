@@ -1,10 +1,10 @@
-import React from "react";
+import React ,{useState, useEffect} from "react";
 import Konva from "konva";
 import useImage from "use-image";
 import { Stage, Layer, Image, Rect } from "react-konva";
 import { useWindowDimensions } from "../ReactToolHooks/useWindowDimensions";
 import { useReactToolsStore } from "../state/reactToolState";
-import { useReactToolInternalStore } from "../state/internalState";
+import { LabelingPoint, useReactToolInternalStore } from "../state/internalState";
 import { KonvaEventObject } from "konva/lib/Node";
 import ReactToolBox from "../Box";
 import IndicatorLine from "../IndicatorLine";
@@ -12,6 +12,7 @@ import { calculateBoundingBox, preventBoxOutOfImage } from "../utils";
 import { isEqual } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../../global/userState";
+import { useMediaQuery } from "@mui/material";
 
 export default function LabelStage() {
   /* -------------------------------------------------------------------------- */
@@ -21,6 +22,11 @@ export default function LabelStage() {
 
   /* -------------------------------- Image Ref ------------------------------- */
   const imgRef = React.useRef<Konva.Image>(null);
+  React.useEffect(()=>{
+    if(window.innerWidth < 895){
+      onChangeStageAttributes({ scaleX: .65, scaleY: .65});
+    }
+  },[])
 
   /* --------------------------- Global Image State --------------------------- */
   const { reactToolImageList, selectedImageId, addReactToolImageLabel } =
@@ -36,10 +42,11 @@ export default function LabelStage() {
   const {
     stageAttributes,
     onChangeStageAttributes,
-    layerAttributes,
+    // layerAttributes,
     imageAttributes,
     scaleConfig,
     onChangeSelectedBoxId,
+    //onChangeSelectedBoxType,
     labelingProcess,
     onChangeLabelingProcess,
     resetLabelingProcess,
@@ -47,8 +54,10 @@ export default function LabelStage() {
 
   /* -------------------- Layout Configuration of LabelTool ------------------- */
   // Get viewport width and height dynamically
-  const { height, width } = useWindowDimensions();
+  // const { height, width } = useWindowDimensions();
   const [image] = useImage(currentImage ? currentImage.imgSrc : "");
+  // const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+  
 
   /* ------------------------------- Wheel Events ------------------------------ */
   const handleStageWheel = (e: KonvaEventObject<WheelEvent>) => {
@@ -71,6 +80,7 @@ export default function LabelStage() {
     const clickedOnEmpty =
       e.target === e.target.getStage() || e.target === imgRef.current;
     if (clickedOnEmpty) {
+      //onChangeSelectedBoxType("");
       onChangeSelectedBoxId("");
     }
   };
@@ -91,6 +101,30 @@ export default function LabelStage() {
       });
     }
   };
+
+  const handleStageTouchEnd= (e: KonvaEventObject<TouchEvent>) => {
+
+    if(labelingProcess.isLabeling){
+      const point:LabelingPoint = e.target.getRelativePointerPosition()
+      const end:LabelingPoint = {x:point.x+40, y:point.y+80}
+      addReactToolImageLabel(selectedImageId, {
+        ...calculateBoundingBox(
+          point,
+          end
+        )!,
+        fill: "rgba(255,255,255, 0.2)",
+        stroke: labelingProcess.labelingColor,
+        strokeWidth: 2,
+        type: labelingProcess.labelingType,
+        subtype: "",
+        isVisible: true,
+        id: uuidv4(),
+        labeledBy: userInfo.nickname!,
+      });
+      resetLabelingProcess();
+    }
+  }
+
   const handleStageMouseUp = (e: KonvaEventObject<MouseEvent>) => {
     if (labelingProcess.endPoint && labelingProcess.startPoint) {
       if (!isEqual(labelingProcess.endPoint, labelingProcess.startPoint)) {
@@ -138,17 +172,38 @@ export default function LabelStage() {
 
   /* ------------------------------- Drag Events ------------------------------ */
   const handleStageDragEnd = (e: KonvaEventObject<DragEvent>) => {
+    onChangeSelectedBoxId("")
+   // onChangeSelectedBoxType("")
     onChangeStageAttributes({ x: e.target.x(), y: e.target.y() });
   };
 
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  // console.log(stageSize);
+  useEffect(() => {
+    function handleResize() {
+      setStageSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initialize the stage size on initial render
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  //console.log(imgRef);
+
   return (
-    <div>
+ 
+    <>
       {currentImage && (
         <Stage
           className="labelStage"
           style={{ cursor: labelingProcess.isLabeling ? "crosshair" : "grab" }}
-          width={width - 101 - 400}
-          height={height - 64}
+          width={stageSize.width}
+          height={stageSize.width > 895 ? stageSize.height - 64: stageSize.height - 256}
           draggable={!labelingProcess.isLabeling}
           {...stageAttributes}
           onMouseDown={handleStageMouseDown}
@@ -157,9 +212,10 @@ export default function LabelStage() {
           onTouchStart={checkDeselect}
           onDragEnd={handleStageDragEnd}
           onWheel={handleStageWheel}
+          onTouchEnd={handleStageTouchEnd}
         >
-          <Layer {...layerAttributes}>
-            <Image image={image} {...imageAttributes} ref={imgRef} />
+          <Layer>
+            <Image image={image}  {...imageAttributes} ref={imgRef} />
             <IndicatorLine />
             {currentImage.labels.length > 0 &&
               currentImage.labels.map((label) => (
@@ -181,6 +237,7 @@ export default function LabelStage() {
           </Layer>
         </Stage>
       )}
-    </div>
+    </>
+   
   );
 }

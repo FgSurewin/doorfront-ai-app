@@ -18,6 +18,8 @@ import { Box, SxProps } from "@mui/material";
 const menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
+  { name: "Tutorial", path: "/tutorial" },
+  // { name: "Contest", path: "/contest" },
 ];
 
 export interface NavbarProps {

@@ -40,28 +40,24 @@ export default function ReviewLabelingPage() {
         });
         if (result.code === 0) {
           const images = result.data!;
-          const final_images = images.filter((image) => {
-            // Check if current user has been modify or validate current image
-            const names = image.human_labels.map((item) => item.name);
-            const isDisable =
-              names.includes(userInfo.nickname!) ||
-              image.human_labels.length >= maxModifier ||
-              image.image_id === "GuildTourSample" ||
-              image.human_labels.length === 0;
-            return !isDisable;
-          });
-          if (final_images.length > 0) {
-            setState(final_images);
-          } else {
-            console.log("TEST HERE");
-            navigate("/");
-            enqueueSnackbar(
-              "Sorry, there is no available images to review now.",
-              {
-                variant: "error",
-              }
-            );
-          }
+          setState(
+            images.filter((image) => {
+              // Check if current user has been modify or validate current image
+              const names = image.human_labels.map((item) => item.name);
+              let incompleteDoor = false;
+              // for(let i = 0; i < image.human_labels[0].labels.length;i++)
+              //   if(image.human_labels[0].labels[i].label === "door" && image.human_labels[0].labels[i].subtype === "") incompleteDoor = true
+          
+              const isDisable =
+                names.includes(userInfo.nickname!) ||
+                //alter to check each label in human_labels[0].labels for door with subtype that is not ""
+                //if door has subtype "", do not disable
+                (image.human_labels.length >= maxModifier && !incompleteDoor) ||
+                image.image_id === "GuildTourSample" ||
+                image.human_labels.length === 0;
+              return !isDisable;
+            })
+          );
         }
       } catch (e) {
         const error = e as Error;

@@ -1,0 +1,114 @@
+#LabelToolContainer {
+  position: relative;
+}
+
+#ImageListWrap  {
+  height: 85%;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+#ImagePanelWrap {
+  height: 94%;
+}
+#AsideContainer   {
+  height: calc(100vh -64px);
+}
+#ImageListItemWrap {
+  height: calc(100vh -20%) !important;
+}
+
+/* .LabelingTool > header {
+  height: 64px;
+} */
+.LabelingTool{
+  overflow: hidden;
+}
+/* 
+break point
+895px
+1200px - col
+ */
+
+.MuiList-padding  {
+  padding: 0 !important;
+}
+
+
+/* 650px  AsideContainer */
+
+@media (max-width: 359px) {
+  .LabelsShowcase, .BoxButtonGroup {
+    height:100px !important;
+    overflow-y: auto !important;
+    padding-bottom: 200px;
+  }
+
+  #ImageListWrap {
+    height: 14rem !important;
+  }
+}
+@media (max-width: 414px) {
+  
+}
+@media (max-width: 500px) {
+  #vertical-tab-Images, #vertical-tab-Label, #vertical-tab-Box{
+    font-size: 0.75rem !important;
+    width: auto !important;
+    min-width: auto !important;
+    padding: .75rem !important;
+  }
+  .LabelingTool > header {
+    padding: .5rem !important;
+  }
+  #logoImage {
+    width: 12rem;
+  }
+  .exitButton {
+    position: absolute !important;
+    top: 0px;
+    right: 0px !important;
+    margin: 0.75rem !important;
+  }
+}
+@media (max-width: 885px) {
+  #LabelToolContainer, .labelStage{
+    height: 87vh;
+  }
+
+.LabelsShowcase {
+  height:220px !important;
+  overflow-y: auto !important;
+}
+
+  /* .BoxButtonGroup {
+    height:170px !important;
+    overflow-y: auto !important;
+  } */
+}
+@media (max-width: 1024px) {
+  .LabelsShowcase, .BoxButtonGroup {
+    height:170px !important;
+    overflow-y: auto !important;
+  }
+}
+@media (max-width: 1200px) {
+  #AsideContainer {
+    bottom: 0;
+    width: 100%;
+    position: absolute;
+    height: 48vh;
+    z-index: 99999;
+    overflow: hidden;
+    /* display: none; */
+  }
+
+  #ImageListWrap {
+    height: 16rem;
+  }
+  
+  #ImagePanelWrap,  #ImageListItemWrap   {
+    height: 43%;
+  }
+}
+

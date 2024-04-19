@@ -25,11 +25,12 @@ export default function ReactToolBox({ boxAttributes }: ReactToolBoxProps) {
   const {
     selectedBoxId,
     onChangeSelectedBoxId,
+    // onChangeSelectedBoxType,
     labelingProcess,
     imageAttributes,
   } = useReactToolInternalStore();
   const { changeReactToolImageLabels } = useReactToolsStore();
-  const { id, x, y, fill, stroke, width, height, strokeWidth, isVisible } =
+  const { id, x, y, fill, stroke, width, height, strokeWidth, isVisible, type } =
     boxAttributes;
   // Set refs
   const rectRef = React.useRef<Konva.Rect>(null);
@@ -55,12 +56,14 @@ export default function ReactToolBox({ boxAttributes }: ReactToolBoxProps) {
   const handleSelectClick = (e: KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true;
     onChangeSelectedBoxId(id);
+    // onChangeSelectedBoxType(type);
   };
 
   /* ------------------------------- Drag Event ------------------------------- */
   const handleRectDragStart = (e: KonvaEventObject<DragEvent>) => {
     e.cancelBubble = true;
     onChangeSelectedBoxId(id);
+    onChangeSelectedBoxId(type);
   };
   const handleRectDragMove = (e: KonvaEventObject<DragEvent>) => {
     e.cancelBubble = true;
