@@ -36,7 +36,7 @@ export const FooterData = {
 			content: "Facebook",
 		},
 	],
-	copyRight: `© 2021 Doorfront. All Rights Reserved.`,
+	copyRight: `© 2024 Doorfront. All Rights Reserved.`,
 };
 
 export const LogoData = [

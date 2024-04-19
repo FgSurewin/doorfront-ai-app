@@ -79,7 +79,7 @@ export function KeyText({
     <>
       <Stack
         direction="row"
-        sx={{ width: "100%", px: 2, py: 1 }}
+        sx={{ width: "100%", p: 1}}
         alignItems="center"
         className="KeyText"
       >
@@ -88,7 +88,7 @@ export function KeyText({
           Press <span style={{ fontWeight: "bold" }}>{keyText}</span>
         </Typography>
         <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
-        <Typography variant="subtitle2" sx={{ textTransform: "uppercase" }}>
+        <Typography variant="caption" sx={{ textTransform: "uppercase" }}>
           {description}
         </Typography>
       </Stack>
