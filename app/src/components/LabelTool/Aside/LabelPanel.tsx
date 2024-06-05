@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@mui/material";
+import {Button, Stack} from "@mui/material";
 import { ReactToolAsideTitle } from "../General";
 import { useReactToolsStore } from "../state/reactToolState";
 import LabelsShowcase from "./LabelsShowcase";
@@ -72,7 +72,7 @@ export default function LabelPanel() {
   },[selectedImageId, selectedLocation.lng,selectedLocation.lat])
 
   return (
-    <div>
+    <Stack >
       {/* <OperationSection /> */}
       {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&(selectedLocation.lat !== 0) && currentArea !== "" && 
       <div>
@@ -102,6 +102,6 @@ export default function LabelPanel() {
       </Button>
       <ReactToolAsideTitle text="Labels" />
       <LabelsShowcase />
-    </div>
+    </Stack>
   );
 }

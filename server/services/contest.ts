@@ -395,13 +395,13 @@ export class ContestService{
         const result = await contestModel.findOne({active:true}).lean()
         if(result){
           res.json({
-            code: 0,
+            code: 200,
             message: "Got Active Contest",
             data: result.contestNumber,
           });
         } else {
           res.json({
-            code: 500,
+            code: 200,
             message: "No contests active!",
             data: result,
           });
@@ -409,7 +409,7 @@ export class ContestService{
       } catch (e) {
         const error = new Error(`${e}`);
         res.json({
-          code: 5000,
+          code: 500,
           message: error.message,
         });
     }

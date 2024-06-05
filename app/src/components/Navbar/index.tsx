@@ -18,7 +18,8 @@ import { Box, SxProps } from "@mui/material";
 let menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
-  { name: "Contest Page" , path: "/contest" }
+  { name: "Contest Page" , path: "/contest" },
+  { name: "Tutorial", path:"/tutorial"}
 ]
 
 

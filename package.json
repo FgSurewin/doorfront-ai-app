@@ -49,6 +49,7 @@
 		"nodemon": "^2.0.15",
 		"nunjucks": "^3.2.3",
 		"react-map-gl": "^7.0.19",
+		"react-player": "^2.16.0",
 		"react-share": "^4.4.1",
 		"ts-node": "^10.4.0",
 		"typescript": "^4.5.4",

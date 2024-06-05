@@ -53,7 +53,7 @@ export default function ImagePanel() {
   
   
   return (
-    <Stack >
+    <Stack>
       <ReactToolAsideTitle text="images preview" />
       <Stack id="ImagePanelWrap" justifyContent='space-between'>
          {/* Image List Wrapper */}

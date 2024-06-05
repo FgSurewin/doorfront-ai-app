@@ -10,7 +10,7 @@ import { debouncedStreetViewImageChange } from "./utils/debounceFunc";
 import { useExplorationStore } from "../../global/explorationState";
 import { useUpdateExplorationPage } from "../../hooks/useUpdateExploration";
 import { useTourStore } from "../../global/tourState";
-import { CallBackProps, EVENTS } from "react-joyride";
+import Joyride, { CallBackProps, EVENTS } from "react-joyride";
 import TreasureShowcase from "./TreasureShowcase";
 import UserCreditShowcase from "./UserCreditShowcase";
 import { contestNeighborhoods } from "../../components/Map/contest";
@@ -25,8 +25,8 @@ import NorthIcon from '@mui/icons-material/North';
 export default function ExplorationPage() {
 	const {
 		explorationTour,
-		// explorationSteps,
-		// explorationTourStepIndex,
+		explorationSteps,
+		explorationTourStepIndex,
 		updateExplorationTourStepIndex,
 		updateExplorationTour,
 	} = useTourStore();
@@ -55,7 +55,7 @@ export default function ExplorationPage() {
 
   const turfStreetPoints: Feature<Polygon>[] = React.useMemo(() => parseGeoinput(), [])
   */
-  
+
   React.useEffect(()=>{
     const point =  turf.point([googleMapConfig.position.lng,googleMapConfig.position.lat]);
     var found = false;
@@ -68,9 +68,9 @@ export default function ExplorationPage() {
       }
     }
     if(!found) setCurrentArea("");
-    
+
   },[googleMapConfig.position])
-  
+
   /* -------------------------------------------------------------------------- */
   /*                                 Custom Hook                                */
   /* -------------------------------------------------------------------------- */
@@ -156,32 +156,33 @@ export default function ExplorationPage() {
   const scrollToDirection = (direction: 'top' | 'bottom') => {
     const top = 0;
     const bottom = document.documentElement.scrollHeight;
-  
+
     const scrollToValue = direction === 'top' ? top : bottom;
-  
+
     window.scrollTo({
       top: scrollToValue,
       behavior: 'smooth',
     });
   };
-  
+
 	return (
 		<div id="ExplorationWrapper">
-			{/* <Joyride
-				callback={handleJoyrideCallback}
-				continuous={true}
-				run={explorationTour}
-				scrollToFirstStep={true}
-				showProgress={true}
-				steps={explorationSteps}
-				stepIndex={explorationTourStepIndex}
-				styles={{
-					options: {
-						zIndex: 10000,
-						width: "500px",
-					},
-				}}
-			/> */}
+
+			{/*<Joyride*/}
+			{/*	callback={handleJoyrideCallback}*/}
+			{/*	continuous={true}*/}
+			{/*	run={explorationTour}*/}
+			{/*	scrollToFirstStep={true}*/}
+			{/*	showProgress={true}*/}
+			{/*	steps={explorationSteps}*/}
+			{/*	stepIndex={explorationTourStepIndex}*/}
+			{/*	styles={{*/}
+			{/*		options: {*/}
+			{/*			zIndex: 10000,*/}
+			{/*			width: "500px",*/}
+			{/*		},*/}
+			{/*	}}*/}
+			{/*/>*/}
 			<Navbar position="static" isTransparent={false} />
 			<Paper
 				id="ExplorationContainer"
@@ -194,7 +195,7 @@ export default function ExplorationPage() {
 			>
 				<Container maxWidth="xl">
 
-        <Stack 
+        <Stack
           sx={{ display: { xs: 'flex', md: 'flex', lg: 'none' } }}
           padding="1rem"
           direction="row"
@@ -203,7 +204,7 @@ export default function ExplorationPage() {
           <Button endIcon={<SouthIcon className='arrow-icon'/>} onClick={() => scrollToDirection('bottom')}>
             Scroll To Bottom
           </Button>
-        </Stack> 
+        </Stack>
 					<Grid container  sx={{ pt:{ xs: 1, lg: 3 } }}>
             <Grid item xs={12}>
             {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
@@ -228,7 +229,7 @@ export default function ExplorationPage() {
 									}}
 									streetViewMarkerList={panoramaMarkerList}
 								/>
-                
+
 							)}
 							<Stack direction="row" spacing={2}>
 								<Typography variant="h6">
@@ -249,7 +250,7 @@ export default function ExplorationPage() {
 						</Grid>
 					</Grid>
 				</Container>
-        <Stack 
+        <Stack
           sx={{ display: { xs: 'flex', md: 'flex', lg: 'none' } }}
           padding="1rem"
           direction="row"

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Map, { Source, Layer, MapLayerMouseEvent } from 'react-map-gl';
-import { Box, Container, Grid, Typography, } from '@mui/material'
+import {Box, Container, Grid, Typography, Dialog, DialogTitle, List, ListItemButton} from '@mui/material'
 import type { Feature, GeoJsonProperties, Point, Geometry } from 'geojson'
 import * as turf from '@turf/turf';
 import nearestPoint from '@turf/nearest-point';
@@ -11,7 +11,8 @@ import { features, turfFeatureCollection, queriedFeatures, defaultHoverInfo, def
 import {contestNeighborhoods} from './contest';
 import { getContestScore } from '../../apis/user';
 import { ContestAreaInfo } from '../Contest';
-import { readLocal} from '../../utils/localStorage';
+import { readLocal } from '../../utils/localStorage';
+import Button from "@mui/material/Button";
 
 
 export default function ContestMap() {
@@ -61,7 +62,8 @@ export default function ContestMap() {
     }
   })
 
-
+  const [dialogOpen, setDialogOpen] = React.useState(false)
+  const [clickedPoint,setClickedPoint] = React.useState<null| MapLayerMouseEvent>(null)
 
   React.useEffect(() => {
     if (hoverInfo.name !== "") {
@@ -79,11 +81,11 @@ export default function ContestMap() {
   }, [hoverInfo.name])
 
 
-  React.useEffect(() => {
-    if (mapClicked) {
-      navigate('/exploration')
-    }
-  }, [mapClicked, navigate])
+  // React.useEffect(() => {
+  //   if (mapClicked) {
+  //     navigate('/exploration')
+  //   }
+  // }, [mapClicked, navigate])
 
   function mouseMove(point: any): void {
     if (point.features[0] !== undefined) {
@@ -92,30 +94,39 @@ export default function ContestMap() {
         name: newPoint.properties.name,
         progress: newPoint.properties.progress,
         total: newPoint.properties.total,
-        percentage: newPoint.properties.percentage
+        percentage: newPoint.properties.percentage,
+        geometry:newPoint.geometry.coordinates,
+        id: ""
       })
 
     }
 
   }
-
-  function findNearestPoint(point: MapLayerMouseEvent) {
-    const turfPoint = turf.point([point.lngLat.lng, point.lngLat.lat])
+  // make point global variable, doesn't need to be a state because it does not affect re-rendering
+  function findNearestPoint() {
+    console.log(clickedPoint)
+    if(!clickedPoint) return
+    const turfPoint = turf.point([clickedPoint.lngLat.lng, clickedPoint.lngLat.lat])
     var closePoint: any
     if (hoverInfo.name !== '') {
       for (var i = 0; i < turfStreetPoints.length; i++) {
         //console.log(hoverInfo)
-        if (hoverInfo.name == turfStreetPoints[i].name) {
+        if (hoverInfo.name.toString() === turfStreetPoints[i].name) {
           closePoint = nearestPoint(turfPoint, turfStreetPoints[i].points)
           //console.log(closePoint)
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
           updateGoogleMapConfig({ position: { lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } })
           updateClickedLocation({ lat: closePoint.geometry.coordinates[1], lng: closePoint.geometry.coordinates[0] } )
-          setMapClicked(true)
+          navigate('/exploration')
+          // setMapClicked(true)
           return
         }
       }
     }
+  }
+
+  function navigateValidatePage(){
+    navigate('/reviewLabels', {state: {area:hoverInfo.name}})
   }
 
   function pointsToFeatureCollection(): turfFeatureCollection[] {
@@ -132,6 +143,16 @@ export default function ContestMap() {
     )
     //console.log(turfStreetPoints)
     return turfStreetPoints
+  }
+  function openDialog(point: MapLayerMouseEvent){
+    if(hoverInfo.name !== "") {
+      setDialogOpen(true)
+      setClickedPoint(point)
+    }
+  }
+
+  function closeDialog(){
+    setDialogOpen(false)
   }
 
   // function onMouseLeave() {
@@ -152,8 +173,8 @@ export default function ContestMap() {
         styleDiffing
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
         interactive={false}
-        interactiveLayerIds={["contest-map copy"]}
-        onClick={(e) => findNearestPoint(e)}
+        interactiveLayerIds={["contest-652024"]}
+        onClick={(e) => openDialog(e)}
         onMouseMove={(e) => mouseMove(e)}
         //onMouseLeave={onMouseLeave}
       >
@@ -162,6 +183,13 @@ export default function ContestMap() {
           <Layer {...layerStyle} />
         </Source>
         <Typography variant="subtitle1" color="text.primary" position='absolute' zIndex={1} fontSize={18}>Your Total Score: {contestScore}</Typography>
+        <Dialog open={dialogOpen} onClose={closeDialog} sx={{m:"4rem"}}>
+          <DialogTitle>Where would you like to navigate?</DialogTitle>
+          <Box textAlign="center" display="flex" flexDirection="column" margin={2} >
+            <Button variant="contained" sx={{mb:"1rem"}}  onClick={()=>findNearestPoint()}>Go to explore page</Button>
+            <Button variant="contained" onClick={navigateValidatePage}>Go to validate page</Button>
+          </Box>
+        </Dialog>
         {/*}
         <Grid container spacing={2} maxWidth={100} rowSpacing={.005} sx={gridSX}>
           <Grid item xs={12}><div><b>Percentage</b></div></Grid>
