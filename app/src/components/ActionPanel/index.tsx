@@ -92,7 +92,7 @@ export default function ActionPanel({ onNext }: { onNext: () => void }) {
         }
       } catch (e) {
         const error = e as Error;
-        console.log(error.message);
+        console.log(e);
         enqueueSnackbar(error.message, {
           variant: "error",
         });
