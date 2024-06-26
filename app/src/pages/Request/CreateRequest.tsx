@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 // import {useUserStore} from "../../global/userState";
 import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
 
+
 export default function CreateRequest() {
   // const deadlines = [2, 3, 4, 5];
   // const {userInfo} = useUserStore();
@@ -22,6 +23,7 @@ export default function CreateRequest() {
   const [currentStep, setCurrentStep] = useState(0)
   const baseData = {address: "", type: "", deadline: 0}
   const [requestData, setRequestData] = useState(baseData)
+  const [retry, setRetry] = useState('block')
  // const placesLibrary = useMapsLibrary("places");
   // const [service, setService] = useState<any>(null);
   // const [results, setResults] = useState<any>([]);
@@ -66,6 +68,10 @@ export default function CreateRequest() {
       case 3:
         setForward(true);
         setBackward(false)
+        break;
+      case 4:
+        setForward(true);
+        setBackward(true)
         break;
       default:
         setForward(false);
@@ -146,10 +152,24 @@ export default function CreateRequest() {
                 </Grid>
 
                 <Button fullWidth type="submit" variant="contained" color="primary"
-                        sx={{color: "white", fontWeight: "bold", mt: 3}} onClick={()=> {setCurrentStep(0); setRequestData(baseData)}}>Submit Request</Button>
+                        sx={{color: "white", fontWeight: "bold", mt: 3}} onClick={()=> {setCurrentStep(4); setRequestData(baseData)}}>Submit Request</Button>
             </div>}
-            <Grid container sx={{mt: "10%"}}>
-              <Grid item xs={6} sx={{textAlign: "left"}}>
+            {currentStep === 4 && <div>
+                <Typography variant="h4" textAlign="center"> Thank you for submitting your request! Our volunteers will label the requested area as soon as possible.</Typography>
+                <Box display="flex" textAlign="center" marginTop={4} justifyContent="center" gap="5%" sx={{display:retry}}>
+                    <Typography variant="h6" textAlign="center">Would you like to submit another request?</Typography>
+                    <Button variant="contained" sx={{color: "white", mr:"5%"}}
+                            onClick={() => {setCurrentStep(0)}}>Yes</Button>
+                    <Button variant="contained" sx={{color: "white"}}
+                            onClick={()=> setRetry('none')}>No</Button>
+
+                </Box>
+
+            </div>
+
+            }
+            <Grid container sx={{mt: "10%", display:retry}}>
+              <Grid item xs={6} sx={{textAlign: "left", }}>
                 <IconButton aria-label="Backward Button" disabled={backward}
                             onClick={() => setCurrentStep(currentStep - 1)}
                             sx={{position: "absolute", bottom: 16, left: 16}}
