@@ -50,6 +50,7 @@ export default function Profile() {
         setValue(newValue);
     };
   const {enqueueSnackbar} = useSnackbar();
+  console.log(userInfo)
 
     React.useEffect(() => {
         async function innerFunc() {

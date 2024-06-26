@@ -6,6 +6,7 @@ export interface UserInfo {
   token: string | null;
   nickname: string | null;
   id: string | null;
+  role: string | null;
 }
 
 export interface UserCredit {
@@ -40,7 +41,7 @@ export interface UserState {
 export const useUserStore = create<UserState>(
   devtools(
     (set) => ({
-      userInfo: { token: null, id: null, nickname: null },
+      userInfo: { token: null, id: null, nickname: null, role: null },
       updateUserInfo: (update) => {
         set(
           (state) => ({ ...state, userInfo: { ...state.userInfo, ...update } }),
@@ -61,7 +62,7 @@ export const useUserStore = create<UserState>(
       clearUserInfo: () => {
         set((state) => ({
           ...state,
-          userInfo: { token: null, id: null, nickname: null },
+          userInfo: { token: null, id: null, nickname: null, role:null },
         }));
       },
 

@@ -132,7 +132,7 @@ export class UserService {
             res.json({
               code: 0,
               message: "Login Successfully",
-              data: { token, nickname: result[0].nickname, id: result[0]._id },
+              data: { token, nickname: result[0].nickname, id: result[0]._id, role: result[0].role },
             });
           } else {
             res.json({

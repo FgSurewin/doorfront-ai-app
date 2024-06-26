@@ -46,12 +46,12 @@ export default function Login() {
           >
             <Tab
               icon={<AssignmentIndIcon />}
-              aria-label="AssignmentIndIcon"
+              aria-label="Sign in"
               label="Sign In"
             />
             <Tab
               icon={<AssignmentIcon />}
-              aria-label="AssignmentIcon"
+              aria-label="Sign Up"
               label="Sign Up"
             />
           </Tabs>

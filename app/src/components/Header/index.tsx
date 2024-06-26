@@ -10,8 +10,10 @@ import {
   HeaderButtonStyle,
 } from "./Header.style";
 import { Link as RouterLink } from "react-router-dom";
+import {useUserStore} from "../../global/userState";
 
 export default function Header() {
+  const {userInfo} = useUserStore()
   const trigger = useScrollTrigger({ disableHysteresis: true, threshold: 80 });
   return (
     <div style={HeaderWrapperStyle}>
@@ -25,6 +27,16 @@ export default function Header() {
       >
         <HeaderTitle />
         <HeaderSubtitle />
+        {userInfo.role === "Blind or Low Vision Data Requester" ?
+          <Button
+            component={RouterLink}
+            to="/createRequest"
+            variant="contained"
+            sx={HeaderButtonStyle}
+          >
+            <Typography variant="h5">Request Data</Typography>
+          </Button>
+          :
         <Button
           component={RouterLink}
           to="/exploration"
@@ -33,6 +45,7 @@ export default function Header() {
         >
           <Typography variant="h5">Explore</Typography>
         </Button>
+        }
       </Stack>
     </div>
   );

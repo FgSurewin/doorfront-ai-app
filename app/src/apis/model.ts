@@ -4,12 +4,14 @@ import axios from "axios";
 //   "https://index-version-two-b7ovn6nbsq-uc.a.run.app/detect";
 // export const DETECTION_LINK =
 //   "http://localhost:5000/model/detect";
-const MODE = process.env.NODE_ENV;
+const MODE = process.env.REACT_APP_NODE_ENV;
+// console.log(MODE);
 export const DETECTION_LINK =
 	MODE === "development"
 		? "http://localhost:5000/model/detect"
 		: "https://doorfront-model-server-zo7id6rtfa-uc.a.run.app//model/detect";
 
+// console.log(DETECTION_LINK);
 
 export interface ModelDetectionLabel {
   bbox: number[];

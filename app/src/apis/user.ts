@@ -14,7 +14,7 @@ export interface ResetData {
 export interface LoginReturnData {
   code: number;
   message: string;
-  data?: { token: string; nickname: string; id: string };
+  data?: { token: string; nickname: string; id: string, role:string };
 }
 
 export interface SignUpData {

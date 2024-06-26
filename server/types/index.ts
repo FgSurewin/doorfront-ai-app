@@ -54,3 +54,10 @@ export interface UpdateUserLabelsBody {
   number: number;
   type: "label" | "revise" | "modify";
 }
+
+export interface RequestBody {
+  requestedBy: string;
+  lat: number;
+  lon: number;
+  type: string;
+}

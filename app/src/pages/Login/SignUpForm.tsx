@@ -16,9 +16,9 @@ import {
   useSearchParams,
 } from "react-router-dom"
 
-type roleType = "Student" | "Faculty" | "Volunteer" | "";
+type roleType = "Student" | "Faculty" | "Volunteer" | "" | "Blind or Low Vision Data Requester";
 
-const roles: roleType[] = ["Student", "Faculty", "Volunteer"];
+const roles: roleType[] = ["Student", "Faculty", "Volunteer", "Blind or Low Vision Data Requester"];
 
 interface Values {
   nickname: string;
@@ -44,9 +44,9 @@ export default function SignUpForm({
       setRef(found)
       console.log(ref)
     }
-    else{
-      console.log("sad")
-    }
+    // else{
+    //   console.log("sad")
+    // }
   },[])
 
   const { enqueueSnackbar } = useSnackbar();
