@@ -3,8 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface RequestInterface extends Document {
   requestedBy: string;
   type: string;
-  lat: number;
-  lon: number;
+  address:string;
   labelers: string[];
   deadline: Date;
 }
@@ -19,12 +18,8 @@ const Request = new Schema<RequestInterface>(
       type: String,
       required: true,
     },
-    lat:{
-      type: Number,
-      required: true,
-    },
-    lon:{
-      type: Number,
+    address:{
+      type: String,
       required: true,
     },
     labelers:{

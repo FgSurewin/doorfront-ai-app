@@ -57,7 +57,7 @@ export interface UpdateUserLabelsBody {
 
 export interface RequestBody {
   requestedBy: string;
-  lat: number;
-  lon: number;
+  address:string;
   type: string;
+  deadline:number;
 }

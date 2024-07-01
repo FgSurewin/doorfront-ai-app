@@ -45,6 +45,7 @@ export default function Notes({ page, id }: {
     const [handicap, setHandicap] = useState(currentBoxNotes.handicap)
     const dropdownOptions = ["", "Yes", "No"]
     //onChangeNotesOpen(true)
+    // additional information field
     function setNewNotes(): NotesInterface {
         return (
             {

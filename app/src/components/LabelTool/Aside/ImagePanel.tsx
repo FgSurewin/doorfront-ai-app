@@ -6,6 +6,7 @@ import { useReactToolsStore, ReactToolImageListItemType } from "../state/reactTo
 import { useUserStore } from "../../../global/userState";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import {  useReactToolInternalStore } from "../state/internalState";
 
 
 export default function ImagePanel() {
@@ -18,6 +19,11 @@ export default function ImagePanel() {
     // disableDelete,
   
   } = useReactToolsStore();
+
+  const {
+      onChangeSelectedBoxId,
+      onChangeSelectedBoxType,
+  } = useReactToolInternalStore();
 
   /* -------------------------------------------------------------------------- */
   /*                              Handle User Score                             */
@@ -79,6 +85,8 @@ export default function ImagePanel() {
                   loading="lazy"
                   onClick={() => {
                     changeSelectedImageId(item.imageId);
+                    onChangeSelectedBoxId("");
+                    onChangeSelectedBoxType("");
                   }}
                 />
                 

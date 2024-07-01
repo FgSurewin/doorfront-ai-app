@@ -1,4 +1,4 @@
-// import {addRequest} from "../../apis/request";
+import {addRequest} from "../../apis/request";
 import Navbar from "../../components/Navbar";
 import {
   Box,
@@ -13,6 +13,10 @@ import {useState, useEffect} from "react";
 import Button from "@mui/material/Button";
 // import {useUserStore} from "../../global/userState";
 import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
+import {useUserStore} from "../../global/userState";
+import { useSnackbar } from "notistack";
+import { AddressAutofill } from '@mapbox/search-js-react';
+import {fromAddress, setKey} from "react-geocode";
 
 
 export default function CreateRequest() {
@@ -24,7 +28,23 @@ export default function CreateRequest() {
   const baseData = {address: "", type: "", deadline: 0}
   const [requestData, setRequestData] = useState(baseData)
   const [retry, setRetry] = useState('block')
- // const placesLibrary = useMapsLibrary("places");
+  const {userInfo} = useUserStore()
+  const {enqueueSnackbar} = useSnackbar()
+  setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
+
+  useEffect(()=>{
+    fromAddress(requestData.address)
+      .then(({ results }) => {
+        const { lat, lng } = results[0].geometry.location;
+        console.log(lat, lng);
+      })
+      .catch(console.error);
+  },[requestData.address])
+
+
+
+  // const placesLibrary = useMapsLibrary("places");
+  // console.log(placesLibrary)
   // const [service, setService] = useState<any>(null);
   // const [results, setResults] = useState<any>([]);
   // const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -47,6 +67,25 @@ export default function CreateRequest() {
   //     setResults(res || []);
   //   });
   // };
+
+  async function handleSubmit(){
+    const result = await addRequest({...requestData, requestedBy:userInfo.id as string})
+    console.log(result)
+    if(result){
+      setCurrentStep(4);
+      setRequestData(baseData);
+      enqueueSnackbar("Request submitted successfully.", {
+        variant: "success",
+      });
+    }
+    else{
+      enqueueSnackbar("Error submitting request!", {
+        variant: "error",
+      });
+      console.log("ERROR SUBMITTING")
+    }
+
+  }
 
   useEffect(() => {
     switch (currentStep) {
@@ -94,7 +133,6 @@ export default function CreateRequest() {
                 <Box textAlign="center" marginTop={5}>
                     <TextField sx={{minWidth: "50%"}} label="Address" value={requestData.address}
                                onChange={(e) => setRequestData({...requestData, address: e.target.value})}/>
-
                 </Box>
             </div>
             }
@@ -123,7 +161,6 @@ export default function CreateRequest() {
                             onClick={() => {setRequestData({...requestData, deadline: 3}); setCurrentStep(currentStep+1)}}> 3 days </Button>
                     <Button variant="contained" sx={{color: "white"}}
                             onClick={() => {setRequestData({...requestData, deadline: -1}); setCurrentStep(currentStep+1)}}> no deadline </Button>
-
                 </Box>
             </div>}
             {currentStep === 3 && <div>
@@ -152,7 +189,7 @@ export default function CreateRequest() {
                 </Grid>
 
                 <Button fullWidth type="submit" variant="contained" color="primary"
-                        sx={{color: "white", fontWeight: "bold", mt: 3}} onClick={()=> {setCurrentStep(4); setRequestData(baseData)}}>Submit Request</Button>
+                        sx={{color: "white", fontWeight: "bold", mt: 3}} onClick={()=> {handleSubmit()}}>Submit Request</Button>
             </div>}
             {currentStep === 4 && <div>
                 <Typography variant="h4" textAlign="center"> Thank you for submitting your request! Our volunteers will label the requested area as soon as possible.</Typography>
@@ -162,11 +199,8 @@ export default function CreateRequest() {
                             onClick={() => {setCurrentStep(0)}}>Yes</Button>
                     <Button variant="contained" sx={{color: "white"}}
                             onClick={()=> setRetry('none')}>No</Button>
-
                 </Box>
-
             </div>
-
             }
             <Grid container sx={{mt: "10%", display:retry}}>
               <Grid item xs={6} sx={{textAlign: "left", }}>

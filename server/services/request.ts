@@ -5,12 +5,12 @@ import UserModel from "../database/models/user";
 export class RequestService{
   async addRequest(ctx: AppContext, body: RequestBody) {
     const { res } = ctx
-    const { requestedBy, type, lat , lon } = body
+    const { requestedBy, type, address, deadline } = body
     try{
-      if(!requestedBy || !lon || !lat || !type) {
+      if(!requestedBy || !address || !type) {
         return res.status(400).json({
           code: 400,
-          message: "Need a requestedBy id, latitude, longitude, and type"
+          message: "Need a requestedBy id, address, and type"
         })
       }
       // check if the requestedBy id is a valid user
@@ -22,7 +22,7 @@ export class RequestService{
           message: "User does not exist!"
         })
       // add date that is five days after today
-      const addNewRequest = {...body, deadline: new Date(new Date().getTime()+(5*24*60*60*1000)).toISOString()
+      const addNewRequest = {...body, deadline: new Date(new Date().getTime()+(deadline*24*60*60*1000)).toISOString()
       };
       const newRequest = RequestModel.create(addNewRequest)
       if(!newRequest)

@@ -158,6 +158,15 @@ function MarkerContent({
         <Typography variant="subtitle1">
           Labeled By: {marker.nickname}
         </Typography>
+        {/*<Typography variant="h6">*/}
+        {/*  Notes*/}
+        {/*</Typography>*/}
+        {/*<Typography variant="subtitle1">*/}
+        {/*  Store Name:*/}
+        {/*</Typography>*/}
+        {/*<Typography variant="subtitle1">*/}
+        {/*  Address:*/}
+        {/*</Typography>*/}
       </CardContent>
       <CardActions>
         <Button

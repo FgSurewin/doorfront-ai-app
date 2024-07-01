@@ -1,11 +1,10 @@
 import {baseRequest} from "./index";
 export interface RequestData{
   requestedBy: string;
-  lat: number;
-  lon: number;
+  address:string;
   type: string;
   // deadline: Date;
-  deadline: string;
+  deadline: number
 
 }
 

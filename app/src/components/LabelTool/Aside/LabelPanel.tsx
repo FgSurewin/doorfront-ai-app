@@ -54,7 +54,7 @@ export default function LabelPanel() {
     return {lat:0,lng:0}
   }, [selectedImageId,reactToolImageList])
   React.useEffect(()=>{
-    var found = false;
+    let found = false;
     if(selectedLocation.lat !== 0){
     const point =  turf.point([selectedLocation.lng,selectedLocation.lat]);
     for( const area of contestNeighborhoods.features){

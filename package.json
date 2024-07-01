@@ -31,8 +31,10 @@
 	},
 	"homepage": "https://github.com/FgSurewin/crowdsourcing_app_docker#readme",
 	"dependencies": {
+		"@mapbox/search-js-react": "^1.0.0-beta.21",
 		"@turf/turf": "^6.5.0",
 		"@types/turf": "^3.5.32",
+		"@vis.gl/react-google-maps": "^1.1.0",
 		"bcrypt": "^5.0.1",
 		"body-parser": "^1.19.1",
 		"concurrently": "^6.5.1",
@@ -48,6 +50,7 @@
 		"nodemailer": "^6.9.8",
 		"nodemon": "^2.0.15",
 		"nunjucks": "^3.2.3",
+		"react-geocode": "^1.0.0-alpha.1",
 		"react-map-gl": "^7.0.19",
 		"react-player": "^2.16.0",
 		"react-share": "^4.4.1",

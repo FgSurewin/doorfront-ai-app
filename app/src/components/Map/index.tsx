@@ -35,7 +35,7 @@ mapboxgl.workerClass =
   require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 export default function MapboxMap() {
-  console.log(progress as FeatureCollection)
+  //console.log(progress as FeatureCollection)
   return (
     <div>
       <Container maxWidth="xl" sx={{pt: 4, pb: 4}}>
@@ -263,8 +263,6 @@ function MapRender() {
     let percentage = 0
     if (feature.properties?.total === 0) percentage = 1
     else percentage = feature.properties?.progress / feature.properties?.total
-    //console.log(percentage* 100)
-    //TODO: for each polygon, find the percentage of the zip and assign it the proper fill color
     const paint = {
       "fill-color": percentToColor(percentage * 100),
       "fill-outline-color": "#000000",
@@ -302,8 +300,6 @@ function MapRender() {
       onMouseMove={(e) => mouseMove(e)}
       onMouseLeave={onMouseLeave}
     >
-
-
       {progress.features.map((item) => {
           const layer = generateLayer(item as Feature)
           //console.log(item)

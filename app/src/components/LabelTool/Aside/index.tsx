@@ -83,7 +83,7 @@ export default function Aside() {
           />
         ))}
         {/*change back to door to enable notes */}
-        {selectedBoxType === 'door1' &&
+        {selectedBoxType === 'door' &&
         <Tab
             key={"NotesPanel"}
             className={`${"Notes"}-button`}
