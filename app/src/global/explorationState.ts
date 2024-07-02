@@ -126,10 +126,12 @@ export const useExplorationStore = create<ExplorationState>(
       saveCollectedImageList: (update) => {
         set(
           (state) => {
+
             const markerList: StreetViewMarkerType[] = [];
             update.forEach((image) => {
               if (image.human_labels.length > 0) {
                 image.human_labels[0].labels.forEach((label) => {
+                  console.log(label)
                   const marker: StreetViewMarkerType = {
                     point: [0, 0],
                     label_id: label.label_id,
@@ -142,6 +144,7 @@ export const useExplorationStore = create<ExplorationState>(
                     isShow: false,
                     box: label.box,
                     imagePov: image.pov,
+                    notes: label.notes
                   };
                   markerList.push(marker);
                 });

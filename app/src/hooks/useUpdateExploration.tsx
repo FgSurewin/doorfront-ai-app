@@ -108,7 +108,7 @@ export const useUpdateExplorationPage = () => {
           streetViewImages.data &&
           streetViewImages.data.length > 0
         ) {
-          // console.log("Save Images -> ", streetViewImages);
+           console.log("Save Images -> ", streetViewImages);
           saveCollectedImageList(streetViewImages.data);
         } else {
           saveCollectedImageList([]);

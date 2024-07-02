@@ -58,12 +58,16 @@ export default function Notes({ page, id }: {
         let box: NotesInterface = defaultNotes;
         if (selectedBoxId !== "") {
             if (page === 'explore') {
+              console.log(panoramaMarkerList)
+              console.log(selectedBoxId)
                 const currentBox = panoramaMarkerList.filter(
                     (item) => item.label_id === selectedBoxId
                 )[0];
-                if (currentBox.notes !== undefined) { box = currentBox.notes }
+              console.log(currentBox)
+               if (currentBox && currentBox.notes !== undefined) { box = currentBox.notes }
             }
             else if (page === "label") {
+              console.log(reactToolImageList)
                 const currentImage = reactToolImageList.filter(
                     (item) => item.imageId === selectedImageId
                 )[0];
@@ -133,12 +137,13 @@ export default function Notes({ page, id }: {
         }
 
         // if(page==="explore"){
-        //     const id = currentSelectedImage
+        //     const submitId = currentSelectedImage
         // }
-        // else {const id = selectedImageId}
+        // else {const submitId = selectedImageId}
+        const submitId = page==="explore" ? currentSelectedImage : selectedImageId
         const result = await updateNewHumanLabels(
             {
-                imageId: id,
+                imageId: submitId,
                 data: {
                   name: userInfo.nickname || "Nobody",
                   labels: humanLabels,

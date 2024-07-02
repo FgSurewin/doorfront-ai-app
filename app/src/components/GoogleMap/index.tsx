@@ -15,7 +15,7 @@ import {
 // import { panoMarker } from "./testData";
 import { StreetViewMarkerType } from "./utils/panoMarker";
 import { useExplorationStore } from "../../global/explorationState";
-// import Notes from "../Notes"
+ import Notes from "../Notes"
 // import {Box,Typography,} from "@mui/material"
 // import asyncLoading from "react-async-loader";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -48,7 +48,7 @@ function GoogleMap({
   /* -------------------------------------------------------------------------- */
   /*                                Global State                                */
   /* -------------------------------------------------------------------------- */
-  const { isNextPosition, setIsNextPosition, currentSelectedImage} = useExplorationStore();
+  const { isNextPosition, setIsNextPosition, currentSelectedImage,  } = useExplorationStore();
   /*
   const [currentArea,setCurrentArea] = React.useState("")
     
@@ -162,6 +162,12 @@ function GoogleMap({
               className={showMap ? 'MapBlock' : 'MapNone'}
               style={MapContainerStyle}
             >
+              {
+                 currentSelectedImage !== "" &&
+                  <div style={{position:'absolute',top:'300px',width:'240px', zIndex:1000000}}>
+                      <Notes page = "explore" id={currentSelectedImage} />
+                  </div>
+              }
 
             <div
               id="Map"

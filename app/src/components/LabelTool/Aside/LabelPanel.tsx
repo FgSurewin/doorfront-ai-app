@@ -13,9 +13,11 @@ import { updateContestStats } from "../../../apis/user";
 import { useUserStore} from "../../../global/userState";
 import { readLocal,LocalStorageKeyType } from "../../../utils/localStorage";
 import { useSnackbar } from "notistack";
+import {useReactToolInternalStore} from "../state/internalState";
 export default function LabelPanel() {
   const {enqueueSnackbar} = useSnackbar();
   const {userInfo} = useUserStore();
+  const {selectedBoxType,selectedBoxId,onChangeNotesOpen, onChangeSelectedBoxType, onChangeSelectedBoxId} = useReactToolInternalStore();
   const {
     selectedImageId,
     reactToolImageList,
@@ -37,7 +39,10 @@ export default function LabelPanel() {
       //console.log(res)
         if(res.code === 1 || res.code === 10 || res.code ===5)enqueueSnackbar(res.message)
       }
-       
+      onChangeNotesOpen(false)
+      onChangeSelectedBoxType("")
+      onChangeSelectedBoxId("")
+      console.log(selectedBoxType,selectedBoxId,selectedBoxId);
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);
     }
