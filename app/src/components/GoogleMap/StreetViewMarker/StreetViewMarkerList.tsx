@@ -198,7 +198,7 @@ function MarkerContent({
         sx={{
           width: "200px",
           zIndex: 1000000000,
-          transform: "translate(12vw, -100%)",
+          transform: "translate(205px, -100%)",
           position: "relative",
         }}
         id={`${sampleMarkerId}-streetViewMarkerCard`}

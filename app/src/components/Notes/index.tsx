@@ -221,7 +221,7 @@ export default function Notes({ page, id }: {
             >
             </TextField>
 
-            <Box sx={{ pt: '5%', pl: '80%' }} >
+            <Box sx={{ pt: '5%', pl: '75%' }} >
                 {!buttonDisabled &&
                     <Button size='small' onClick={handleCancel} sx={{
                         color: "white",
