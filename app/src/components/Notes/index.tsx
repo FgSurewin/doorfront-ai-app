@@ -26,8 +26,7 @@ export default function Notes({ page, id }: {
     {
         name: "",
         address: "",
-        accessible: "",
-        handicap: ""
+        additionalInfo: ""
     }
     const { enqueueSnackbar } = useSnackbar();
     const { userInfo, clearUserInfo } = useUserStore();
@@ -41,8 +40,7 @@ export default function Notes({ page, id }: {
     const currentBoxNotes = useMemo(() => findCurrentBoxNotes(), [selectedBoxId]);
     const [name, setName] = useState(currentBoxNotes.name)
     const [address, setAddress] = useState(currentBoxNotes.address)
-    const [accessible, setAccessible] = useState(currentBoxNotes.accessible)
-    const [handicap, setHandicap] = useState(currentBoxNotes.handicap)
+    const [additionalInfo, setAdditionalInfo] = useState(currentBoxNotes.additionalInfo)
     const dropdownOptions = ["", "Yes", "No"]
     //onChangeNotesOpen(true)
     // additional information field
@@ -51,8 +49,7 @@ export default function Notes({ page, id }: {
             {
                 name: name,
                 address: address,
-                accessible: accessible,
-                handicap: handicap,
+                additionalInfo: additionalInfo
             }
         )
     }
@@ -110,8 +107,7 @@ export default function Notes({ page, id }: {
         //updateCurrentNotes(selectedBoxId, currentBoxNotes)
         setName(currentBoxNotes.name)
         setAddress(currentBoxNotes.address)
-        setAccessible(currentBoxNotes.accessible)
-        setHandicap(currentBoxNotes.handicap)
+        setAdditionalInfo(currentBoxNotes.additionalInfo)
         setButtonDisabled(true);
         setEditButtonText('edit?');
     }
@@ -211,36 +207,15 @@ export default function Notes({ page, id }: {
             />
             <TextField
                 variant="standard"
-                label='Accessible'
-                size='small'
-                select
-                fullWidth
-                disabled={buttonDisabled}
-                onChange={(event) => { setAccessible(event.target.value) }}
-                value={accessible}
-            >
-                {dropdownOptions.map((option) => (
-                    <MenuItem key={option} value={option}>
-                        {option}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                variant="standard"
-                label='Handicap Restroom'
+                label='Additional Information'
                 size='small'
                 fullWidth
-                select
                 disabled={buttonDisabled}
-                onChange={(event) => setHandicap(event.target.value)}
-                value={handicap}
+                onChange={(event) => { setAdditionalInfo(event.target.value) }}
+                value={additionalInfo}
             >
-                {dropdownOptions.map((option) => (
-                    <MenuItem key={option} value={option}>
-                        {option}
-                    </MenuItem>
-                ))}
             </TextField>
+
             <Box sx={{ pt: '5%', pl: '80%' }} >
                 {!buttonDisabled &&
                     <Button size='small' onClick={handleCancel} sx={{

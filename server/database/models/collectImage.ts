@@ -16,8 +16,7 @@ export interface PovInterface {
 export interface NotesInterface {
   name: string;
   address:string;
-  accessible: string;
-  handicap: string;
+  additionalInfo:string;
 }
 
 export interface CollectedLabelInterface {
@@ -84,8 +83,7 @@ const CollectedLabelSchema = new Schema<CollectedLabelInterface>(
     notes : {
       name: String,
       address: String,
-      handicap: String,
-      accessible: String,
+      additionalInfo:String
     }
   },
   { timestamps: false }

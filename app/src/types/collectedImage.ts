@@ -14,8 +14,7 @@ export interface PovInterface {
 export interface NotesInterface {
   name: string;
   address:string;
-  accessible: string;
-  handicap: string;
+  additionalInfo:string;
 }
 
 export interface CollectedLabelInterface {

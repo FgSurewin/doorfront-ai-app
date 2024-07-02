@@ -124,8 +124,7 @@ export const useReactToolsStore = create<ReactToolState>(
       currentNotes:{
         name:'',
         address:'',
-        handicap: '',
-        accessible: ''
+        additionalInfo: ''
       },
       updateCurrentNotes:(boxId,notes) => {
         set(
