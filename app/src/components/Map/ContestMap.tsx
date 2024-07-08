@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Map, { Source, Layer, MapLayerMouseEvent } from 'react-map-gl';
-import {Box, Container, Grid, Typography, Dialog, DialogTitle, List, ListItemButton} from '@mui/material'
+import {Box, Container, Grid, Typography, Dialog, DialogTitle } from '@mui/material'
 import type { Feature, GeoJsonProperties, Point, Geometry } from 'geojson'
 import * as turf from '@turf/turf';
 import nearestPoint from '@turf/nearest-point';
@@ -20,7 +20,7 @@ export default function ContestMap() {
   const navigate = useNavigate();
 
   const [subtitle, setSubtitle] = React.useState<string>(defaultMessage)
-  const [mapClicked, setMapClicked] = React.useState<boolean>(false);
+
   const [hoverInfo, setHoverInfo] = React.useState<features>(defaultHoverInfo)
   const turfStreetPoints: turfFeatureCollection[] = React.useMemo(() => pointsToFeatureCollection(), [])
   const [contestScore,setContestScore] =React.useState(0)

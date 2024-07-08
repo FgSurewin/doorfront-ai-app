@@ -3,7 +3,7 @@ import Map, {Source, Layer, MapLayerMouseEvent} from "react-map-gl";
 import {Box, Container, Grid, Typography} from "@mui/material";
 import Item from "@mui/material/Grid";
 import CircleIcon from "@mui/icons-material/Circle";
-import type {Feature, GeoJsonProperties, Point, Geometry, FeatureCollection, Position} from "geojson";
+import type {Feature, GeoJsonProperties, Point, Geometry } from "geojson";
 import * as turf from "@turf/turf";
 import nearestPoint from "@turf/nearest-point";
 import {useExplorationStore} from "../../global/explorationState";
@@ -20,7 +20,6 @@ import {
   typographySX,
   gridSX,
 } from "./data";
-import neighborhoods from "./neighborhoods";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import progress from "./all.json"

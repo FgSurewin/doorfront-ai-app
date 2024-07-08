@@ -64,31 +64,31 @@ export default function LabelTool({
     updateLabelingPageTour,
   } = useTourStore();
 
-  const handleJoyrideCallback = async (data: CallBackProps) => {
-    const { action, index, type } = data;
-
-    // * Handle error situation
-    if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
-      updateLabelingPageTour(false);
-      updateLabelingTourStepIndex(0);
-    }
-    // * Handle next situation
-    if (action === "next" && type === EVENTS.STEP_AFTER) {
-      // console.log("next");
-      updateLabelingTourStepIndex(index + 1);
-    }
-    // * Handle prev situation
-    if (action === "prev" && type === EVENTS.STEP_AFTER) {
-      // console.log("prev");
-      updateLabelingTourStepIndex(index - 1);
-    }
-    // * Handle over situation (even skip will trigger "over" so I just comment skip situation)
-    if (type === "tour:end") {
-      // console.log("over");
-      updateLabelingPageTour(false);
-      updateLabelingTourStepIndex(0);
-    }
-  };
+  // const handleJoyrideCallback = async (data: CallBackProps) => {
+  //   const { action, index, type } = data;
+  //
+  //   // * Handle error situation
+  //   if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
+  //     updateLabelingPageTour(false);
+  //     updateLabelingTourStepIndex(0);
+  //   }
+  //   // * Handle next situation
+  //   if (action === "next" && type === EVENTS.STEP_AFTER) {
+  //     // console.log("next");
+  //     updateLabelingTourStepIndex(index + 1);
+  //   }
+  //   // * Handle prev situation
+  //   if (action === "prev" && type === EVENTS.STEP_AFTER) {
+  //     // console.log("prev");
+  //     updateLabelingTourStepIndex(index - 1);
+  //   }
+  //   // * Handle over situation (even skip will trigger "over" so I just comment skip situation)
+  //   if (type === "tour:end") {
+  //     // console.log("over");
+  //     updateLabelingPageTour(false);
+  //     updateLabelingTourStepIndex(0);
+  //   }
+  // };
 
   /* -------------------------------------------------------------------------- */
   const {

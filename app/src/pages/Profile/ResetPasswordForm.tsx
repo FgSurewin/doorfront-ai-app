@@ -17,7 +17,7 @@ interface Values {
 export default function ResetPasswordForm() {
   const { updateUserInfo } = useUserStore();
   const { enqueueSnackbar } = useSnackbar();
-  const {userInfo} = useUserStore();
+  // const {userInfo} = useUserStore();
   const navigate = useNavigate();
   return (
     <Box

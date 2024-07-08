@@ -15,7 +15,7 @@ import {
   convertInitImageToInputImageList,
   convertReactToolImageLabelsToDBImageLabels,
 } from "./utils/label";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { deleteImage } from "../../firebase/uploadImage";
 import { CollectedImageInterface } from "../../types/collectedImage";
 import {

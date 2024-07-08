@@ -1,4 +1,4 @@
-import { Container, TextField, Button, MenuItem } from '@mui/material'
+import { Container, TextField, Button } from '@mui/material'
 import { Box } from '@mui/system';
 import { useMemo } from 'react';
 import { useEffect } from 'react';
@@ -41,7 +41,7 @@ export default function Notes({ page, id }: {
     const [name, setName] = useState(currentBoxNotes.name)
     const [address, setAddress] = useState(currentBoxNotes.address)
     const [additionalInfo, setAdditionalInfo] = useState(currentBoxNotes.additionalInfo)
-    const dropdownOptions = ["", "Yes", "No"]
+    // const dropdownOptions = ["", "Yes", "No"]
     //onChangeNotesOpen(true)
     // additional information field
     function setNewNotes(): NotesInterface {

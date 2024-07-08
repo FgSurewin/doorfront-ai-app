@@ -1,5 +1,5 @@
 import { readLocal } from "../../utils/localStorage"
-import { getNickname, getAreaScore, getAllContestUsersInfo, contestUserReturn } from "../../apis/user"
+import { getNickname, getAreaScore } from "../../apis/user"
 import { getArea } from "../../apis/contest"
 import { LocalStorageKeyType } from "../../utils/localStorage"
 import * as React from 'react'

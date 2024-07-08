@@ -24,7 +24,7 @@ import {deleteAllLocal} from "../../utils/localStorage";
 import {contestNeighborhoods} from "../../components/Map/contest";
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import * as turf from "@turf/turf";
-import {CircularProgress, Container} from "@mui/material";
+import {CircularProgress } from "@mui/material";
 import {Box} from "@mui/system";
 
 export default function ReviewLabelingPage() {

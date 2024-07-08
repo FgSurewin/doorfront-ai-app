@@ -15,7 +15,6 @@ import Button from "@mui/material/Button";
 import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
 import {useUserStore} from "../../global/userState";
 import { useSnackbar } from "notistack";
-import { AddressAutofill } from '@mapbox/search-js-react';
 import {fromAddress, setKey} from "react-geocode";
 
 

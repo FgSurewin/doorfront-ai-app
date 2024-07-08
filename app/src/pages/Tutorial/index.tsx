@@ -1,10 +1,8 @@
 import React from 'react'
-import {Box, Tab, Typography, Tabs, Container, Grid} from '@mui/material'
-import YoutubeEmbed from './YoutubeEmbed';
+import {Box, Tab, Typography, Tabs, Grid} from '@mui/material'
 import {useState,} from "react";
 import {Intro, Junior, Pivot, Ramdom, Validate, Labeling, Panels} from './Images';
 import Navbar from '../../components/Navbar';
-import ReactPlayer from 'react-player/lazy'
 
 
 export default function Tutorial() {

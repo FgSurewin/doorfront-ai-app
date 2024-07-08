@@ -16,7 +16,7 @@ export interface areaUpdate{
 }
 
 export interface ContestState{
-    contestAreas:contestArea[],
+    contestAreas:contestArea[] ,
     updateContestAreas: (update:contestArea[]) => void
     activeContestNumber: number,
     setActiveContestNumber: (update: number)=>void

@@ -10,13 +10,13 @@ export default function ContributionsChart() {
         ['Reviewed', userScore.modify],
         ['Modified', userScore.review],
     ]
-    const data1 = [
-        ['Contribution Type', 'Amount'],
-        ['Created', 20],
-        ['Labeled', 50],
-        ['Reviewed', 10],
-        ['Modified', 4],
-    ]
+    // const data1 = [
+    //     ['Contribution Type', 'Amount'],
+    //     ['Created', 20],
+    //     ['Labeled', 50],
+    //     ['Reviewed', 10],
+    //     ['Modified', 4],
+    // ]
     const options = {
         title: "My Contribution Spread",
         pieHole: 0.2,

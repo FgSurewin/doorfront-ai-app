@@ -20,7 +20,7 @@ import { useExplorationStore } from "../../global/explorationState";
 // import asyncLoading from "react-async-loader";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Button, IconButton} from "@mui/material";
+import { Button } from "@mui/material";
 
 export interface GoogleMapProps {
   google?: typeof google;
