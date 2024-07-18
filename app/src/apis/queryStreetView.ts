@@ -130,10 +130,22 @@ export const useFetchGoogleStreetView = (optionFuncs: {
 };
 
 export function fetchMetadata(key: string, location: LocationType) {
+
   return axios
     .get(
       `https://maps.googleapis.com/maps/api/streetview/metadata?location=${location.lat},${location.lng}&key=${key}`
     )
     .then((res) => res.data)
     .catch((e) => new Error(e));
+}
+
+export async function getNewStreetview(key: string, location: LocationType){
+  const streetViewService = new google.maps.StreetViewService()
+  try{
+    const SVpano = await streetViewService.getPanorama({location,  source:  google.maps.StreetViewSource.OUTDOOR})
+//    console.log(SVpano)
+    return SVpano
+  } catch(e){
+    console.log(e)
+  }
 }

@@ -4,6 +4,7 @@ import { FooterData } from "./data";
 import { FooterList } from "./Footer.style";
 
 export default function Footer() {
+
   return (
     <Box component="div" sx={{ backgroundColor: "#484646", pt: 4 }}>
       <Container maxWidth="md">
@@ -26,6 +27,7 @@ export default function Footer() {
             <Divider sx={{ borderBottomWidth: 5, borderColor: "white" }} />
           </Grid>
           <Grid item container justifyContent="center" sx={{ pb: 2 }}>
+
             <Typography variant="body2" sx={{ color: "white" }}>
               {FooterData.copyRight}
             </Typography>

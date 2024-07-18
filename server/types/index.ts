@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CollectedLabelInterface } from "../database/models/collectImage";
 import { LabelInterface } from "../database/models/image";
+import {LocationType} from "../database/models/request";
 
 export interface ImageParams {
   panoId?: string;
@@ -60,4 +61,5 @@ export interface RequestBody {
   address:string;
   type: string;
   deadline:number;
+  location: LocationType
 }

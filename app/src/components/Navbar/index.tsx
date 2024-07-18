@@ -48,7 +48,7 @@ const Navbar = React.memo(function ({
   );
 
   const {userInfo} = useUserStore()
-  console.log(userInfo.role)
+  //console.log(userInfo.role)
   if(userInfo.role === "Blind or Low Vision Data Requester"){
     menuItems = [
       {name: "Request Data", path: "/createRequest"}

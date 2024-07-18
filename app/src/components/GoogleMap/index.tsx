@@ -61,9 +61,22 @@ function GoogleMap({
       }
     }
     */
+  React.useEffect(()=>{
+    if(google) {
+      mapConfig = {...mapConfig, streetViewControlOptions: {sources: [google.maps.StreetViewSource.GOOGLE]}}
+    }
+  },[google,
+    map,
+    streetView,
+    streetViewEvents,
+    streetViewConfig,
+    isNextPosition,
+    setIsNextPosition,])
+
   React.useEffect(() => {
     if (google && !_isMounted.current) {
-      if (!map && !streetView) {
+      // mapConfig = {...mapConfig, streetViewControlOptions:{sources: [google.maps.StreetViewSource.GOOGLE]}}
+      if ( !map && !streetView) {
         // console.log("Initialize Map...");
         setMap(
           new google.maps.Map(_map.current!, combineMapOptions(mapConfig))
@@ -91,6 +104,7 @@ function GoogleMap({
       _isMounted.current = false;
       setIsNextPosition(false);
       setMap(new google.maps.Map(_map.current!, combineMapOptions(mapConfig)));
+      //console.log(streetViewConfig);
       setStreetView(
         new google.maps.StreetViewPanorama(
           _streetView.current!,
@@ -162,12 +176,7 @@ function GoogleMap({
               className={showMap ? 'MapBlock' : 'MapNone'}
               style={MapContainerStyle}
             >
-              {
-                 currentSelectedImage !== "" &&
-                  <div style={{position:'absolute',top:'300px',width:'240px', zIndex:1000000}}>
-                      <Notes page = "explore" id={currentSelectedImage} />
-                  </div>
-              }
+
 
             <div
               id="Map"

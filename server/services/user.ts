@@ -432,6 +432,7 @@ export class UserService {
             create: currentUser.create,
             review: currentUser.review,
             contestScore: currentUser.contestScore,
+            bonus: currentUser.bonus
           },
         });
       } else {
@@ -476,6 +477,7 @@ export class UserService {
               modify: result.modify,
               create: result.create,
               review: result.review,
+              bonus: result.bonus
             },
           });
         } else {

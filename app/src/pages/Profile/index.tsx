@@ -50,7 +50,7 @@ export default function Profile() {
         setValue(newValue);
     };
   const {enqueueSnackbar} = useSnackbar();
-  console.log(userInfo)
+  //console.log(userInfo)
 
     React.useEffect(() => {
         async function innerFunc() {
@@ -60,7 +60,7 @@ export default function Profile() {
           const allReferredUsers = await getAllReferredUsers({
             id: userInfo.id!,
           });
-          console.log(allReferredUsers)
+          //console.log(allReferredUsers)
           var users:referredUser[] = []
           if(allReferredUsers.data){
             for(var i =0; i <allReferredUsers.data.length;i++){
@@ -128,6 +128,8 @@ export default function Profile() {
                             <Grid item xs={8} sx={gridContent} textAlign='center' display="flex" justifyContent={"center"}><Typography marginTop={1} sx={{display:"flex", flexDirection:"row", alignSelf:"center"}} fontSize={18}>{userScore.review}</Typography></Grid>
                             <Grid item xs={4} sx={gridTitle} textAlign='center'><Typography marginTop={1} sx={{display:"flex", flexDirection:"row",fontWeight: 'bold'}} fontSize={18}>Modified:</Typography></Grid>
                             <Grid item xs={8} sx={gridContent} textAlign='center' display="flex" justifyContent={"center"}><Typography marginTop={1} sx={{display:"flex", flexDirection:"row", alignSelf:"center"}} fontSize={18}>{userScore.modify}</Typography></Grid>
+                            <Grid item xs={4} sx={gridTitle} textAlign='center'><Typography marginTop={1} sx={{display:"flex", flexDirection:"row",fontWeight: 'bold'}} fontSize={18}>Bonus:</Typography></Grid>
+                            <Grid item xs={8} sx={gridContent} textAlign='center' display="flex" justifyContent={"center"}><Typography marginTop={1} sx={{display:"flex", flexDirection:"row", alignSelf:"center"}} fontSize={18}>{userScore.bonus}</Typography></Grid>
                             {readLocal("contest" as LocalStorageKeyType) !== null && readLocal("contest" as LocalStorageKeyType) !== ""&&
                             <>
                             <Grid item xs={4} sx={gridTitle} textAlign='center'><Typography marginTop={1} sx={{display:"flex", flexDirection:"row",fontWeight: 'bold'}} fontSize={18}>Contest Score:</Typography></Grid>

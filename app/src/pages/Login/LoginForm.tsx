@@ -64,7 +64,7 @@ export default function LoginForm() {
                 enqueueSnackbar("Login successfully", {
                   variant: "success",
                 });
-                console.log(result)
+                //console.log(result)
                 // Save to global state
                 updateUserInfo(result.data!);
                 // Save to localStorage

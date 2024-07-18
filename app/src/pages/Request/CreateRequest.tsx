@@ -16,6 +16,8 @@ import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
 import {useUserStore} from "../../global/userState";
 import { useSnackbar } from "notistack";
 import {fromAddress, setKey} from "react-geocode";
+import { LocationType } from "../../global/explorationState";
+
 
 
 export default function CreateRequest() {
@@ -27,18 +29,23 @@ export default function CreateRequest() {
   const baseData = {address: "", type: "", deadline: 0}
   const [requestData, setRequestData] = useState(baseData)
   const [retry, setRetry] = useState('block')
+  const [location, setLocation] = useState<LocationType>({lat: 0, lng: 0})
+
   const {userInfo} = useUserStore()
   const {enqueueSnackbar} = useSnackbar()
   setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
 
   useEffect(()=>{
+    if(currentStep === 1)
     fromAddress(requestData.address)
       .then(({ results }) => {
         const { lat, lng } = results[0].geometry.location;
         console.log(lat, lng);
+        setLocation(results[0].geometry.location)
       })
       .catch(console.error);
-  },[requestData.address])
+  },[currentStep])
+
 
 
 
@@ -68,7 +75,7 @@ export default function CreateRequest() {
   // };
 
   async function handleSubmit(){
-    const result = await addRequest({...requestData, requestedBy:userInfo.id as string})
+    const result = await addRequest({...requestData, requestedBy:userInfo.id as string, location})
     console.log(result)
     if(result){
       setCurrentStep(4);

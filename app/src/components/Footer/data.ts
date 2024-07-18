@@ -9,28 +9,32 @@ import BookIcon from "@mui/icons-material/Book";
 export const FooterData = {
   project: "project",
   projectList: [
-    { icon: InfoIcon, content: "About Us" },
-    { icon: GavelIcon, content: "Term of Use" },
-    { icon: BookIcon, content: "Labeling Guide" },
+    { icon: InfoIcon, content: "About Us", link: "" },
+    { icon: GavelIcon, content: "Term of Use", link: "" },
+    { icon: BookIcon, content: "Labeling Guide", link: "" },
   ],
   connect: "connect",
   connectList: [
     {
       icon: GitHubIcon,
       content: "GitHub",
+      link: "https://github.com/FgSurewin/doorfront-ai-app"
     },
     {
       icon: TwitterIcon,
       content: "Twitter",
+      link: ""
     },
     {
       icon: EmailIcon,
       content: "Email",
+      link: "mailto:doorfront.info@gmail.com"
     },
-    {
-      icon: FacebookIcon,
-      content: "Facebook",
-    },
+    // {
+    //   icon: FacebookIcon,
+    //   content: "Facebook",
+    //   link: ""
+    // },
   ],
-  copyRight: `© 2021 Doorfront. All Rights Reserved.`,
+  copyRight: `© 2024 Doorfront. All Rights Reserved.`,
 };

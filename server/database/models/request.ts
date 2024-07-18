@@ -6,7 +6,10 @@ export interface RequestInterface extends Document {
   address:string;
   labelers: string[];
   deadline: Date;
+  location: LocationType;
 }
+
+export type LocationType = { lat: number; lng: number };
 
 const Request = new Schema<RequestInterface>(
   {
@@ -29,6 +32,10 @@ const Request = new Schema<RequestInterface>(
     deadline:{
       type: Date,
       required: true,
+    },
+    location:{
+      type:{ lat: Number, lng: Number },
+      required:true
     }
 
   }, {timestamps: true});

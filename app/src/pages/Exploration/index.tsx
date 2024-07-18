@@ -1,10 +1,10 @@
-import React from "react";
+import React, {useState} from "react";
 import Navbar from "../../components/Navbar";
 import GoogleMap from "../../components/GoogleMap";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
-import {Container, Grid, Paper, Stack, Typography, Button, TextField} from "@mui/material";
+import {Container, Grid, Paper, Stack, Typography, Button, TextField, Box} from "@mui/material";
 import {generateInfo} from "../../components/GoogleMap/utils/streetViewTool";
 import {debouncedStreetViewImageChange} from "./utils/debounceFunc";
 import {useExplorationStore} from "../../global/explorationState";
@@ -23,6 +23,10 @@ import SouthIcon from '@mui/icons-material/South';
 import NorthIcon from '@mui/icons-material/North';
 import {fromAddress, setKey} from "react-geocode";
 import {useSnackbar} from "notistack";
+import {fetchMetadata, getNewStreetview} from "../../apis/queryStreetView";
+import {useContestState} from "../../global/contestState";
+import {getOpenRequests, RequestData} from "../../apis/request";
+
 
 export default function ExplorationPage() {
   const {
@@ -43,13 +47,19 @@ export default function ExplorationPage() {
     setIsNextPosition,
     clickedLocation,
     updateClickedLocation,
+    defaultGoogleMapConfig
   } = useExplorationStore();
+
+  const {activeContestNumber} = useContestState()
 
   const {enqueueSnackbar} = useSnackbar();
 
   const [currentArea, setCurrentArea] = React.useState("")
   const [address, setAddress] = React.useState("");
   const [location, setLocation] = React.useState({lat: 0, lng: 0})
+  const [requests, setRequests] = useState<RequestData[]>([]);
+  const [borderWidth, setBorderWidth] = useState(0)
+
   /*
   function parseGeoinput() {
     var neighborhoods: Feature<Polygon>[] = [];
@@ -63,17 +73,31 @@ export default function ExplorationPage() {
   */
 
   React.useEffect(() => {
-    const point = turf.point([googleMapConfig.position.lng, googleMapConfig.position.lat]);
-    let found = false;
-    for (const area of contestNeighborhoods.features) {
-      if (booleanPointInPolygon(point, area)) {
-        console.log('update current area')
-        setCurrentArea(String(area.properties.name))
-        found = true;
+    if (activeContestNumber !== 0) {
+      const point = turf.point([googleMapConfig.position.lng, googleMapConfig.position.lat]);
+      let found = false;
+      for (const area of contestNeighborhoods.features) {
+        if (booleanPointInPolygon(point, area)) {
+          console.log('update current area')
+          setCurrentArea(String(area.properties.name))
+          found = true;
+          break
+        }
+      }
+      if (!found) setCurrentArea("");
+    }
+    for(const request of requests){
+      //console.log(googleMapConfig.position)
+      const decimalPoint = 3
+      if(request.location &&
+         request.location.lng.toFixed(decimalPoint) === googleMapConfig.position.lng.toFixed(decimalPoint) &&
+         request.location.lat.toFixed(decimalPoint) === googleMapConfig.position.lat.toFixed(decimalPoint)){
+        //console.log("Nearby!");
+        setBorderWidth(7);
         break
       }
+      else{ setBorderWidth(0) }
     }
-    if (!found) setCurrentArea("");
 
   }, [googleMapConfig.position])
 
@@ -86,10 +110,12 @@ export default function ExplorationPage() {
   /* ------------------------------ React Effect ------------------------------ */
   React.useEffect(() => {
     (async function () {
-      if (!explorationTour && clickedLocation) {
+      if (clickedLocation) {
+        //console.log("handling clicked location")
         await handleClickedLocation(clickedLocation);
         updateClickedLocation(null);
       }
+
     })();
   }, [
     clickedLocation,
@@ -98,6 +124,15 @@ export default function ExplorationPage() {
     // handleNextPosition,
     updateClickedLocation,
   ]);
+
+  React.useEffect(()=>{
+    (async function () {
+      const result = await getOpenRequests()
+      // console.log(result)
+      if(result.data) setRequests(result.data)
+
+    })();
+  },[])
 
   /* -------------------------------------------------------------------------- */
   const onPovChanged = (
@@ -174,29 +209,40 @@ export default function ExplorationPage() {
 
   async function handleClick() {
     try {
+      //console.log(streetViewImageConfig)
       const result = await fromAddress(address)
-      console.log(result)
+      //console.log(result)
       if (result.status === "OK") {
         setLocation({lat: result.results[0].geometry.location.lat, lng: result.results[0].geometry.location.lng});
-        console.log(location)
-      }
-      else{
+        const newSV = await getNewStreetview(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
+        //  console.log(newSV!.data.location?.pano);
+        // const metadata = await fetchMetadata(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
+        // console.log(metadata)
+
+        updateGoogleMapConfig({
+          position: {
+            lat: newSV!.data.location?.latLng?.lat() as number,
+            lng: newSV!.data.location?.latLng?.lng() as number
+          },
+          panoId: newSV!.data.location?.pano,
+          povConfig: streetViewImageConfig.imagePov
+        })
+        updateStreetViewImageConfig({
+          imageLocation: {lat: location.lat, lng: location.lng},
+          panoId: newSV!.data.location?.pano
+        })
+        setIsNextPosition(true)
+        //  console.log(location)
+      } else {
         enqueueSnackbar("The location is not a valid address!", {variant: "error"})
       }
     } catch (error) {
       console.error(error);
       enqueueSnackbar("The location is not a valid address!", {variant: "error"});
-    }
-    finally {
-      updateStreetViewImageConfig({imageLocation: {lat: location.lat, lng: location.lng}})
-          updateGoogleMapConfig({
-            position: {
-              lat: location.lat, lng: location.lng
-            }
-          })
-          updateClickedLocation({
-            lat: location.lat, lng: location.lng
-          });
+    } finally {
+      // console.log(googleMapConfig)
+
+
     }
 
     // .then(({ results }) => {
@@ -259,7 +305,7 @@ export default function ExplorationPage() {
 
             </Grid>
             <Grid item xs={8}>
-              <Button variant={"contained"} onClick={() => handleClick()}>
+              <Button variant={"contained"} onClick={() => handleClick()} sx={{mt: 1}}>
                 Go!
               </Button>
             </Grid>
@@ -288,6 +334,7 @@ export default function ExplorationPage() {
             </Grid>
             <Grid item sm={12} lg={8} width={"100%"} sx={{pr: {sm: 0, lg: 5}}} id="GridBot">
               {googleMapConfig.panoId !== "" && (
+                <Box border={borderWidth} borderColor="primary.main" >
                 <GoogleMap
                   streetViewEvents={{onPovChanged, onPositionChanged}}
                   mapConfig={{
@@ -297,9 +344,11 @@ export default function ExplorationPage() {
                   streetViewConfig={{
                     pov: googleMapConfig.povConfig,
                     position: googleMapConfig.position,
+                    pano: googleMapConfig.panoId
                   }}
                   streetViewMarkerList={panoramaMarkerList}
                 />
+                </Box>
 
               )}
               <Stack direction="row" spacing={2}>

@@ -9,6 +9,7 @@ export default function ContributionsChart() {
         ['Labeled', userScore.label],
         ['Reviewed', userScore.modify],
         ['Modified', userScore.review],
+        ['Bonus', userScore.bonus],
     ]
     // const data1 = [
     //     ['Contribution Type', 'Amount'],

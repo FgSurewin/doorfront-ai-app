@@ -1,17 +1,19 @@
 import {baseRequest} from "./index";
+import {LocationType} from "../global/explorationState";
 export interface RequestData{
   requestedBy: string;
   address:string;
   type: string;
   // deadline: Date;
   deadline: number
-
+  location: LocationType,
+  _id?:string
 }
 
 export interface RequestReturnData {
   code: number;
   message: string;
-  data?: any;
+  data?: RequestData[];
 }
 export const addRequest = (data: RequestData) =>
   baseRequest
@@ -25,7 +27,7 @@ export const addRequest = (data: RequestData) =>
       throw new Error(res);
     })
 
-export function addLabeler(data: {requestId: string, labelerId: string}) {
+export const addLabeler = (data: {requestId: string, labelerId: string})=>
   baseRequest
     .request({
       method: "POST",
@@ -36,7 +38,7 @@ export function addLabeler(data: {requestId: string, labelerId: string}) {
     .catch((res) =>{
       throw new Error(res)
     })
-}
+
 
 export const getOpenRequests =() =>
   baseRequest
@@ -50,7 +52,7 @@ export const getOpenRequests =() =>
     })
 
 
-export function getUserRequests(data: {requestId: string, labelerId: string}) {
+export const getUserRequests = (data: {requestId: string, labelerId: string}) =>
   baseRequest
     .request({
       method: "GET",
@@ -61,4 +63,4 @@ export function getUserRequests(data: {requestId: string, labelerId: string}) {
     .catch((res) =>{
       throw new Error(res)
     })
-}
+

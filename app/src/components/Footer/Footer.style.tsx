@@ -13,6 +13,7 @@ import React from "react";
 export interface FooterListItemType {
   icon: OverridableComponent<SvgIconTypeMap>;
   content: string;
+  link: string;
 }
 
 export interface FooterListProps {
@@ -24,6 +25,13 @@ export const FooterList = React.memo(function ({
   list,
   listTitle,
 }: FooterListProps) {
+  function openInNewTab(url:string){
+    if(url !== "") {
+      const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+      if (newWindow) newWindow.opener = null
+    }
+  }
+
   return (
     <>
       <Typography
@@ -43,7 +51,7 @@ export const FooterList = React.memo(function ({
           const IconComponent = item.icon;
           return (
             <ListItem key={index}>
-              <Button>
+              <Button onClick={()=>openInNewTab(item.link)}>
                 <ListItemIcon sx={{ color: "white" }}>
                   <IconComponent />
                 </ListItemIcon>

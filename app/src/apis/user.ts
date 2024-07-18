@@ -240,6 +240,7 @@ export interface UserScoreFromDBType {
   create: number;
   review: number;
   contestScore?:number;
+  bonus: number
 }
 
 export const getUserScoreFromDB = (data: { id: string }) =>

@@ -1,11 +1,12 @@
 import RequestModel from "../database/models/request";
 import {AppContext, RequestBody} from "../types";
 import UserModel from "../database/models/user";
+import {LocationType} from "../database/models/request";
 
 export class RequestService{
   async addRequest(ctx: AppContext, body: RequestBody) {
     const { res } = ctx
-    const { requestedBy, type, address, deadline } = body
+    const { requestedBy, type, address, deadline, location: LocationType } = body
     try{
       if(!requestedBy || !address || !type) {
         return res.status(400).json({
@@ -21,7 +22,7 @@ export class RequestService{
           code:400,
           message: "User does not exist!"
         })
-      // add date that is five days after today
+      // add date that is {deadline} days after today
       const addNewRequest = {...body, deadline: new Date(new Date().getTime()+(deadline*24*60*60*1000)).toISOString()
       };
       const newRequest = RequestModel.create(addNewRequest)
@@ -63,8 +64,8 @@ export class RequestService{
         })
       const update = await RequestModel.findOneAndUpdate({_id: requestId, labelers: {$nin: [labelerId]}}, {$push: {labelers: labelerId}}, {new: true})
       if(!update)
-        return res.status(400).json({
-          code:400,
+        return res.status(200).json({
+          code:200,
           message: "Labeler already exists in this request or request id invalid"
         })
 

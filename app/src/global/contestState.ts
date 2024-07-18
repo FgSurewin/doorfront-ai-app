@@ -1,4 +1,4 @@
-import create from "zustand/react";
+import create from "zustand";
 import { devtools } from "zustand/middleware";
 import { readAllLocal } from "../utils/localStorage";
 
@@ -16,7 +16,7 @@ export interface areaUpdate{
 }
 
 export interface ContestState{
-    contestAreas:contestArea[] ,
+    contestAreas:contestArea[] | never[] ,
     updateContestAreas: (update:contestArea[]) => void
     activeContestNumber: number,
     setActiveContestNumber: (update: number)=>void
@@ -44,9 +44,10 @@ export const useContestState = create<ContestState>(
                 set((state)=>({
                     ...state,
                     activeContestNumber:update
-                })),
+                }),
                 false,
                 "ContestState/SetActiveContestNumber"
+                )
             },
             selectedArea:"",
             selectedAreaOwner:"",

@@ -16,6 +16,7 @@ export interface UserCredit {
   create: number;
   review: number;
   contestScore?:number;
+  bonus: number
 }
 
 export interface UserState {
@@ -73,6 +74,7 @@ export const useUserStore = create<UserState>(
         modify: 0,
         create: 0,
         review: 0,
+        bonus: 0
       },
       updateUserScore: (update) => {
         set(

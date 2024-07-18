@@ -180,19 +180,19 @@ function MapRender() {
     let closePoint: any;
     if (hoverInfo.name !== "") {
       for (let i = 0; i < turfStreetPoints.length; i++) {
-        console.log(hoverInfo, turfStreetPoints[i])
+        //console.log(hoverInfo, turfStreetPoints[i])
         if (hoverInfo.name.toString() === turfStreetPoints[i].name) {
           closePoint = nearestPoint(turfPoint, turfStreetPoints[i].points);
           //closePoint = nearestPoint(turfPoint,turfStreetPoints[0].points)
 
           /* ---------------------------- Handle navigation --------------------------- */
           // TODO: Update clicked location in global state
-          updateGoogleMapConfig({
-            position: {
-              lat: closePoint.geometry.coordinates[1],
-              lng: closePoint.geometry.coordinates[0]
-            }
-          })
+          // updateGoogleMapConfig({
+          //   position: {
+          //     lat: closePoint.geometry.coordinates[1],
+          //     lng: closePoint.geometry.coordinates[0]
+          //   }
+          // })
           updateClickedLocation({
             lat: closePoint.geometry.coordinates[1] as number,
             lng: closePoint.geometry.coordinates[0] as number,
