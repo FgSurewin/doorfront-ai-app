@@ -17,8 +17,7 @@ import {useUserStore} from "../../global/userState";
 import { useSnackbar } from "notistack";
 import {fromAddress, setKey} from "react-geocode";
 import { LocationType } from "../../global/explorationState";
-
-
+import {useNavigate} from "react-router-dom";
 
 export default function CreateRequest() {
   // const deadlines = [2, 3, 4, 5];
@@ -33,6 +32,7 @@ export default function CreateRequest() {
 
   const {userInfo} = useUserStore()
   const {enqueueSnackbar} = useSnackbar()
+  const navigate = useNavigate();
   setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
 
   useEffect(()=>{
@@ -45,9 +45,6 @@ export default function CreateRequest() {
       })
       .catch(console.error);
   },[currentStep])
-
-
-
 
   // const placesLibrary = useMapsLibrary("places");
   // console.log(placesLibrary)
@@ -126,7 +123,7 @@ export default function CreateRequest() {
 
   return (
     <div>
-      <Navbar/>
+      {/*<Navbar/>*/}
       <Container>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh" margin="5%">
           <Paper elevation={3}
@@ -134,7 +131,7 @@ export default function CreateRequest() {
 
             {currentStep === 0 && <div>
                 <Typography variant="h4" textAlign="center">
-                    Enter the address you would like to request for data collection
+                    Enter the address you would like to request for accessibility labeling
                 </Typography>
                 <Box textAlign="center" marginTop={5}>
                     <TextField sx={{minWidth: "50%"}} label="Address" value={requestData.address}
@@ -147,25 +144,22 @@ export default function CreateRequest() {
                     Would you like to request data for just this address or for the area around this address as well?
                 </Typography>
                 <Box display="flex" textAlign="center" marginTop={4} justifyContent="center" gap="4rem">
-                    <Button variant="contained" sx={{color: "white"}}
-                            onClick={() => {setRequestData({...requestData, type: "point"}); setCurrentStep(currentStep+1)}}> point</Button>
-                    <Button variant="contained" sx={{color: "white"}}
+                    <Button variant="contained"
+                            onClick={() => {setRequestData({...requestData, type: "point"}); setCurrentStep(currentStep+1)}}>single address</Button>
+                    <Button variant="contained"
                             onClick={() => {setRequestData({...requestData, type: "area"}); setCurrentStep(currentStep+1)}}> area </Button>
                 </Box>
             </div>}
             {currentStep === 2 && <div>
                 <Typography variant="h4" textAlign="center">
-                    Would you like to set a deadline for this request? Setting a deadline may result in faster data
-                    collection
+                    Would you like to set a deadline for this request?
                 </Typography>
                 <Box display="flex" textAlign="center" marginTop={4} justifyContent="center" gap="5%">
-                    <Button variant="contained" sx={{color: "white"}}
-                            onClick={() => {setRequestData({...requestData, deadline: 5}); setCurrentStep(currentStep+1)}}> 5 days</Button>
-                    <Button variant="contained" sx={{color: "white"}}
-                            onClick={() => {setRequestData({...requestData, deadline: 4}); setCurrentStep(currentStep+1)}}> 4 days </Button>
-                    <Button variant="contained" sx={{color: "white"}}
+                    <Button variant="contained"
+                            onClick={() => {setRequestData({...requestData, deadline: 7}); setCurrentStep(currentStep+1)}}> 7 days</Button>
+                    <Button variant="contained"
                             onClick={() => {setRequestData({...requestData, deadline: 3}); setCurrentStep(currentStep+1)}}> 3 days </Button>
-                    <Button variant="contained" sx={{color: "white"}}
+                    <Button variant="contained"
                             onClick={() => {setRequestData({...requestData, deadline: -1}); setCurrentStep(currentStep+1)}}> no deadline </Button>
                 </Box>
             </div>}
@@ -195,44 +189,49 @@ export default function CreateRequest() {
                 </Grid>
 
                 <Button fullWidth type="submit" variant="contained" color="primary"
-                        sx={{color: "white", fontWeight: "bold", mt: 3}} onClick={()=> {handleSubmit()}}>Submit Request</Button>
+                        sx={{fontWeight: "bold", mt: 3}} onClick={()=> {handleSubmit()}}>Submit Request</Button>
             </div>}
             {currentStep === 4 && <div>
                 <Typography variant="h4" textAlign="center"> Thank you for submitting your request! Our volunteers will label the requested area as soon as possible.</Typography>
                 <Box display="flex" textAlign="center" marginTop={4} justifyContent="center" gap="5%" sx={{display:retry}}>
                     <Typography variant="h6" textAlign="center">Would you like to submit another request?</Typography>
-                    <Button variant="contained" sx={{color: "white", mr:"5%"}}
+                    <Button variant="contained" sx={{ mr:"5%"}}
                             onClick={() => {setCurrentStep(0)}}>Yes</Button>
-                    <Button variant="contained" sx={{color: "white"}}
+                    <Button variant="contained"
                             onClick={()=> setRetry('none')}>No</Button>
+
                 </Box>
+              {retry === 'none' &&
+                  <Box display="flex" textAlign="center" marginTop={4} justifyContent="center" gap="5%" >
+                      <Button variant="contained" onClick={()=>navigate("/")}>Go Home</Button>
+                  </Box>}
             </div>
             }
             <Grid container sx={{mt: "10%", display:retry}}>
               <Grid item xs={6} sx={{textAlign: "left", }}>
-                <IconButton aria-label="Backward Button" disabled={backward}
+                <Button aria-label="Backward Button" disabled={backward}
                             onClick={() => setCurrentStep(currentStep - 1)}
-                            sx={{position: "absolute", bottom: 16, left: 16}}
+                            sx={{position: "absolute", bottom: 16, left: 16, color:"black", border:1}}
                             onKeyDown={(e) => {
                               if (e.key === '37') {
                                 setCurrentStep(currentStep - 1)
                               }
                             }}
                 >
-                  <ArrowBackIos/>
-                </IconButton>
+                  Back
+                </Button>
               </Grid>
               <Grid item xs={6} sx={{textAlign: "right"}}>
-                <IconButton aria-label="Forward Button" onClick={() => setCurrentStep(currentStep + 1)}
-                            disabled={forward} sx={{position: "absolute", bottom: 16, right: 16,}}
+                <Button aria-label="Forward Button" onClick={() => setCurrentStep(currentStep + 1)}
+                            disabled={forward} sx={{position: "absolute", bottom: 16, right: 16, color:"black", border:1}}
                             onKeyDown={(e) => {
                               if (e.key === '39') {
                                 setCurrentStep(currentStep + 1)
                               }
                             }}
                 >
-                  <ArrowForwardIos/>
-                </IconButton>
+                  Forward
+                </Button>
               </Grid>
             </Grid>
           </Paper>

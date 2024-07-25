@@ -194,7 +194,7 @@ export default function LabelStage() {
   }, []);
 
   //console.log(imgRef);
-
+  // stageSize.width is the window width, ok for mobile but extra space on desktop
   return (
  
     <>

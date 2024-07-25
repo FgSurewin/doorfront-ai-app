@@ -20,9 +20,13 @@ export default function LeaderBoard() {
 	const [allUsers, setAllUsers] = React.useState<AllUserScores[]>([]);
 	React.useEffect(() => {
 		async function loadFunc() {
-			const result = await getAllUsersFromDB();
-			if (result.code === 0) {
-				setAllUsers(_.orderBy(result.data, ["score"], ["desc"]));
+			try {
+				const result = await getAllUsersFromDB();
+				if (result.code === 0) {
+					setAllUsers(_.orderBy(result.data, ["score"], ["desc"]));
+				}
+			} catch(e){
+				console.error(e)
 			}
 		}
 		loadFunc();

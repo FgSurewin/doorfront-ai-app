@@ -82,7 +82,7 @@ export default function ReviewLabelingPage() {
             const areaGeometry = turf.polygon(areaData[0].geometry.coordinates, {name: areaData[0].properties.name})
             setImages(
               images.filter((image) => {
-                // Check if current user has been modify or validate current image
+                // Check if current user has been modified or validate current image
                 const names = image.human_labels.map((item) => item.name);
                 let incompleteDoor = false;
                 if (image.human_labels.length > 0)

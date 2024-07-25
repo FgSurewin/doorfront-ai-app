@@ -40,7 +40,9 @@ export default function LabelsShowcase() {
       <List
         sx={{
           overflowY: "scroll",
-          height: "calc(100vh - 48px - 48px - 41px - 74px)",
+          // height: "calc(100vh - 48px - 48px - 41px - 74px)",
+          height: "auto",
+          pb:10
         }}
         className="LabelsShowcase"
       >

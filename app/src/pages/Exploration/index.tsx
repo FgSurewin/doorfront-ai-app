@@ -21,9 +21,8 @@ import {ContestAreaInfo} from "../../components/Contest";
 import "./exploration.css";
 import SouthIcon from '@mui/icons-material/South';
 import NorthIcon from '@mui/icons-material/North';
-import {fromAddress, setKey} from "react-geocode";
+import {setKey} from "react-geocode";
 import {useSnackbar} from "notistack";
-import {fetchMetadata, getNewStreetview} from "../../apis/queryStreetView";
 import {useContestState} from "../../global/contestState";
 import {getOpenRequests, RequestData} from "../../apis/request";
 
@@ -207,69 +206,6 @@ export default function ExplorationPage() {
   };
   setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
 
-  async function handleClick() {
-    try {
-      //console.log(streetViewImageConfig)
-      const result = await fromAddress(address)
-      //console.log(result)
-      if (result.status === "OK") {
-        setLocation({lat: result.results[0].geometry.location.lat, lng: result.results[0].geometry.location.lng});
-        const newSV = await getNewStreetview(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
-        //  console.log(newSV!.data.location?.pano);
-        // const metadata = await fetchMetadata(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
-        // console.log(metadata)
-
-        updateGoogleMapConfig({
-          position: {
-            lat: newSV!.data.location?.latLng?.lat() as number,
-            lng: newSV!.data.location?.latLng?.lng() as number
-          },
-          panoId: newSV!.data.location?.pano,
-          povConfig: streetViewImageConfig.imagePov
-        })
-        updateStreetViewImageConfig({
-          imageLocation: {lat: location.lat, lng: location.lng},
-          panoId: newSV!.data.location?.pano
-        })
-        setIsNextPosition(true)
-        //  console.log(location)
-      } else {
-        enqueueSnackbar("The location is not a valid address!", {variant: "error"})
-      }
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar("The location is not a valid address!", {variant: "error"});
-    } finally {
-      // console.log(googleMapConfig)
-
-
-    }
-
-    // .then(({ results }) => {
-    //   const { lat, lng } = results[0].geometry.location;
-    //   if(results){
-    //     updateStreetViewImageConfig({imageLocation: {lat, lng}})
-    //     updateGoogleMapConfig({
-    //       position: {
-    //         lat,
-    //         lng
-    //       }
-    //     })
-    //     updateClickedLocation({
-    //       lat,
-    //       lng
-    //     });
-    //
-    //     console.log(lat, lng)
-    //     console.log(googleMapConfig)
-    //   }
-    // })
-    // .catch((error)=>{
-    //   console.error(error);
-    //   enqueueSnackbar("The location is not a valid address!", {variant: "error"});
-    // })}
-  }
-
   return (
     <div id="ExplorationWrapper">
 
@@ -299,17 +235,6 @@ export default function ExplorationPage() {
         }}
       >
         <Container maxWidth="xl">
-          <Grid container maxWidth="s">
-            <Grid item xs={4}>
-              <TextField label={"Address"} value={address} onChange={(e) => setAddress(e.target.value)}/>
-
-            </Grid>
-            <Grid item xs={8}>
-              <Button variant={"contained"} onClick={() => handleClick()} sx={{mt: 1}}>
-                Go!
-              </Button>
-            </Grid>
-          </Grid>
 
           <Stack
             sx={{display: {xs: 'flex', md: 'flex', lg: 'none'}}}

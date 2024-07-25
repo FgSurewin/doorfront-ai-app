@@ -72,8 +72,12 @@ export const MobileMenu = React.memo(function ({
     const controller = new AbortController();
     const signal = controller.signal;
     (async function (){
-      const res = await getOpenRequests();
-      if(res.data) setNumRequests(res.data.length)
+      try {
+        const res = await getOpenRequests();
+        if (res.data) setNumRequests(res.data.length)
+      } catch(e){
+        console.error(e)
+      }
     })()
     return () => controller.abort()
   },[])
@@ -160,8 +164,12 @@ export const WebMenu = React.memo(function ({
   const[numRequests, setNumRequests] = React.useState(0);
   React.useEffect(()=>{
     (async function (){
-      const res = await getOpenRequests();
-      if(res.data) setNumRequests(res.data.length)
+      try {
+        const res = await getOpenRequests();
+        if (res.data) setNumRequests(res.data.length)
+      } catch(e){
+        console.error(e)
+      }
     })()
   },[])
 
