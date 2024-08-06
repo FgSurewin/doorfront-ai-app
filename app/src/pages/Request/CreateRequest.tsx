@@ -29,22 +29,59 @@ export default function CreateRequest() {
   const [requestData, setRequestData] = useState(baseData)
   const [retry, setRetry] = useState('block')
   const [location, setLocation] = useState<LocationType>({lat: 0, lng: 0})
+  const [addressWrong,setAddressWrong] = useState(false)
 
   const {userInfo} = useUserStore()
   const {enqueueSnackbar} = useSnackbar()
   const navigate = useNavigate();
   setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
 
-  useEffect(()=>{
-    if(currentStep === 1)
-    fromAddress(requestData.address)
-      .then(({ results }) => {
-        const { lat, lng } = results[0].geometry.location;
+  async function fetchAddress(){
+    try{
+      console.log(requestData.address);
+      const res = await fromAddress(requestData.address)
+      if(res){
+        console.log(res)
+        const { lat, lng } = res.results[0].geometry.location;
         console.log(lat, lng);
-        setLocation(results[0].geometry.location)
-      })
-      .catch(console.error);
-  },[currentStep])
+        setLocation(res.results[0].geometry.location)
+        setCurrentStep(currentStep +1)
+      }
+    } catch(e){
+      console.error(e)
+      setAddressWrong(true)
+      setForward(true)
+    }
+
+  }
+  // useEffect(()=>{
+  //   async function fetchAddress(){
+  //     try{
+  //       console.log(requestData.address);
+  //       const res = await fromAddress(requestData.address)
+  //       if(res){
+  //         console.log(res)
+  //         const { lat, lng } = res.results[0].geometry.location;
+  //         console.log(lat, lng);
+  //         setLocation(res.results[0].geometry.location)
+  //       }
+  //     } catch(e){
+  //       console.error(e)
+  //       setAddressWrong(true)
+  //       setForward(false)
+  //     }
+  //
+  //   }
+  //   if(currentStep === 1)
+  //    fetchAddress()
+  //   // fromAddress(requestData.address)
+  //   //   .then(({ results }) => {
+  //   //     const { lat, lng } = results[0].geometry.location;
+  //   //     console.log(lat, lng);
+  //   //     setLocation(results[0].geometry.location)
+  //   //   })
+  //   //   .catch(console.error);
+  // },[currentStep])
 
   // const placesLibrary = useMapsLibrary("places");
   // console.log(placesLibrary)
@@ -99,6 +136,7 @@ export default function CreateRequest() {
         break;
       case 1:
         setBackward(false);
+        setAddressWrong(false)
         if (requestData.type === "") setForward(true);
         else setForward(false);
         break;
@@ -130,9 +168,14 @@ export default function CreateRequest() {
                  sx={{p: 4, backgroundColor: "white", position: "relative", minWidth: "100%", minHeight: "100%"}}>
 
             {currentStep === 0 && <div>
+              {!addressWrong ?
                 <Typography variant="h4" textAlign="center">
                     Enter the address you would like to request for accessibility labeling
                 </Typography>
+                :
+                <Typography variant="h4" textAlign="center">
+                  Sorry, the entered address does not seem to be valid. Please try again.
+                </Typography> }
                 <Box textAlign="center" marginTop={5}>
                     <TextField sx={{minWidth: "50%"}} label="Address" value={requestData.address}
                                onChange={(e) => setRequestData({...requestData, address: e.target.value})}/>
@@ -189,7 +232,7 @@ export default function CreateRequest() {
                 </Grid>
 
                 <Button fullWidth type="submit" variant="contained" color="primary"
-                        sx={{fontWeight: "bold", mt: 3}} onClick={()=> {handleSubmit()}}>Submit Request</Button>
+                        sx={{fontWeight: "bold", mt: 3, bgcolor:"white", border:1, color:"black"}} onClick={()=> {handleSubmit()}}>Submit Request</Button>
             </div>}
             {currentStep === 4 && <div>
                 <Typography variant="h4" textAlign="center"> Thank you for submitting your request! Our volunteers will label the requested area as soon as possible.</Typography>
@@ -222,7 +265,11 @@ export default function CreateRequest() {
                 </Button>
               </Grid>
               <Grid item xs={6} sx={{textAlign: "right"}}>
-                <Button aria-label="Forward Button" onClick={() => setCurrentStep(currentStep + 1)}
+                <Button aria-label="Forward Button" onClick={() => {
+                  if(currentStep === 0)  fetchAddress()
+                  else setCurrentStep(currentStep + 1);
+
+                }}
                             disabled={forward} sx={{position: "absolute", bottom: 16, right: 16, color:"black", border:1}}
                             onKeyDown={(e) => {
                               if (e.key === '39') {

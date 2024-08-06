@@ -260,6 +260,7 @@ export default function ExplorationPage() {
             <Grid item sm={12} lg={8} width={"100%"} sx={{pr: {sm: 0, lg: 5}}} id="GridBot">
               {googleMapConfig.panoId !== "" && (
                 <Box border={borderWidth} borderColor="primary.main" >
+                  {//@ts-ignore
                 <GoogleMap
                   streetViewEvents={{onPovChanged, onPositionChanged}}
                   mapConfig={{
@@ -273,6 +274,7 @@ export default function ExplorationPage() {
                   }}
                   streetViewMarkerList={panoramaMarkerList}
                 />
+                  }
                 </Box>
 
               )}

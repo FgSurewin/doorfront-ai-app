@@ -30,6 +30,8 @@ export default function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
+          {//@ts-ignore
+            // }
           <SnackbarProvider
             anchorOrigin={{
               vertical: "bottom",
@@ -39,6 +41,7 @@ export default function App() {
           >
             <Outlet />
           </SnackbarProvider>
+          }
         </ThemeProvider>
         {/* <ReactQueryDevtools initialIsOpen={false} position="bottom-left" /> */}
       </QueryClientProvider>

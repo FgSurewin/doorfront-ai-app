@@ -41,9 +41,12 @@ export default function StreetViewMarkerList({
     explorationTour,
     explorationTourStepIndex,
   } = useTourStore();
+
   return (
     <>
-      {panoramaMarkerList.map((item) => (
+
+      {panoramaMarkerList.map((item) =>
+        //@ts-ignore
         <StreetViewMarker
           key={item.label_id}
           id={item.label_id}
@@ -106,7 +109,7 @@ export default function StreetViewMarkerList({
             )}
           </div>
         </StreetViewMarker>
-      ))}
+      )}
     </>
   );
 }
