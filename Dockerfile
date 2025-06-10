@@ -1,4 +1,4 @@
-FROM node:16Add commentMore actions
+FROM node:16
 
 WORKDIR /doorfront
 
@@ -36,3 +36,7 @@ COPY . /doorfront/
 # RUN npm run linux-build
 
 RUN npm run server-build
+
+ENV NODE_ENV=production
+
+CMD npm start --bind 0.0.0.0:$PORT
