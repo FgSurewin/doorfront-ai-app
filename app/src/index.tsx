@@ -18,7 +18,7 @@ import Test from "./pages/Contest/test"
 import Profile from "./pages/Profile"
 import Tutorial from "./pages/Tutorial"
 import Request from "./pages/Request";
-import CreateRequest from "./pages/Request/CreateRequest";
+import CreateRequest from "./pages/Request/CreateRequest"; 
 
 ReactDOM.render(
   <React.StrictMode>
