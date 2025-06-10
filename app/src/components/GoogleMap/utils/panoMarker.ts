@@ -1,4 +1,4 @@
-import { CollectedBoxInterface } from "../../../types/collectedImage";
+import { CollectedBoxInterface, NotesInterface } from "../../../types/collectedImage";
 
 export interface StreetViewMarkerType {
   point: number[];
@@ -12,4 +12,5 @@ export interface StreetViewMarkerType {
   isShow: boolean;
   box: CollectedBoxInterface;
   imagePov: { heading: number; pitch: number; zoom: number };
+  notes?:NotesInterface
 }

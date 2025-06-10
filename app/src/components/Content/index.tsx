@@ -10,15 +10,18 @@ import {
 } from "./Content.style";
 
 export default function Content() {
+
   return (
     <>
       <div style={{ backgroundColor: "rgba(225, 207, 185, 0.15)" }}>
         <Container maxWidth="xl">
+
           <Grid
             container
             sx={{ pt: { sm: 10, xs: 5 } }}
             rowSpacing={{ sm: 15, xs: 5 }}
           >
+
             <GridItem>
               <Box
                 sx={{

@@ -2,7 +2,7 @@ import React ,{useState, useEffect} from "react";
 import Konva from "konva";
 import useImage from "use-image";
 import { Stage, Layer, Image, Rect } from "react-konva";
-import { useWindowDimensions } from "../ReactToolHooks/useWindowDimensions";
+
 import { useReactToolsStore } from "../state/reactToolState";
 import { LabelingPoint, useReactToolInternalStore } from "../state/internalState";
 import { KonvaEventObject } from "konva/lib/Node";
@@ -12,7 +12,7 @@ import { calculateBoundingBox, preventBoxOutOfImage } from "../utils";
 import { isEqual } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../../global/userState";
-import { useMediaQuery } from "@mui/material";
+
 
 export default function LabelStage() {
   /* -------------------------------------------------------------------------- */
@@ -46,7 +46,7 @@ export default function LabelStage() {
     imageAttributes,
     scaleConfig,
     onChangeSelectedBoxId,
-    //onChangeSelectedBoxType,
+    onChangeSelectedBoxType,
     labelingProcess,
     onChangeLabelingProcess,
     resetLabelingProcess,
@@ -80,7 +80,7 @@ export default function LabelStage() {
     const clickedOnEmpty =
       e.target === e.target.getStage() || e.target === imgRef.current;
     if (clickedOnEmpty) {
-      //onChangeSelectedBoxType("");
+      onChangeSelectedBoxType("");
       onChangeSelectedBoxId("");
     }
   };
@@ -173,7 +173,7 @@ export default function LabelStage() {
   /* ------------------------------- Drag Events ------------------------------ */
   const handleStageDragEnd = (e: KonvaEventObject<DragEvent>) => {
     onChangeSelectedBoxId("")
-   // onChangeSelectedBoxType("")
+    onChangeSelectedBoxType("")
     onChangeStageAttributes({ x: e.target.x(), y: e.target.y() });
   };
 
@@ -194,7 +194,7 @@ export default function LabelStage() {
   }, []);
 
   //console.log(imgRef);
-
+  // stageSize.width is the window width, ok for mobile but extra space on desktop
   return (
  
     <>

@@ -6,10 +6,37 @@ export interface QueryImageAttribute {
   fileName: string;
 }
 
+export interface areaScores{
+  areaName:string;
+  areaScore: number;
+}
+
+export interface userReferred{
+  userID:string;
+  bonusReceived: boolean;
+}
+
+const areaSchema = new Schema<areaScores> ({
+  areaName: {type:String, required:true},
+  areaScore: {type:Number, required:true}
+})
+
 const QueryImageAttributeSchema = new Schema<QueryImageAttribute>(
   { imageId: String, imgSrc: String, fileName: String },
   { timestamps: true }
 );
+
+const UserReferredSchema = new Schema<userReferred> (
+  {userID:String, bonusReceived:Boolean},
+  {timestamps:true}
+)
+
+/*
+const PreviousScoresSchema = new Schema<number>(
+  {previousScore: Number},
+  {timestamps: true}
+)
+*/
 
 export interface UserInterface extends Document {
   nickname: string;
@@ -30,6 +57,15 @@ export interface UserInterface extends Document {
   modify_images: QueryImageAttribute[];
   review_images: QueryImageAttribute[];
   unLabel_images: QueryImageAttribute[];
+  contestScore: number;
+  areaScores: areaScores[];
+  //previousScores: number[]; //store 12 previous months scores
+  //NEW all optional
+  referralCode: string;
+  usersReferred: userReferred[];
+  referrer : string;
+  updatedAt: Date
+
 }
 
 const UserModel = new Schema<UserInterface>(
@@ -94,6 +130,25 @@ const UserModel = new Schema<UserInterface>(
     modify_images: [QueryImageAttributeSchema],
     review_images: [QueryImageAttributeSchema],
     unLabel_images: [QueryImageAttributeSchema],
+    contestScore: {
+      type: Number,
+      required: false
+    },
+    areaScores: [areaSchema],
+   // previousScores: [PreviousScoresSchema]
+    referralCode: {
+      type:String,
+      required:false
+    },
+    usersReferred:[UserReferredSchema],
+    referrer:{
+      type:String,
+      required:false
+    },
+    updatedAt:{
+      type:Date,
+      required: false
+    }
   },
   { timestamps: true }
 );

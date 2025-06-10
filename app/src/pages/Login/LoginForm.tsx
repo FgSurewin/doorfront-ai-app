@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Formik, Form, Field } from "formik";
+  import { Formik, Form, Field } from "formik";
 import { TextField } from "formik-mui";
 import { useSnackbar } from "notistack";
 import { login } from "../../apis/user";
@@ -64,6 +64,7 @@ export default function LoginForm() {
                 enqueueSnackbar("Login successfully", {
                   variant: "success",
                 });
+                //console.log(result)
                 // Save to global state
                 updateUserInfo(result.data!);
                 // Save to localStorage
@@ -87,6 +88,7 @@ export default function LoginForm() {
                 event.preventDefault();
                 event.stopPropagation();
                 submitForm();
+
               }}
             >
               <Field

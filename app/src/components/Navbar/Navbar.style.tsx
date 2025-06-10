@@ -5,10 +5,12 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import Typography from "@mui/material/Typography";
+import Badge from "@mui/material/Badge";
 import Button from "@mui/material/Button";
 import { SxProps } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useHandleMenu } from "../../hooks/useHandleMenu";
+import {getOpenRequests} from "../../apis/request";
 
 export const transparentStyle: SxProps = {
   py: 0.6,
@@ -65,6 +67,20 @@ export const MobileMenu = React.memo(function ({
     [isTransparent]
   );
   const { anchorEl, handleOpenMenu, handleCloseMenu } = useHandleMenu();
+  const[numRequests, setNumRequests] = React.useState(0);
+  React.useEffect(()=>{
+    const controller = new AbortController();
+    const signal = controller.signal;
+    (async function (){
+      try {
+        const res = await getOpenRequests();
+        if (res.data) setNumRequests(res.data.length)
+      } catch(e){
+        console.error(e)
+      }
+    })()
+    return () => controller.abort()
+  },[])
   return (
     <>
       <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -96,7 +112,18 @@ export const MobileMenu = React.memo(function ({
             display: { xs: "block", md: "none" },
           }}
         >
-          {menuItems.map((item, index) => (
+          {menuItems.map((item, index) =>
+            item.name === "Requests" ?
+              <Badge badgeContent={numRequests} color={"primary"} max={10} overlap={"circular"} anchorOrigin={{vertical:'top', horizontal:'right'}} key={`${item.name} + ${index}`}>
+              <MenuItem
+                component={RouterLink}
+                to={item.path}
+                onClick={handleCloseMenu}
+              >
+                <Typography textAlign="center">{item.name}</Typography>
+              </MenuItem>
+              </Badge>
+              :
             <MenuItem
               component={RouterLink}
               to={item.path}
@@ -105,7 +132,7 @@ export const MobileMenu = React.memo(function ({
             >
               <Typography textAlign="center">{item.name}</Typography>
             </MenuItem>
-          ))}
+          )}
         </Menu>
       </Box>
     </>
@@ -115,6 +142,16 @@ export const MobileMenu = React.memo(function ({
 /* -------------------------------------------------------------------------- */
 /*                         React Component - Web Menu                         */
 /* -------------------------------------------------------------------------- */
+
+async function getNumRequests(){
+  try {
+    const result = await getOpenRequests();
+    return result.data
+  }
+  catch(e){
+    console.log(e)
+  }
+}
 export const WebMenu = React.memo(function ({
   menuItems,
   isTransparent,
@@ -124,25 +161,56 @@ export const WebMenu = React.memo(function ({
     [isTransparent]
   );
 
+  const[numRequests, setNumRequests] = React.useState(0);
+  React.useEffect(()=>{
+    (async function (){
+      try {
+        const res = await getOpenRequests();
+        if (res.data) setNumRequests(res.data.length)
+      } catch(e){
+        console.error(e)
+      }
+    })()
+  },[])
+
+
+
   return (
     <>
       <Box sx={{ flexGrow: 0.2, display: { xs: "none", md: "flex" } }}>
-        {menuItems.map((item, index) => (
-          <Button
-            key={`${item.name} + ${index}`}
-            component={RouterLink}
-            to={item.path}
-            sx={{
-              mx: 2,
-              display: "block",
-              fontSize: "1.25rem",
-              textTransform: "none",
-              ...colorStyle,
-            }}
-          >
-            {item.name}
-          </Button>
-        ))}
+        {menuItems.map((item, index) =>
+           item.name === "Requests" ?
+              <Badge badgeContent={numRequests} color={"primary"} max={10} overlap={"circular"} anchorOrigin={{vertical:'top', horizontal:'right'}} key={`${item.name} + ${index}`}>
+                  <Button
+                      component={RouterLink}
+                      to={item.path}
+                      sx={{
+                        mx: 2,
+                        display: "block",
+                        fontSize: "1.25rem",
+                        textTransform: "none",
+                        ...colorStyle,
+                      }}
+                  >
+                    {item.name}
+                  </Button>
+              </Badge>:
+              <Button
+                key={`${item.name} + ${index}`}
+                component={RouterLink}
+                to={item.path}
+                sx={{
+                  mx: 2,
+                  display: "block",
+                  fontSize: "1.25rem",
+                  textTransform: "none",
+                  ...colorStyle,
+                }}
+              >
+                {item.name}
+              </Button>
+
+        )}
       </Box>
     </>
   );

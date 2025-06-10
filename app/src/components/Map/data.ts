@@ -7,11 +7,12 @@ export type features = {
   progress: number;
   percentage: number;
   total: number;
-  //geometry: number[][];
+  geometry: number[][];
+  id: string;
 };
 
 export type turfFeatureCollection = {
-  name: string;
+  name: string | number;
   points: FeatureCollection<Point, GeoJsonProperties>;
 };
 
@@ -28,6 +29,7 @@ export type queriedFeatures = {
     total: number;
   };
   geometry: { coordinates: number[][] };
+  id: string
 };
 
 export const defaultHoverInfo: features = {
@@ -35,7 +37,8 @@ export const defaultHoverInfo: features = {
   progress: 0,
   percentage: 0,
   total: 0,
-  //geometry: [[0]],
+  geometry: [[0]],
+  id: ""
 };
 
 export const defaultMessage: string =

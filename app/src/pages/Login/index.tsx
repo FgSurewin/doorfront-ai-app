@@ -11,6 +11,9 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 import { Copyright, generateRandomImageStyle } from "./Login.style";
+import {
+  useSearchParams,
+} from "react-router-dom"
 
 export default function Login() {
   /* --------------------- State for tab panel --------------------- */
@@ -22,7 +25,12 @@ export default function Login() {
     setValue(0);
   };
   /* -------------------------------------------------------------------------- */
-
+  const [queryParameters] = useSearchParams()
+  React.useEffect(()=>{
+    if(queryParameters.has("ref")){
+      setValue(1)
+    }
+  },[])
   return (
     <div style={{ height: "100vh" }}>
       <Navbar position="static" isTransparent={false} />
@@ -38,12 +46,12 @@ export default function Login() {
           >
             <Tab
               icon={<AssignmentIndIcon />}
-              aria-label="AssignmentIndIcon"
+              aria-label="Sign in"
               label="Sign In"
             />
             <Tab
               icon={<AssignmentIcon />}
-              aria-label="AssignmentIcon"
+              aria-label="Sign Up"
               label="Sign Up"
             />
           </Tabs>

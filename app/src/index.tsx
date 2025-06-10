@@ -13,8 +13,12 @@ import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
 import ResetPage from "./pages/Login/ResetPage";
-import Tutorial from "./pages/Tutorial/Form"
 import Contest from "./pages/Contest";
+import Test from "./pages/Contest/test"
+import Profile from "./pages/Profile"
+import Tutorial from "./pages/Tutorial"
+import Request from "./pages/Request";
+import CreateRequest from "./pages/Request/CreateRequest";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -28,7 +32,11 @@ ReactDOM.render(
           <Route path="*" element={<NotFound />} />
           <Route path="/tutorial" element={<Tutorial/>} />
           <Route element={<ProtectedRoute />}>
-            <Route path= "/contest" element={<Contest />} />
+            <Route path="/contest" element={<Contest />} />
+            <Route path="/requests" element={<Request />} />
+            <Route path="/createRequest" element={<CreateRequest />} />
+            {<Route path="/contestTest" element = {<Test />} /> }
+            <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
             <Route path="/reviewLabels" element={<ReviewLabelingPage />} />

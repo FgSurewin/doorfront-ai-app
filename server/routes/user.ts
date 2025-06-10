@@ -27,6 +27,18 @@ route.post("/getUserScore", userController.getUserScore);
 route.post("/addBonusCredit", userController.addBonusCredit);
 route.get("/getAllUsers", userController.getAllUsers);
 
+route.post("/getContestScore",userController.getContestScore);
+route.post("/updateContestScore", userController.updateContestScore)
+route.post("/updateContestStats",userController.updateContestStats)
+route.post("/resetContestScore",userController.resetContestScore)
+route.post("/getAreaScore",userController.getAreaScore)
+route.post("/getNickname",userController.getNickname)
+route.post("/getReferrer",userController.getReferrer)
+route.post("/getReferralCode",userController.getReferralCode)
+route.post("/getAllReferredUsers",userController.getAllReferredUsers)
+route.post("/updateReferredUserBonus",userController.updateReferredUserBonus)
+route.post("/getAllContestUsersInfo",userController.getAllContestUsersInfo)
+
 // route.post("/addImages", userController.updateImage);
 // route.post("/addCreateCredit", userController.addCreateCredit);
 // route.post("/addReviewCredit", userController.addReviewCredit);

@@ -39,9 +39,28 @@ const shadeStyle: React.CSSProperties = {
 /* -------------------------------------------------------------------------- */
 const videoLink = process.env.REACT_APP_VIDEO_LINK;
 export const BackgroundVideo = React.memo(function () {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement && /Mobi|Android/i.test(navigator.userAgent)) {
+      // Disable fullscreen for mobile browsers
+      videoElement.removeAttribute("controls");
+      videoElement.setAttribute("playsinline", ""); // This attribute is important for iOS
+    }
+  }, []);
+
   return (
     <>
-      <video muted loop autoPlay src={videoLink} style={videoStyle} />
+      <video
+        ref={videoRef}
+        muted
+        loop
+        autoPlay
+        playsInline // This prop is important for iOS
+        src={videoLink}
+        style={videoStyle}
+      />
       <div style={shadeStyle} />
     </>
   );

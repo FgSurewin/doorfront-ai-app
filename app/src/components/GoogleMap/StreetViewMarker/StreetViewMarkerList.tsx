@@ -8,9 +8,12 @@ import {
   CardContent,
   CardMedia,
   Typography,
+  Grid
 } from "@mui/material";
 import { useExplorationStore } from "../../../global/explorationState";
 import { useTourStore } from "../../../global/tourState";
+import {useReactToolInternalStore } from "../../LabelTool/state/internalState"
+import Notes from "../../Notes"
 
 export interface StreetViewMarkerListProps {
   streetViewContainer: HTMLElement;
@@ -30,6 +33,7 @@ export default function StreetViewMarkerList({
 }: StreetViewMarkerListProps) {
   const { updatePanoramaMarkerList, updateCurrentSelectedImage } =
     useExplorationStore();
+  const { onChangeSelectedBoxId, onChangeSelectedBoxType} = useReactToolInternalStore()
 
   const {
     sampleMarkerId,
@@ -37,9 +41,12 @@ export default function StreetViewMarkerList({
     explorationTour,
     explorationTourStepIndex,
   } = useTourStore();
+
   return (
     <>
-      {panoramaMarkerList.map((item) => (
+
+      {panoramaMarkerList.map((item) =>
+        //@ts-ignore
         <StreetViewMarker
           key={item.label_id}
           id={item.label_id}
@@ -71,6 +78,9 @@ export default function StreetViewMarkerList({
                 })
               );
               updateCurrentSelectedImage(item.image_id);
+              onChangeSelectedBoxId(item.label_id);
+              onChangeSelectedBoxType(item.title);
+              console.log(item)
               if (
                 item.label_id === sampleMarkerId &&
                 explorationTour &&
@@ -92,12 +102,14 @@ export default function StreetViewMarkerList({
                     })
                   );
                   updateCurrentSelectedImage("");
+                  onChangeSelectedBoxId("");
+                  onChangeSelectedBoxType("");
                 }}
               />
             )}
           </div>
         </StreetViewMarker>
-      ))}
+      )}
     </>
   );
 }
@@ -109,8 +121,11 @@ function MarkerContent({
   marker: StreetViewMarkerType;
   onClose: () => void;
 }) {
+  const {selectedBoxId, selectedBoxType} = useReactToolInternalStore()
   const { sampleMarkerId } = useTourStore();
   return (
+    <Grid container>
+      <Grid item xs={6}>
     <Card
       sx={{
         width: "200px",
@@ -179,6 +194,28 @@ function MarkerContent({
         </Button>
       </CardActions>
     </Card>
+      </Grid>
+      <Grid item xs ={6} >
+      {selectedBoxType === "door" &&
+        <Card
+        sx={{
+          width: "200px",
+          zIndex: 1000000000,
+          transform: "translate(205px, -100%)",
+          position: "relative",
+        }}
+        id={`${sampleMarkerId}-streetViewMarkerCard`}
+        className={`${sampleMarkerId}-streetViewMarkerCard`}
+      >
+        <CardContent>
+          <Notes page="explore" id={selectedBoxId} />
+        </CardContent>
+
+      </Card>
+          }
+      </Grid>
+    </Grid>
+
   );
 }
 

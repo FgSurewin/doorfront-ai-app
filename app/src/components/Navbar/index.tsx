@@ -13,14 +13,16 @@ import {
   WebMenu,
 } from "./Navbar.style";
 import { Box, SxProps } from "@mui/material";
+import {useUserStore} from "../../global/userState";
 
 // const menuItems = ["Start Exploring", "Validation"];
-const menuItems = [
+let menuItems = [
   { name: "Start Exploring", path: "/exploration" },
   { name: "Validate Labels", path: "/reviewLabels" },
- // { name: "Tutorial", path: "/tutorial" },
-  // { name: "Contest", path: "/contest" },
-];
+  //{ name: "Contest Page" , path: "/contest" },
+  { name: "Tutorial", path:"/tutorial"},
+  { name: "Requests", path:"/requests"}
+]
 
 export interface NavbarProps {
   position?: "static" | "fixed";
@@ -45,6 +47,24 @@ const Navbar = React.memo(function ({
     [isTransparent]
   );
 
+  const {userInfo} = useUserStore()
+  //console.log(userInfo.role)
+  if(userInfo.role === "Blind or Low Vision Data Requester"){
+    menuItems = [
+      {name: "Request Data", path: "/createRequest"}
+    ]
+  }
+  /* this is to only show contest in navbar when a contest is active in the DB but it's buggy so disabled for now
+    React.useEffect(()=>{
+      if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
+        menuItems = [
+          { name: "Start Exploring", path: "/exploration" },
+          { name: "Validate Labels", path: "/reviewLabels" },
+          { name: "Contest Page" , path: "/contest" }
+        ];
+        }
+    },[readLocal("contest" as LocalStorageKeyType)])
+    */
   return (
     <>
       <AppBar position={position} sx={backgroundStyle}>

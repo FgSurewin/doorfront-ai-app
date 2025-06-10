@@ -25,6 +25,7 @@ export interface ExplorationState {
   updateGoogleMapConfig: (update: Partial<GoogleMapConfig>) => void;
   isNextPosition: boolean;
   setIsNextPosition: (update: boolean) => void;
+  defaultGoogleMapConfig: () => void;
 
   streetViewImageConfig: StreetViewImageConfig;
   updateStreetViewImageConfig: (update: Partial<StreetViewImageConfig>) => void;
@@ -65,8 +66,8 @@ const guildTourPov = {
 };
 
 // const guildTourImagePano = "O06zgWTW9GvbMLOT1CKrEg";
-// const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
-const guildTourImagePano = "None";
+ const guildTourImagePano = "vO-Wd4dXOI1yVd0Lt5CwpQ";
+//const guildTourImagePano = "None";
 
 export const useExplorationStore = create<ExplorationState>(
   devtools(
@@ -75,7 +76,7 @@ export const useExplorationStore = create<ExplorationState>(
         panoId: guildTourImagePano,
         position: guildTourLocation,
         povConfig: guildTourPov,
-        staticMapZoom: 18,
+        staticMapZoom: 18
       },
       updateGoogleMapConfig: (update) => {
         set(
@@ -85,6 +86,19 @@ export const useExplorationStore = create<ExplorationState>(
           }),
           false,
           "ExplorationState/updateGoogleMapConfig"
+        );
+      },
+      defaultGoogleMapConfig: () => {
+        set(
+          (state) => ({
+            ...state,
+            googleMapConfig: { panoId: guildTourImagePano,
+              position: guildTourLocation,
+              povConfig: guildTourPov,
+              staticMapZoom: 18, },
+          }),
+          false,
+          "ExplorationState/restoreGoogleMapConfig"
         );
       },
       isNextPosition: false,
@@ -126,10 +140,12 @@ export const useExplorationStore = create<ExplorationState>(
       saveCollectedImageList: (update) => {
         set(
           (state) => {
+
             const markerList: StreetViewMarkerType[] = [];
             update.forEach((image) => {
               if (image.human_labels.length > 0) {
                 image.human_labels[0].labels.forEach((label) => {
+                  //console.log(label)
                   const marker: StreetViewMarkerType = {
                     point: [0, 0],
                     label_id: label.label_id,
@@ -142,6 +158,7 @@ export const useExplorationStore = create<ExplorationState>(
                     isShow: false,
                     box: label.box,
                     imagePov: image.pov,
+                    notes: label.notes
                   };
                   markerList.push(marker);
                 });

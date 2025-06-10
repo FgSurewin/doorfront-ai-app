@@ -25,7 +25,7 @@ export default function ReactToolBox({ boxAttributes }: ReactToolBoxProps) {
   const {
     selectedBoxId,
     onChangeSelectedBoxId,
-    // onChangeSelectedBoxType,
+    onChangeSelectedBoxType,
     labelingProcess,
     imageAttributes,
   } = useReactToolInternalStore();
@@ -56,7 +56,7 @@ export default function ReactToolBox({ boxAttributes }: ReactToolBoxProps) {
   const handleSelectClick = (e: KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true;
     onChangeSelectedBoxId(id);
-    // onChangeSelectedBoxType(type);
+    onChangeSelectedBoxType(type);
   };
 
   /* ------------------------------- Drag Event ------------------------------- */

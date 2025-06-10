@@ -12,7 +12,7 @@ import { panelData } from "./panelData";
 import { useTourStore } from "../../../global/tourState";
 import NotesIcon from '@mui/icons-material/Notes';
 import { useReactToolInternalStore } from "../state/internalState";
-// import NotesPanel from "./NotesPanel";
+import NotesPanel from "./NotesPanel";
 // import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export default function Aside() {
@@ -23,22 +23,21 @@ export default function Aside() {
     labelingTourStepIndex,
     updateLabelingTourStepIndex,
   } = useTourStore();
-  //const {selectedBoxType,selectedBoxId,onChangeNotesOpen} = useReactToolInternalStore();
-   const {selectedBoxId} = useReactToolInternalStore();
+  const {selectedBoxType,selectedBoxId,onChangeNotesOpen} = useReactToolInternalStore();
 
   
-  // useEffect(
-  //   () => {
-  //     if(value !==3){
-  //       onChangeNotesOpen(false)
-  //     }
-  //     if(value===3 && selectedBoxType !== "door"){
-  //       setValue(0);
-  //       onChangeNotesOpen(false)
-  //     }
-  //   },
-  //   [selectedBoxType],
-  // );
+  useEffect(
+    () => {
+      if(value !==3){
+        onChangeNotesOpen(false)
+      }
+      if(value===3 && selectedBoxType !== "door"){
+        setValue(0);
+        onChangeNotesOpen(false)
+      }
+    },
+    [selectedBoxType],
+  );
 
     
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -83,8 +82,8 @@ export default function Aside() {
             {...a11yProps(item.tabName)}
           />
         ))}
-        {/* change back to door to enable notes
-        {selectedBoxType === 'door1' &&
+        {/*change back to door to enable notes */}
+        {selectedBoxType === 'door' &&
         <Tab
             key={"NotesPanel"}
             className={`${"Notes"}-button`}
@@ -93,7 +92,7 @@ export default function Aside() {
             label={"Notes"}
             {...a11yProps("Notes")}
           />
-        } */}
+        }
         {/* <Button sx={{ display: "flex", flexDirection: "column", p: 1.5 }}>
           <ExitToAppIcon />
           <Typography variant="body2">Exit</Typography>
@@ -107,11 +106,11 @@ export default function Aside() {
         </>
       ))}
       {
-      // (selectedBoxType === "door" &&
-      // <TabPanel key={3} value={value} index={3}>
-      //   <NotesPanel page = "label" id ={selectedBoxId} />
-      //   {/*onChangeNotesOpen(true)*/}
-      // </TabPanel>) 
+      (selectedBoxType === "door" &&
+      <TabPanel key={3} value={value} index={3}>
+        <NotesPanel page = "label" id ={selectedBoxId} />
+        {/*onChangeNotesOpen(true)*/}
+      </TabPanel>) 
       }
     </Stack>
   );

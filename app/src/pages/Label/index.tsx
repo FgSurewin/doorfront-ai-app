@@ -26,11 +26,12 @@ import {
 } from "../../apis/user";
 
 export default function LabelPage() {
-  const [state, setState] = React.useState<CollectedImageInterface[]>([]);
+  const [Images, setImages] = React.useState<CollectedImageInterface[]>([]);
   const { queryImageList } = useQueryImagesStore();
   const { userInfo, clearUserInfo } = useUserStore();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+
 
   React.useEffect(() => {
     async function loadFunc() {
@@ -47,7 +48,7 @@ export default function LabelPage() {
             }
           );
           if (result.code === 0) {
-            setState(result.data!);
+            setImages(result.data!);
           }
         } else {
           navigate("/exploration");
@@ -64,7 +65,7 @@ export default function LabelPage() {
 
   const onSubmit = async (image: ReactToolImageListItemType) => {
     try {
-      const filterImageList = state.filter(
+      const filterImageList = Images.filter(
         (item) => item.image_id === image.imageId
       );
       // Extract images data from response data
@@ -199,9 +200,9 @@ export default function LabelPage() {
 
   return (
     <>
-      {state && state.length > 0 && (
+      {Images && Images.length > 0 && (
         <LabelTool
-          collectedImageList={convertInitImageToInputImageList(state)}
+          collectedImageList={convertInitImageToInputImageList(Images)}
           typeConfigs={testTypeConfigs}
           operations={{
             onSubmitImage: onSubmit,

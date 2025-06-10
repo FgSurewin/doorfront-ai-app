@@ -11,11 +11,15 @@ export const debouncedStreetViewImageChange = debounce(
     func: (update: Partial<StreetViewImageConfig>) => void
   ) => {
     if (result.position && result.pov && result.pano && result.zoom) {
-      func({
-        imagePov: { ...result.pov, zoom: result.zoom },
-        imageLocation: result.position,
-        panoId: result.pano,
-      });
+      try {
+        func({
+          imagePov: {...result.pov, zoom: result.zoom},
+          imageLocation: result.position,
+          panoId: result.pano,
+        });
+      } catch(e){
+        console.error(e)
+      }
     }
   },
   300

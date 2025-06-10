@@ -7,11 +7,15 @@ import {
   UpdateUserLabelsBody,
 } from "../types";
 import {
+  ChallengeArea,
+  getAreaScore,
   GetUserScoreBody,
   QueryImageBody,
   QueryImageListBody,
   ResetBody,
   SaveActionListBody,
+  UpdateContestScore,
+  UpdateContestStats,
   UpdateCreditBody,
   UpdateLabelCreditBody,
 } from "../types/user";
@@ -143,4 +147,99 @@ export class UserController {
   ): Promise<void> {
     await userService.getAllUsers({ req, res, next });
   }
+
+  async getContestScore(   
+     req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const body: GetUserScoreBody = req.body;
+    await userService.getContestScore({req,res,next},body)
+  }
+  
+  async getNickname(   
+    req: Request,
+   res: Response,
+   next: NextFunction
+ ): Promise<void> {
+   const body: {id:string} = req.body;
+   await userService.getNickname({req,res,next},body)
+ }
+  async updateContestScore(   
+    req: Request,
+   res: Response,
+   next: NextFunction
+ ): Promise<void> {
+   const body: UpdateContestScore = req.body;
+   await userService.updateContestScore({req,res,next},body)
+ }
+
+ async updateContestStats(
+  req: Request,
+  res: Response,
+  next: NextFunction
+ ): Promise<void> {
+  const body: UpdateContestStats = req.body;
+  await userService.updateContestStats({req,res,next},body)
+}
+
+async resetContestScore(
+  req: Request,
+  res: Response,
+  next: NextFunction
+ ): Promise<void> {
+  const body: GetUserScoreBody = req.body;
+  await userService.resetContestScore({req,res,next},body)
+}
+
+async getAreaScore (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const body: getAreaScore = req.body;
+  await userService.getAreaScore({req,res,next},body)
+}
+
+async getReferralCode(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getReferralCode({req,res,next},body)
+}
+
+async getReferrer(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getReferrer({req,res,next},body)
+}
+async getAllReferredUsers(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{id:string} = req.body;
+  await userService.getAllReferredUsers({req,res,next},body)
+}
+
+async updateReferredUserBonus(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  const body:{referrerId: string,refereeId:string} = req.body;
+  await userService.updateReferredUserBonus({req,res,next},body)
+}
+async getAllContestUsersInfo(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> { 
+  await userService.getAllContestUsersInfo({req,res,next})
+}
 }

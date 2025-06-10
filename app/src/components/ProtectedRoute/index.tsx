@@ -12,5 +12,9 @@ export default function ProtectedRoute() {
     return checkGlobalState || checkLocalState;
   }, [userInfo]);
 
-  return <>{isLogin ? <Outlet /> : <Navigate to="/login" />}</>;
+  return <>
+    {//userInfo.role === "Blind or Low Vision Data Requester" ? <Navigate to={"/createRequest"} /> :
+      isLogin ? <Outlet /> : <Navigate to="/login" />
+    }
+  </>;
 }

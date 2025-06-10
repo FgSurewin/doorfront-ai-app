@@ -27,4 +27,5 @@ export const panelData: PanelDataType[] = [
     tabName: "Box",
     panelElement: <BoxPanel />,
   },
+  
 ];

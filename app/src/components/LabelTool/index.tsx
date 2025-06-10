@@ -18,7 +18,7 @@ import  { CallBackProps, EVENTS } from "react-joyride";
 import { useTourStore } from "../../global/tourState";
 import { v4 as uuidv4 } from "uuid";
 import { useUserStore } from "../../global/userState";
-import { ImageLocation } from "../../types/collectedImage";
+import { ImageLocation, NotesInterface } from "../../types/collectedImage";
 
 export interface InputLabel {
   x: number;
@@ -29,6 +29,7 @@ export interface InputLabel {
   id: string;
   subtype: string | undefined;
   labeledBy: string;
+  notes?: NotesInterface
 }
 
 export interface InputImageList {
@@ -63,31 +64,31 @@ export default function LabelTool({
     updateLabelingPageTour,
   } = useTourStore();
 
-  const handleJoyrideCallback = async (data: CallBackProps) => {
-    const { action, index, type } = data;
-
-    // * Handle error situation
-    if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
-      updateLabelingPageTour(false);
-      updateLabelingTourStepIndex(0);
-    }
-    // * Handle next situation
-    if (action === "next" && type === EVENTS.STEP_AFTER) {
-      // console.log("next");
-      updateLabelingTourStepIndex(index + 1);
-    }
-    // * Handle prev situation
-    if (action === "prev" && type === EVENTS.STEP_AFTER) {
-      // console.log("prev");
-      updateLabelingTourStepIndex(index - 1);
-    }
-    // * Handle over situation (even skip will trigger "over" so I just comment skip situation)
-    if (type === "tour:end") {
-      // console.log("over");
-      updateLabelingPageTour(false);
-      updateLabelingTourStepIndex(0);
-    }
-  };
+  // const handleJoyrideCallback = async (data: CallBackProps) => {
+  //   const { action, index, type } = data;
+  //
+  //   // * Handle error situation
+  //   if ([EVENTS.TARGET_NOT_FOUND].includes(type as "error:target_not_found")) {
+  //     updateLabelingPageTour(false);
+  //     updateLabelingTourStepIndex(0);
+  //   }
+  //   // * Handle next situation
+  //   if (action === "next" && type === EVENTS.STEP_AFTER) {
+  //     // console.log("next");
+  //     updateLabelingTourStepIndex(index + 1);
+  //   }
+  //   // * Handle prev situation
+  //   if (action === "prev" && type === EVENTS.STEP_AFTER) {
+  //     // console.log("prev");
+  //     updateLabelingTourStepIndex(index - 1);
+  //   }
+  //   // * Handle over situation (even skip will trigger "over" so I just comment skip situation)
+  //   if (type === "tour:end") {
+  //     // console.log("over");
+  //     updateLabelingPageTour(false);
+  //     updateLabelingTourStepIndex(0);
+  //   }
+  // };
 
   /* -------------------------------------------------------------------------- */
   const {
@@ -103,8 +104,10 @@ export default function LabelTool({
   const {
     selectedBoxId,
     onChangeSelectedBoxId,
+    onChangeSelectedBoxType,
     resetLabelingProcess,
     imageAttributes,
+    notesOpen
   } = useReactToolInternalStore();
   const { userInfo } = useUserStore();
 
@@ -162,23 +165,23 @@ export default function LabelTool({
         isVisible: true,
         id: newBoxId,
         labeledBy: userInfo.nickname!,
-        // notes: currentBox.notes
+        notes: currentBox.notes
       });
       onChangeSelectedBoxId(newBoxId);
-      // onChangeSelectedBoxType(currentBox.type)
+      onChangeSelectedBoxType(currentBox.type)
     }
   };
 
   const handleReactToolKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
-  //   if (!notesOpen) {
-  //   if (e.key === "q" || e.key === "Q") {
-  //     resetLabelingProcess();
-  //   } else if (e.key === "d" || e.key === "D") {
-  //     if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
-  //   } else if (e.key === "c" || e.key === "C") {
-  //     handleCopyBox();
-  //   }
-  // }
+    if (!notesOpen) {
+    if (e.key === "q" || e.key === "Q") {
+      resetLabelingProcess();
+    } else if (e.key === "d" || e.key === "D") {
+      if (selectedBoxId !== "") deleteReactToolImageLabel(selectedBoxId);
+    } else if (e.key === "c" || e.key === "C") {
+      handleCopyBox();
+    }
+  }
   };
 
   const isChangingDirection = useMediaQuery("(max-width: 1200px)");

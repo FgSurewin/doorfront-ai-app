@@ -1,5 +1,5 @@
 import { AllUserScores } from "../../apis/user";
-
+/*
 export const fakeUserData: AllUserScores[] = [
   {
     username: "Uta Neal",
@@ -136,4 +136,4 @@ export const fakeUserData: AllUserScores[] = [
     email: "sed@hotmail.ca",
     score: 50,
   },
-];
+]; */

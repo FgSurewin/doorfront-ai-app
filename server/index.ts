@@ -2,8 +2,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import imageRoute from "./routes/image";
 import userRoute from "./routes/user";
+import contestRoute from "./routes/contest"
+import mailerRoute from "./routes/mailer"
 import collectImageRoute from "./routes/collectImage";
 import locationRoute from "./routes/location";
+import requestRoute from "./routes/request";
 import mongoose from "mongoose";
 import nunjucks from "nunjucks";
 import morgan from "morgan";
@@ -33,6 +36,9 @@ import { config, databaseLink } from "./database";
   app.use("/api/user", userRoute);
   app.use("/api/collectImage", collectImageRoute);
   app.use("/api/location", locationRoute);
+  app.use("/api/contest",contestRoute)
+  app.use("/api/mailer",mailerRoute)
+  app.use("/api/request", requestRoute)
 
   // MongoDB Connection
   try {

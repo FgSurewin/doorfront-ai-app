@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CollectedLabelInterface } from "../database/models/collectImage";
 import { LabelInterface } from "../database/models/image";
+import {LocationType} from "../database/models/request";
 
 export interface ImageParams {
   panoId?: string;
@@ -36,6 +37,7 @@ export interface UserBody {
   email: string;
   role: string;
   institution: string;
+  referralCode?:string;
 }
 
 export interface LoginBody {
@@ -52,4 +54,12 @@ export interface UpdateUserLabelsBody {
   name: string;
   number: number;
   type: "label" | "revise" | "modify";
+}
+
+export interface RequestBody {
+  requestedBy: string;
+  address:string;
+  type: string;
+  deadline:number;
+  location: LocationType
 }

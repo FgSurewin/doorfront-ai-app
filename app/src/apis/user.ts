@@ -14,7 +14,7 @@ export interface ResetData {
 export interface LoginReturnData {
   code: number;
   message: string;
-  data?: { token: string; nickname: string; id: string };
+  data?: { token: string; nickname: string; id: string, role:string };
 }
 
 export interface SignUpData {
@@ -23,6 +23,7 @@ export interface SignUpData {
   email: string;
   role: string;
   institution: string;
+  referralCode:string;
 }
 
 export interface SignUpReturnData {
@@ -30,6 +31,24 @@ export interface SignUpReturnData {
   message: string;
   data?: any;
 }
+
+export interface referredUser{
+  userID: string;
+  bonusReceived:boolean;
+}
+
+export interface userAreaScore{
+  areaName:string,
+  areaScore:number
+}
+
+export interface contestUserReturn{
+  _id:string,
+  nickname:string,
+  contestScore?:number,
+  areaScores: userAreaScore[]
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                               Login & Sign Up                              */
@@ -220,6 +239,8 @@ export interface UserScoreFromDBType {
   modify: number;
   create: number;
   review: number;
+  contestScore?:number;
+  bonus: number
 }
 
 export const getUserScoreFromDB = (data: { id: string }) =>
@@ -239,7 +260,7 @@ export const getUserScoreFromDB = (data: { id: string }) =>
 /* -------------------------------------------------------------------------- */
 export const addUserBonusCredit = (data: { id: string }) =>
   baseRequest
-    .request<UserReturnData<UserScoreFromDBType>>({
+    .request<UserReturnData<any>>({
       method: "POST",
       url: `/user/addBonusCredit`,
       data,
@@ -260,6 +281,9 @@ export interface AllUserScores {
   review: number;
   modify: number;
   create: number;
+  contestScore?:number;
+  updatedAt:Date;
+  institution:string;
 }
 
 export const getAllUsersFromDB = () =>
@@ -272,3 +296,129 @@ export const getAllUsersFromDB = () =>
     .catch((res) => {
       throw new Error(res);
     });
+
+export const updateContestScore = (data: {id:string, contestScore:number}) =>
+    baseRequest
+      .request<UserReturnData<any>>({
+        method: "POST",
+        url: `/user/updateContestScore`,
+        data
+      })
+      .then((res) => res.data)
+      .catch((res) => {
+        throw new Error(res);
+      });
+
+export const getContestScore =(data: {id:string}) =>
+      baseRequest
+        .request<UserReturnData<number>>({
+          method:"POST",
+          url: `user/getContestScore`,
+          data
+        })
+        .then((res) => res.data)
+        .catch((res) => {
+          throw new Error(res);
+        });
+
+export const getAreaScore = (data: {id:string, areaName:string}) =>
+        baseRequest
+          .request<UserReturnData<number>>({
+            method:"POST",
+            url: `user/getAreaScore`,
+            data
+          })
+          .then ((res) => res.data)
+          .catch((res) =>{
+            throw new Error(res);
+          });
+          
+export const resetContestScore = (data: {id:string}) =>
+          baseRequest
+            .request<UserReturnData<any>>({
+              method:"POST",
+              url: `user/resetContestScore`,
+              data
+            })
+            .then ((res)=>res.data)
+            .catch((res)=> {
+              throw new Error(res);
+            });
+
+export const updateContestStats = (data: {id:string, areaName:string, areaScoreIncrement:number}) =>
+          baseRequest
+            .request<UserReturnData<any>>({
+              method:"POST",
+              url: `user/updateContestStats`,
+              data
+            })
+            .then ((res)=>res.data)
+            .catch((res)=> {
+              throw new Error(res);
+            });
+            
+export const getNickname = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<string>>({
+             method:"POST",
+             url: `user/getNickname`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getReferrer = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<string>>({
+             method:"POST",
+             url: `user/getReferrer`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getReferralCode = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<string>>({
+             method:"POST",
+             url: `user/getReferralCode`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getAllReferredUsers = (data:{id:string}) =>
+           baseRequest
+           .request<UserReturnData<referredUser[]>>({
+             method:"POST",
+             url: `user/getAllReferredUsers`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const updateReferredUserBonus = (data:{referrerId:string,refereeId:string}) =>
+           baseRequest
+           .request<UserReturnData<any>>({
+             method:"POST",
+             url: `user/updateReferredUserBonus`,
+             data
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
+export const getAllContestUsersInfo = () =>
+           baseRequest
+           .request<UserReturnData<contestUserReturn[]>>({
+             method:"POST",
+             url: `user/getAllContestUsersInfo`
+           })
+           .then ((res)=>res.data)
+           .catch((res)=> {
+             throw new Error(res);
+           });
