@@ -29,7 +29,7 @@ export interface InputLabel {
   id: string;
   subtype: string | undefined;
   labeledBy: string;
-  notes?: NotesInterface
+  notes?: NotesInterface;
 }
 
 export interface InputImageList {

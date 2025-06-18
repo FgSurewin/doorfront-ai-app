@@ -19,6 +19,8 @@ export function generateNewImage(
     image_size: [640, 640],
     fileName: "",
     url: "",
+    createdAt: "",
+    updatedAt: ""
   };
 }
 

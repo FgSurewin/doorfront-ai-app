@@ -28,6 +28,7 @@ interface Values {
   role: roleType;
   institution: string;
   referralCode?:string;
+  accessLevel: string;
 }
 
 export default function SignUpForm({
@@ -74,7 +75,8 @@ export default function SignUpForm({
             confirmPassword: "",
             role: "",
             institution: "",
-            referralCode: ref
+            referralCode: ref,
+            accessLevel: ""
           }}
           enableReinitialize
           validate={(values) => {

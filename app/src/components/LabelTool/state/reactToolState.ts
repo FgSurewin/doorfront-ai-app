@@ -182,16 +182,24 @@ export const useReactToolsStore = create<ReactToolState>(
             if (imageList.length === 0) {
               return { ...state, reactToolImageList: imageList };
             }
+      
+            // Only set selectedImageId if it doesn't exist already
+            const shouldSetSelectedImage =
+              !state.selectedImageId || !imageList.find((img) => img.imageId === state.selectedImageId);
+      
             return {
               ...state,
               reactToolImageList: imageList,
-              selectedImageId: imageList[0].imageId,
+              selectedImageId: shouldSetSelectedImage
+                ? imageList[0].imageId
+                : state.selectedImageId,
             };
           },
           false,
           "ReactToolState/initReactToolState"
         );
       },
+      
       changeSelectedImageId: (imageId) => {
         set(
           (state) => ({ ...state, selectedImageId: imageId }),

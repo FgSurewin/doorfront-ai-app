@@ -37,6 +37,6 @@ COPY . /doorfront/
 
 RUN npm run server-build
 
-ENV NODE_ENV=production
+ENV NODE_ENV =development
 
 CMD npm start --bind 0.0.0.0:$PORT

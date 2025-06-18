@@ -60,6 +60,7 @@ export interface CollectedImageInterface extends Document {
   // panoMarkers: PanoMarkerInterface[];
   pov: PovInterface;
   creator: string;
+  address: string;
   // modifiers: ModifierInterface[];
 }
 
@@ -132,6 +133,10 @@ const CollectImageModel = new Schema<CollectedImageInterface>(
       required: true,
     },
     creator: {
+      type: String,
+      require: true,
+    },
+    address: {
       type: String,
       require: true,
     },

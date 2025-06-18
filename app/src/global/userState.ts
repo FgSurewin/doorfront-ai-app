@@ -7,6 +7,7 @@ export interface UserInfo {
   nickname: string | null;
   id: string | null;
   role: string | null;
+  accessLevel: string | null;
 }
 
 export interface UserCredit {
@@ -16,7 +17,7 @@ export interface UserCredit {
   create: number;
   review: number;
   contestScore?:number;
-  bonus: number
+  bonus: number;
 }
 
 export interface UserState {
@@ -42,7 +43,7 @@ export interface UserState {
 export const useUserStore = create<UserState>(
   devtools(
     (set) => ({
-      userInfo: { token: null, id: null, nickname: null, role: null },
+      userInfo: { token: null, id: null, nickname: null, role: null, accessLevel: null },
       updateUserInfo: (update) => {
         set(
           (state) => ({ ...state, userInfo: { ...state.userInfo, ...update } }),
@@ -63,7 +64,7 @@ export const useUserStore = create<UserState>(
       clearUserInfo: () => {
         set((state) => ({
           ...state,
-          userInfo: { token: null, id: null, nickname: null, role:null },
+          userInfo: { token: null, id: null, nickname: null, role:null, accessLevel: null },
         }));
       },
 

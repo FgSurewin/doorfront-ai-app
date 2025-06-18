@@ -37,6 +37,7 @@ export default function LabelStage() {
     );
     return filterImageList[0];
   }, [reactToolImageList, selectedImageId]);
+  
 
   /* -------------------------- Global Internal State ------------------------- */
   const {
@@ -181,23 +182,30 @@ export default function LabelStage() {
   // console.log(stageSize);
   useEffect(() => {
     function handleResize() {
+      const width = document.documentElement.clientWidth;  // Using clientWidth for the viewport
+      const height = window.innerHeight;  // Using window.innerHeight for the height
+  
+      // Adjust the stage size based on the window dimensions
       setStageSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: Math.min(width, 1440),  // Max width 1440 to prevent overflow
+        height: height,  // Use the full height of the window
       });
     }
-
+  
+    // Initialize stage size when the component mounts
+    handleResize();
+  
+    // Listen for window resize events
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initialize the stage size on initial render
-
+  
+    // Cleanup listener on component unmount
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  
 
-  //console.log(imgRef);
-  // stageSize.width is the window width, ok for mobile but extra space on desktop
   return (
  
-    <>
+    <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
       {currentImage && (
         <Stage
           className="labelStage"
@@ -237,7 +245,7 @@ export default function LabelStage() {
           </Layer>
         </Stage>
       )}
-    </>
+    </div>
    
   );
 }

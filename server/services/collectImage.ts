@@ -35,10 +35,38 @@ export class CollectImageService {
     const { res } = ctx;
     try {
       const { imageId, data: imageAttrs } = body;
+      console.log('imageAttrs:', imageAttrs); 
+      // If only address is provided, update only address
+    if (Object.keys(imageAttrs).length === 1 && imageAttrs.address) {
+      console.log('Updating only address:', imageAttrs.address);
+      const result = await CollectImageModel.findOneAndUpdate(
+        { image_id: imageId },
+        { $set: { address: imageAttrs.address } },
+        {
+          new: true,
+          rawResult: true,
+        }
+      );
+
+      if (result.ok === 1) {
+        res.json({
+          code: 0,
+          message: "Address updated successfully",
+          data: result,
+        });
+      } else {
+        res.json({
+          code: 4000,
+          message: "Failed to update address",
+        });
+      }
+      return;
+    }
+    //if url provided
       if (imageAttrs.url) {
         const result = await CollectImageModel.findOneAndUpdate(
           { image_id: imageId },
-          { ...imageAttrs },
+          { $set: imageAttrs },
           {
             new: true,
             upsert: true,
