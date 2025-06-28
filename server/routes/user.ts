@@ -38,6 +38,10 @@ route.post("/getReferralCode",userController.getReferralCode)
 route.post("/getAllReferredUsers",userController.getAllReferredUsers)
 route.post("/updateReferredUserBonus",userController.updateReferredUserBonus)
 route.post("/getAllContestUsersInfo",userController.getAllContestUsersInfo)
+route.get("/getUserAccessLevel/:userId", userController.getUserAccessLevel);
+route.post("/searchUserByNameOrEmail", userController.searchUserByNameOrEmail);
+route.post("/grantAdminRight", userController.grantAdminRight);
+route.post("/revokeAdminRight", userController.revokeAdminRight);
 
 // route.post("/addImages", userController.updateImage);
 // route.post("/addCreateCredit", userController.addCreateCredit);

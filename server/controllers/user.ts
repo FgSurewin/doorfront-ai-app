@@ -18,6 +18,9 @@ import {
   UpdateContestStats,
   UpdateCreditBody,
   UpdateLabelCreditBody,
+  GetAccessLevelBody,
+  GetUser,
+  GrantAdminRight
 } from "../types/user";
 
 const userService = new UserService();
@@ -242,4 +245,78 @@ async getAllContestUsersInfo(
 ): Promise<void> { 
   await userService.getAllContestUsersInfo({req,res,next})
 }
+
+async getUserAccessLevel(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    await userService.getUserAccessLevel({ req, res }); 
+  } catch (error) {
+
+    next(error);
+  }
 }
+
+async searchUserByNameOrEmail(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { searchTerm } = req.body;
+
+    await userService.searchUserByNameOrEmail({ req, res, next }, { searchTerm });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async grantAdminRight(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { userId } = req.body; // Extract userId from request body
+
+    // Call the service to grant admin rights
+    const updatedUser = await userService.grantAdminRight({ req, res, next }, { userId });
+
+    // Send the response with the updated user data
+    res.json({
+      code: 0,
+      message: "Admin rights granted successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    // Handle any errors by passing them to the error handler middleware
+    next(error);
+  }
+}
+async revokeAdminRight(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { userId } = req.body; // Extract userId from request body
+
+    // Call the service to grant admin rights
+    const updatedUser = await userService.revokeAdminRight({ req, res, next }, { userId });
+
+    // Send the response with the updated user data
+    res.json({
+      code: 0,
+      message: "Admin rights revoked successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    // Handle any errors by passing them to the error handler middleware
+    next(error);
+  }
+}
+
+}
+

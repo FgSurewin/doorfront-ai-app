@@ -5,10 +5,13 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import AdminPage from "./pages/AdminPage/AdminPage";
+import AdminLabel from "./pages/AdminLabel/ReviewLabelingPage";
 import NotFound from "./pages/NotFound";
 import ExplorationPage from "./pages/Exploration";
 import LabelPage from "./pages/Label";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute/AdminRoute";
 import EditLabelingPage from "./pages/Label/EditLabelingPage";
 import ReviewLabelingPage from "./pages/Label/ReviewLabelingPage";
 import LeaderBoard from "./pages/LeaderBoard";
@@ -32,7 +35,7 @@ ReactDOM.render(
           <Route path="*" element={<NotFound />} />
           <Route path="/tutorial" element={<Tutorial/>} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/contest" element={<Contest />} />
+            {/* <Route path="/contest" element={<Contest />} /> */}
             <Route path="/requests" element={<Request />} />
             <Route path="/createRequest" element={<CreateRequest />} />
             {<Route path="/contestTest" element = {<Test />} /> }
@@ -42,6 +45,11 @@ ReactDOM.render(
             <Route path="/reviewLabels" element={<ReviewLabelingPage />} />
             <Route path="/editLabel/:id" element={<EditLabelingPage />} />
           </Route>
+          <Route element={<AdminRoute />}>
+            <Route path="/adminPage" element={<AdminPage />} />
+            <Route path="/adminLabel" element={<AdminLabel />} />
+          </Route>
+          
         </Route>
       </Routes>
     </Router>

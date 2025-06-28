@@ -23,7 +23,7 @@ export default function Request() {
   useEffect(() => {
     async function fetchRequests() {
       const result = await getOpenRequests()
-     // console.log(result)
+      console.log(result)
       if(result.data) setRequests(result.data)
     }
 

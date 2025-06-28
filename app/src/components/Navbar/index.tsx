@@ -42,7 +42,7 @@ const Navbar = React.memo(function ({
     if (extraStyle) return Object.assign({}, style, extraStyle) as SxProps;
     return style;
   }, [isTransparent, extraStyle]);
-  const LogoSrc = React.useMemo(
+const LogoSrc = React.useMemo(
     () => (isTransparent ? WhiterLogo : BlackLogo),
     [isTransparent]
   );
@@ -65,7 +65,7 @@ const Navbar = React.memo(function ({
         }
     },[readLocal("contest" as LocalStorageKeyType)])
     */
-  return (
+return (
     <>
       <AppBar position={position} sx={backgroundStyle}>
         <Container maxWidth="xl">

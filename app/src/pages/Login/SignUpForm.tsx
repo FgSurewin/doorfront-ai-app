@@ -28,6 +28,7 @@ interface Values {
   role: roleType;
   institution: string;
   referralCode?:string;
+  accessLevel: string;
 }
 
 export default function SignUpForm({
@@ -42,7 +43,6 @@ export default function SignUpForm({
     const found = queryParameters.get("ref")
     if(found !== null){
       setRef(found)
-      console.log(ref)
     }
     // else{
     //   console.log("sad")
@@ -74,7 +74,8 @@ export default function SignUpForm({
             confirmPassword: "",
             role: "",
             institution: "",
-            referralCode: ref
+            referralCode: ref,
+            accessLevel: ""
           }}
           enableReinitialize
           validate={(values) => {
@@ -99,10 +100,10 @@ export default function SignUpForm({
           onSubmit={async (values, { setSubmitting }) => {
             try {
               const { confirmPassword, ...other } = values;
-              console.log(values)
+
               setSubmitting(true);
               const result = await signUp(other);
-              console.log(result)
+           
               if (result.code === 0) {
                 enqueueSnackbar(result.message, {
                   variant: "success",

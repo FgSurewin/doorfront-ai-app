@@ -14,9 +14,10 @@ export interface CreateImageData {
 }
 
 export interface UpdateImageData {
-  fileName: string;
-  url: string;
-  model_labels: CollectedLabelInterface[];
+  fileName?: string;
+  url?: string;
+  address?: string;
+  model_labels?: CollectedLabelInterface[];
 }
 
 export interface CollectedImageApiReturnType<T> {

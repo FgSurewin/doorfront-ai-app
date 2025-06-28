@@ -3,8 +3,9 @@ export const TOKEN = "token";
 export const NICKNAME = "nickname";
 export const CONTEST = "contest"
 export const ROLE = "role"
+export const ACCESSLEVEL = "accessLevel"
 
-export type LocalStorageKeyType = typeof ID | typeof TOKEN | typeof NICKNAME | typeof CONTEST | typeof ROLE;
+export type LocalStorageKeyType = typeof ID | typeof TOKEN | typeof NICKNAME | typeof CONTEST | typeof ROLE | typeof ACCESSLEVEL;
 
 export const saveLocal = (key: LocalStorageKeyType, value: string) => {
   sessionStorage.setItem(key, value);
@@ -22,6 +23,7 @@ export const deleteAllLocal = () => {
   deleteLocal(NICKNAME);
   deleteLocal(CONTEST);
   deleteLocal(ROLE);
+  deleteLocal(ACCESSLEVEL);
 };
 
 export const readAllLocal = () => ({
@@ -29,13 +31,15 @@ export const readAllLocal = () => ({
   token: readLocal(TOKEN),
   nickname: readLocal(NICKNAME),
   role: readLocal(ROLE),
+  accessLevel: readLocal(ACCESSLEVEL),
 });
 
 export const saveAllLocal = (info: {
   id: string;
   token: string;
   nickname: string;
-  role: string
+  role: string;
+  accessLevel: string
 }) => {
   for (const [key, value] of Object.entries(info)) {
     saveLocal(key as LocalStorageKeyType, value);

@@ -98,14 +98,22 @@ export class CollectImageService {
   }
 
   async getAllImages(ctx: AppContext): Promise<void> {
-    const { res } = ctx;
+    const { res, req } = ctx;
+
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const skip = parseInt(req.query.skip as string) || 0;
+
     try {
-      const result: CollectedImageInterface[] =
-        await CollectImageModel.find().lean();
+      const result = await CollectImageModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
       if (result.length > 0) {
         res.json({
           code: 0,
-          message: "Get all images successfully",
+          message: `Fetched ${result.length} images successfully`,
           data: result,
         });
       } else {

@@ -1,6 +1,8 @@
 import { SECRET } from "./../database/index";
 import { LoginBody } from "./../types/index";
 import { AppContext, UserBody } from "../types";
+import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
 import UserModel, {
   UserInterface,
@@ -23,6 +25,7 @@ import {
   getAreaScore,
   ChallengeArea,
   setReferrer,
+  GetAccessLevelBody,
 } from "../types/user";
 
 // Bcrypt Configuration
@@ -67,6 +70,7 @@ export class UserService {
               checkOld: 0,
               contestScore: 0,
               referrer: ref,
+              accessLevel: "basic",
             };
             const finish = await UserModel.create(newUser);
             if (referrer && referrer.length > 0) {
@@ -76,7 +80,6 @@ export class UserService {
                 { $addToSet: { usersReferred: newRefer } }
               );
             }
-
             res.json({
               code: 0,
               message: "Sign Up Successful!",
@@ -132,7 +135,13 @@ export class UserService {
             res.json({
               code: 0,
               message: "Login Successfully",
-              data: { token, nickname: result[0].nickname, id: result[0]._id, role: result[0].role },
+              data: {
+                token,
+                nickname: result[0].nickname,
+                id: result[0]._id,
+                role: result[0].role,
+                accessLevel: result[0].accessLevel,
+              },
             });
           } else {
             res.json({
@@ -214,6 +223,7 @@ export class UserService {
 
   async getUnLabelImageList(ctx: AppContext, body: QueryImageListBody) {
     const { res } = ctx;
+    console.log(res);
     try {
       const { id } = body;
       const currentUser = await UserModel.findById(id);
@@ -432,7 +442,7 @@ export class UserService {
             create: currentUser.create,
             review: currentUser.review,
             contestScore: currentUser.contestScore,
-            bonus: currentUser.bonus
+            bonus: currentUser.bonus,
           },
         });
       } else {
@@ -477,7 +487,7 @@ export class UserService {
               modify: result.modify,
               create: result.create,
               review: result.review,
-              bonus: result.bonus
+              bonus: result.bonus,
             },
           });
         } else {
@@ -516,9 +526,12 @@ export class UserService {
           review: item.review,
           modify: item.modify,
           create: item.create,
+          bonus: item.bonus,
+          role: item.role,
           contestScore: item.contestScore,
           institution: item.institution,
-          updatedAt: item.updatedAt
+          updatedAt: item.updatedAt,
+          accessLevel: item.accessLevel,
         })),
       });
     } catch (e) {
@@ -1055,17 +1068,17 @@ export class UserService {
     }
   }
 
-  async getAllReferredUsers(ctx:AppContext, body:{id:string}){
-    const {id} = body
-    const {res} = ctx
-    try{
-    const user = await UserModel.findById(id).lean();
+  async getAllReferredUsers(ctx: AppContext, body: { id: string }) {
+    const { id } = body;
+    const { res } = ctx;
+    try {
+      const user = await UserModel.findById(id).lean();
       if (user) {
-       res.json({
-        code:0,
-        message:"Referred users found",
-        data:user.usersReferred
-       })
+        res.json({
+          code: 0,
+          message: "Referred users found",
+          data: user.usersReferred,
+        });
       } else {
         res.json({
           code: 4000,
@@ -1081,36 +1094,38 @@ export class UserService {
     }
   }
 
-  async updateReferredUserBonus(ctx:AppContext, body:{referrerId:string, refereeId:string}){
-    const{referrerId,refereeId} = body
-    const {res} = ctx
-    try{
+  async updateReferredUserBonus(
+    ctx: AppContext,
+    body: { referrerId: string; refereeId: string }
+  ) {
+    const { referrerId, refereeId } = body;
+    const { res } = ctx;
+    try {
       const OG = await UserModel.findById(referrerId).lean();
-      if(OG){
+      if (OG) {
         const update = await UserModel.findOneAndUpdate(
-          {_id:referrerId, "usersReferred.userID": refereeId},
-          {$set:{"usersReferred.$.bonusReceived":true}}
-        )
-        if(update){
+          { _id: referrerId, "usersReferred.userID": refereeId },
+          { $set: { "usersReferred.$.bonusReceived": true } }
+        );
+        if (update) {
           res.json({
-            code:0,
+            code: 0,
             message: "Successfully updated referred user bonus received",
-            data:update
-          })
-        }
-        else{
+            data: update,
+          });
+        } else {
           res.json({
-            code:5000,
+            code: 5000,
             message: "Error updating referred user bonus received",
-          })
+          });
         }
-      } else{
+      } else {
         res.json({
-          code:5000,
+          code: 5000,
           message: "User not found",
-        })
+        });
       }
-    }catch (e) {
+    } catch (e) {
       const error = new Error(`${e}`);
       res.json({
         code: 5000,
@@ -1119,25 +1134,26 @@ export class UserService {
     }
   }
 
-  async getAllContestUsersInfo(ctx:AppContext){
-    const {res} = ctx;
-    try{
-      const allUsers = await UserModel.find({contestScore:{$gt:0}},{id:true,nickname:true,contestScore:true,areaScores:true})
-      if(allUsers){
+  async getAllContestUsersInfo(ctx: AppContext) {
+    const { res } = ctx;
+    try {
+      const allUsers = await UserModel.find(
+        { contestScore: { $gt: 0 } },
+        { id: true, nickname: true, contestScore: true, areaScores: true }
+      );
+      if (allUsers) {
         res.json({
-          code:0,
-          message:"Users found",
-          data: allUsers
-        })
-      }
-      else{
+          code: 0,
+          message: "Users found",
+          data: allUsers,
+        });
+      } else {
         res.json({
-          code:400,
-          message:"No users found!"
-        })
+          code: 400,
+          message: "No users found!",
+        });
       }
-
-    }catch(e){
+    } catch (e) {
       const error = new Error(`${e}`);
       res.json({
         code: 5000,
@@ -1145,5 +1161,170 @@ export class UserService {
       });
     }
   }
-  
+
+  async getUserAccessLevel({
+    req,
+    res,
+  }: {
+    req: Request;
+    res: Response;
+  }): Promise<void> {
+    const { userId } = req.params;
+
+    // Check if userId is provided in the request
+    if (!userId) {
+      res.status(400).json({
+        code: 4001,
+        message: "User ID is required",
+      });
+      return;
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({
+        code: 4002,
+        message: "Invalid User ID format",
+      });
+      return;
+    }
+
+    try {
+      // Fetch the user by their ID
+      const user = await UserModel.findById(userId);
+
+      if (!user) {
+        res.status(404).json({
+          code: 4040,
+          message: "User not found",
+        });
+        return;
+      }
+
+      // Respond with the user's access level
+      res.status(200).json({
+        code: 0,
+        message: "User access level retrieved successfully",
+        data: {
+          accessLevel: user.accessLevel || "basic", // Default to "basic" if accessLevel is not set
+        },
+      });
+    } catch (error) {
+      // Handle any errors that occur during the fetch operation
+      res.status(500).json({
+        code: 5000,
+        message: "Error retrieving user",
+      });
+      console.error("Error retrieving user:", error);
+    }
+  }
+
+  async searchUserByNameOrEmail(ctx: AppContext, body: { searchTerm: string }) {
+    const { searchTerm } = body;
+    const { res } = ctx;
+
+    try {
+      if (!searchTerm) {
+        return res.json({
+          code: 4001,
+          message: "Missing search term",
+          data: null,
+        });
+      }
+
+      // Find user by name or email (case-insensitive)
+      const users = await UserModel.find({
+        $or: [
+          { email: new RegExp(`^${searchTerm}$`, "i") },
+          { nickname: new RegExp(searchTerm, "i") },
+          { accessLevel: new RegExp(`^${searchTerm}$`, "i") }, // match accessLevel exactly (case-insensitive)
+        ],
+      })
+        .select("_id nickname email accessLevel role")
+        .lean();
+
+      if (users.length === 0) {
+        return res.json({
+          code: 4002,
+          message: `No users found with search term "${searchTerm}"`,
+          data: [],
+        });
+      }
+
+      return res.json({
+        code: 0,
+        message: `${users.length} user(s) found`,
+        data: users,
+      });
+    } catch (e) {
+      return res.json({
+        code: 5000,
+        message: `Internal server error: ${e instanceof Error ? e.message : e}`,
+        data: null,
+      });
+    }
+  }
+
+  async grantAdminRight(ctx: AppContext, body: { userId: string }) {
+    const { userId } = body;
+
+    try {
+      // Check if userId is provided
+      if (!userId) {
+        throw new Error("Missing user ID");
+      }
+
+      // Find user by ID
+      const user = await UserModel.findById(userId).lean();
+
+      if (!user) {
+        throw new Error(`User not found with ID "${userId}"`);
+      }
+
+      // Grant admin rights by updating the access level
+      user.accessLevel = "admin";
+
+      // Save the updated user
+      const updatedUser = await UserModel.findByIdAndUpdate(userId, user, {
+        new: true,
+      }).lean();
+
+      return updatedUser; // Return the updated user data to the controller
+    } catch (e) {
+      throw new Error(
+        `Internal server error: ${e instanceof Error ? e.message : e}`
+      );
+    }
+  }
+
+  async revokeAdminRight(ctx: AppContext, body: { userId: string }) {
+    const { userId } = body;
+
+    try {
+      // Check if userId is provided
+      if (!userId) {
+        throw new Error("Missing user ID");
+      }
+
+      // Find user by ID
+      const user = await UserModel.findById(userId).lean();
+
+      if (!user) {
+        throw new Error(`User not found with ID "${userId}"`);
+      }
+
+      // Grant admin rights by updating the access level
+      user.accessLevel = "basic";
+
+      // Save the updated user
+      const updatedUser = await UserModel.findByIdAndUpdate(userId, user, {
+        new: true,
+      }).lean();
+
+      return updatedUser; // Return the updated user data to the controller
+    } catch (e) {
+      throw new Error(
+        `Internal server error: ${e instanceof Error ? e.message : e}`
+      );
+    }
+  }
 }

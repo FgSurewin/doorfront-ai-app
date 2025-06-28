@@ -64,3 +64,20 @@ export interface setReferrer{
   id:string;
   referrer:string
 }
+
+export interface GetAccessLevelBody {
+  userId: string; 
+}
+
+export interface GetUser {
+  id: string;
+  nickname: string;
+  email: string;
+  role:string
+  accessLevel: string;
+}
+
+export interface GrantAdminRight {
+  id: string;         
+}
+

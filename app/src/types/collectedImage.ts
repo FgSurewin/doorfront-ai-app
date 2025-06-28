@@ -25,9 +25,11 @@ export interface CollectedLabelInterface {
   labeledBy: string;
   markerPov?: PovInterface;
   notes?: NotesInterface;
+  exactCoordinates?: LabelLocation;
 }
 
-export type ImageLocation = { lat: number; lng: number };
+export type ImageLocation = { lat: number; lng: number; address?: string; };
+export type LabelLocation = { lat: number, lng: number };
 
 export interface PanoMarkerInterface {
   id: string;
@@ -43,6 +45,8 @@ export interface PanoMarkerInterface {
 export interface HumanLabels {
   name: string;
   labels: CollectedLabelInterface[];
+  createdAt?: string;
+
 }
 
 export interface CollectedImageInterface {
@@ -50,6 +54,7 @@ export interface CollectedImageInterface {
   pano: string;
   fileName: string;
   location: ImageLocation;
+  address?: string;
   url: string;
   image_size: number[];
   isLabeled: boolean;
@@ -58,5 +63,7 @@ export interface CollectedImageInterface {
   // panoMarkers: PanoMarkerInterface[];
   pov: PovInterface;
   creator: string;
+  createdAt?: string;
+  updatedAt?: string;
   // modifiers: ModifierInterface[];
 }

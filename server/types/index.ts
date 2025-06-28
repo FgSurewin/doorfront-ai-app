@@ -38,6 +38,7 @@ export interface UserBody {
   role: string;
   institution: string;
   referralCode?:string;
+  accessLevel:string;
 }
 
 export interface LoginBody {

@@ -44,6 +44,7 @@ import { config, databaseLink } from "./database";
   try {
     await mongoose.connect(config.link!, config.options);
     console.log("Connect to the MongoDB successfully!");
+    console.log("Connected to database:", mongoose.connection.name); 
     console.log("DB LINK -> ", databaseLink);
   } catch (error) {
     console.log(new Error(`${error}`));

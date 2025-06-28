@@ -65,7 +65,7 @@ export interface UserInterface extends Document {
   usersReferred: userReferred[];
   referrer : string;
   updatedAt: Date
-
+  accessLevel?: string;
 }
 
 const UserModel = new Schema<UserInterface>(
@@ -148,6 +148,12 @@ const UserModel = new Schema<UserInterface>(
     updatedAt:{
       type:Date,
       required: false
+    },
+    accessLevel:{
+      type:String,
+      required: false,
+      enum: ["admin", "basic"],
+      default: "basic"
     }
   },
   { timestamps: true }

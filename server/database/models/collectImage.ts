@@ -27,6 +27,7 @@ export interface CollectedLabelInterface {
   labeledBy: string;
   markerPov?: PovInterface;
   notes?:NotesInterface;
+  exactCoordinates?:ImageLocation;
 }
 
 export type ImageLocation = { lat: number; lng: number };
@@ -60,6 +61,7 @@ export interface CollectedImageInterface extends Document {
   // panoMarkers: PanoMarkerInterface[];
   pov: PovInterface;
   creator: string;
+  address?: string;
   // modifiers: ModifierInterface[];
 }
 
@@ -134,6 +136,10 @@ const CollectImageModel = new Schema<CollectedImageInterface>(
     creator: {
       type: String,
       require: true,
+    },
+    address: {
+      type: String,
+      require: false,
     },
   },
   { timestamps: true }
