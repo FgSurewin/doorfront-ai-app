@@ -40,3 +40,18 @@ export function getCurrentTime(user: SingleUser): string {
   const safeMinutes = totalMinutes < 0 ? 0 : totalMinutes; // avoid negative time
   return formatCompactTime(safeMinutes);
 }
+
+export function getCurrentTimeMinutes(user: SingleUser): number {
+  const labeledMinutes = (user.review ?? 0) + (user.label ?? 0);
+  const certifiedMinutes = (user.hoursCertified ?? 0) * 60; // hours to minutes
+  const totalMinutes = labeledMinutes - certifiedMinutes;
+  return totalMinutes < 0 ? 0 : totalMinutes; // no negative minutes
+}
+
+export function getCurrentTimeHours(user: SingleUser): number {
+  const labeledMinutes = (user.review ?? 0) + (user.label ?? 0);
+  const certifiedMinutes = (user.hoursCertified ?? 0) * 60;
+  const totalMinutes = labeledMinutes - certifiedMinutes;
+  const safeMinutes = totalMinutes < 0 ? 0 : totalMinutes;
+  return safeMinutes / 60; // convert minutes back to hours as decimal
+}

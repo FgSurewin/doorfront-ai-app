@@ -43,6 +43,7 @@ route.post("/searchUserByNameOrEmail", userController.searchUserByNameOrEmail);
 route.post("/grantAdminRight", userController.grantAdminRight);
 route.post("/revokeAdminRight", userController.revokeAdminRight);
 route.post("/fetchAllAdmins", userController.fetchAllAdmins);
+route.post("/addCertifiedHours", userController.addCertifiedHours);
 
 
 // route.post("/addImages", userController.updateImage);

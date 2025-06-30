@@ -523,3 +523,17 @@ export const revokeAdminRight = (userId: string) =>
       console.error("Failed to revoke admin rights:", err);
       throw new Error(err);
     });
+
+export const addCertifiedHours = (email: string, hours: number) =>
+  baseRequest
+    .request<UserReturnData<SingleUser | null>>({
+      method: "POST",
+      url: `user/addCertifiedhours`, 
+      data: { email, hours },
+    })
+    .then((res) => res.data)
+    .catch((err) => {
+      console.error("Failed to add certified hours:", err);
+      throw new Error(err);
+    });
+

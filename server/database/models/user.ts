@@ -155,6 +155,11 @@ const UserModel = new Schema<UserInterface>(
       required: false,
       enum: ["admin", "basic"],
       default: "basic"
+    },
+    hoursCertified:{
+      type: Number,
+      required: false,
+      default: 0,
     }
   },
   { timestamps: true }

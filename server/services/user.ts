@@ -1223,7 +1223,7 @@ export class UserService {
   async searchUserByNameOrEmail(ctx: AppContext, body: { searchTerm: string }) {
     const { searchTerm } = body;
     const { res } = ctx;
-
+    console.log(body)
     try {
       if (!searchTerm) {
         return res.json({
@@ -1251,7 +1251,7 @@ export class UserService {
           data: [],
         });
       }
-
+      
       return res.json({
         code: 0,
         message: `${users.length} user(s) found`,
@@ -1353,6 +1353,67 @@ export class UserService {
       code: 5000,
       message: error.message,
     });
+  }
+}
+
+async addCertifiedHours(
+  ctx: AppContext,
+  params: { email: string; hours: number }
+): Promise<{
+  code: number;
+  message: string;
+  data?: { userId: string; hoursCertified: number };
+}> {
+  const { email, hours } = params;
+
+  // Validate input
+  if (!email || typeof hours !== "number" || hours === 0) {
+    return {
+      code: 4001,
+      message: "Missing or invalid parameters: non-zero number of hours and email are required.",
+    };
+  }
+
+  try {
+    // Find user (ensure no .lean())
+    const userDoc = await UserModel.findOne({ email: email.toLowerCase() });
+
+    if (!userDoc) {
+      return {
+        code: 4004,
+        message: "User not found.",
+      };
+    }
+
+    // Safely get current value
+    const currentCertified = userDoc.hoursCertified ?? 0;
+    const newCertified = currentCertified + hours;
+
+    // Prevent going negative
+    if (newCertified < 0) {
+      return {
+        code: 4002,
+        message: `Cannot remove more hours than certified (${currentCertified}h).`,
+      };
+    }
+
+    // Update and save
+    userDoc.hoursCertified = newCertified;
+    await userDoc.save();
+
+    return {
+      code: 0,
+      message: "Certified hours updated successfully.",
+      data: {
+        userId: userDoc._id.toString(),
+        hoursCertified: userDoc.hoursCertified,
+      },
+    };
+  } catch (e) {
+    return {
+      code: 5000,
+      message: `Internal server error: ${e instanceof Error ? e.message : e}`,
+    };
   }
 }
 
