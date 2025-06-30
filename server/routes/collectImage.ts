@@ -9,6 +9,7 @@ route.post("/updateImage", checkToken, collectImageController.updateImage);
 route.delete("/deleteImage", checkToken, collectImageController.deleteImage);
 route.get("/getAllImages", checkToken, collectImageController.getAllImages);
 route.get("/getPaginatedImages", checkToken, collectImageController.getPaginatedImages);
+route.get("/getUnapprovedLabels", checkToken, collectImageController.getUnapprovedLabels);
 route.post(
   "/getMultiImageByIds",
   checkToken,

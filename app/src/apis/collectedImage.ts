@@ -296,3 +296,33 @@ export const fetchPaginatedImages = async ({
     throw err;
   }
 };
+interface FetchUnapprovedLabelsParams {
+  limit?: number;
+  skip?: number;
+}
+
+export const fetchUnapprovedLabels = (
+  params: { nickname: string; limit?: number; skip?: number },
+  handleFailedTokenFuncs?: HandleFailedTokenFuncs
+) =>
+  baseRequest
+    .request<CollectedImageApiReturnType<CollectedImageInterface[]>>({
+      method: "GET",
+      url: `/collectImage/getUnapprovedLabels`,
+      params, // includes nickname, limit, skip
+    })
+    .then((res) => {
+      if (res.data.code === 2000) {
+        if (handleFailedTokenFuncs) {
+          handleFailedTokenFuncs.navigate("/login");
+          handleFailedTokenFuncs.deleteAllLocal();
+          handleFailedTokenFuncs.clearUserInfo();
+        }
+        return Promise.reject(new Error(res.data.message));
+      }
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+

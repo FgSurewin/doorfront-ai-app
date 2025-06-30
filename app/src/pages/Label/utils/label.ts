@@ -30,7 +30,10 @@ export function convertHumanImageToInputImageList(
     imgSrc: item.url,
     fileName: item.fileName,
     location: item.location,
-    labels: modelLabelsToInputLabels(item.human_labels[0].labels),
+    labels:
+      item.human_labels.length > 0
+        ? modelLabelsToInputLabels(item.human_labels[0].labels)
+        : [],
   }));
 }
 
@@ -56,7 +59,7 @@ export function modelLabelToInputLabel(
     subtype: data.subtype || "",
     id: data.label_id,
     labeledBy: data.labeledBy,
-    notes: data.notes
+    notes: data.notes,
   };
 }
 
@@ -83,6 +86,6 @@ export function reactToolLabelToDBLabel(
     subtype: label.subtype,
     labeledBy: label.labeledBy,
     markerPov: calculatePointPov(targetX, targetY, pov),
-    notes: label.notes
+    notes: label.notes,
   };
 }

@@ -96,7 +96,7 @@ export class CollectImageService {
       });
     }
   }
-  
+
   async getAllImages(ctx: AppContext): Promise<void> {
     const { res } = ctx;
     try {
@@ -254,42 +254,142 @@ export class CollectImageService {
   }
 
   async getPaginatedImages(ctx: AppContext): Promise<void> {
-  const { req, res } = ctx;
+    const { req, res } = ctx;
 
-  // Parse and limit pagination params safely
-  const limit = Math.min(parseInt(req.query.limit as string) || 50, 100); // max 100 items per page
-  const skip = parseInt(req.query.skip as string) || 0;
+    // Parse and limit pagination params safely
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100); // max 100 items per page
+    const skip = parseInt(req.query.skip as string) || 0;
 
-  try {
-    // Fetch images and total count concurrently for efficiency
-    const [images, total] = await Promise.all([
-      CollectImageModel.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      CollectImageModel.countDocuments(),
-    ]);
+    try {
+      // Fetch images and total count concurrently for efficiency
+      const [images, total] = await Promise.all([
+        CollectImageModel.find()
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        CollectImageModel.countDocuments(),
+      ]);
 
-    res.status(200).json({
-      code: 0,
-      message: `Fetched ${images.length} images successfully`,
-      data: images,
-      pagination: {
-        total,       // total number of images in DB
-        limit,       // current page limit
-        skip,        // current offset
-        hasMore: skip + images.length < total, // true if more data available
-      },
-    });
-  } catch (e) {
-    console.error("Error fetching images:", e);
+      res.status(200).json({
+        code: 0,
+        message: `Fetched ${images.length} images successfully`,
+        data: images,
+        pagination: {
+          total, // total number of images in DB
+          limit, // current page limit
+          skip, // current offset
+          hasMore: skip + images.length < total, // true if more data available
+        },
+      });
+    } catch (e) {
+      console.error("Error fetching images:", e);
 
-    res.status(500).json({
-      code: 5000,
-      message: "Internal server error",
-      error: e instanceof Error ? e.message : String(e),
-    });
+      res.status(500).json({
+        code: 5000,
+        message: "Internal server error",
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
   }
-}
+
+  async getUnapprovedLabels(ctx: AppContext) {
+    const { req, res } = ctx;
+
+    const nickname = req.query.nickname as string;
+    const minLabels = parseInt(req.query.minLabels as string) || 3;
+    const limit = Math.min(parseInt(req.query.limit as string) || 100, 100);
+    const skip = parseInt(req.query.skip as string) || 0;
+    const chunkSize = 100;
+
+    try {
+      if (!nickname) {
+        return res.status(400).json({
+          code: 4001,
+          message: "Missing required 'nickname' or 'name' parameter",
+        });
+      }
+
+      const filtered: any[] = [];
+      let offset = skip;
+      let totalChecked = 0;
+      let hasMore = true;
+
+      while (filtered.length < limit && hasMore) {
+        const images = await CollectImageModel.find()
+          .sort({ createdAt: -1 })
+          .skip(offset)
+          .limit(chunkSize)
+          .lean();
+
+        totalChecked += images.length;
+        offset += chunkSize;
+
+        if (images.length === 0) {
+          hasMore = false;
+          break;
+        }
+
+        for (const image of images) {
+          const labeledBy = image.human_labels.map((h) => (h.name || "").trim().toLowerCase());
+
+          if (labeledBy.includes(nickname.trim().toLowerCase())) {
+            continue; // skip already labeled
+          }
+
+          // skip if too few labels or sample image or no labels
+          if (
+            image.human_labels.length <= minLabels ||
+            image.image_id === "GuildTourSample" ||
+            image.human_labels.length === 0
+          ) {
+            continue;
+          }
+
+          // check incomplete door label (in first labeler only, as in frontend)
+          let incompleteDoor = false;
+          if (image.human_labels.length > 0) {
+            const labels = image.human_labels[0].labels || [];
+            for (const label of labels) {
+              if (label.label === "door" && label.subtype === "") {
+                incompleteDoor = true;
+                break;
+              }
+            }
+          }
+
+          // skip if too many labels and no incomplete door
+          const maxModifier = 5; // or whatever your logic uses
+          if (image.human_labels.length >= maxModifier && !incompleteDoor) {
+            continue;
+          }
+
+          filtered.push(image);
+          if (filtered.length >= limit) {
+            hasMore = true;
+            break;
+          }
+        }
+      }
+
+      res.status(200).json({
+        code: 0,
+        message: `Filtered ${filtered.length} images`,
+        data: filtered,
+        pagination: {
+          skip,
+          limit,
+          hasMore,
+          totalChecked,
+          returned: filtered.length,
+        },
+      });
+    } catch (e) {
+      console.error("Error filtering paginated images:", e);
+      res.status(500).json({
+        code: 5000,
+        message: "Internal server error",
+      });
+    }
+  }
 }
