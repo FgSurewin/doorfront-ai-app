@@ -1,5 +1,6 @@
 // 📂 pages/AdminPanel/utils/filters.ts
 import { CollectedImageInterface } from "../../../types/collectedImage";
+import { fetchAllImages } from "../../../apis/collectedImage"; 
 
 export const filterImagesLabeledBy = (images: CollectedImageInterface[], labledQuery: string) => {
   return images.filter((image) =>
@@ -30,20 +31,35 @@ export const filterImagesByLocation = (
 };
 
 
-// Unified filtering function
-export const applyFilters = async (
-  images: CollectedImageInterface[],
-  { searchQuery, searchType, addressFilter }: { searchQuery: string; searchType: "creator" | "labledBy" | "address"; addressFilter: string }
-) => {
-  let filteredImages = images;
+// ✅ Unified filtering function — now fetches all images first
+export const applyFilters = async ({
+  searchQuery,
+  searchType,
+  addressFilter,
+}: {
+  searchQuery: string;
+  searchType: "creator" | "labledBy" | "address";
+  addressFilter: string;
+}): Promise<CollectedImageInterface[]> => {
+  try {
+    // ✅ Fetch all images from DB (unpaginated)
+    const response = await fetchAllImages();
+    const allImages = response.data || [];
 
-  if (searchType === "creator") {
-    filteredImages = filterImagesByCreator(filteredImages, searchQuery);
-  } else if (searchType === "labledBy") {
-    filteredImages = filterImagesLabeledBy(filteredImages, searchQuery);
-  } else if (searchType === "address") {
-    filteredImages = await filterImagesByLocation(filteredImages, addressFilter);
+    // 🧠 Apply filters in memory
+    let filteredImages = allImages;
+
+    if (searchType === "creator") {
+      filteredImages = filterImagesByCreator(filteredImages, searchQuery);
+    } else if (searchType === "labledBy") {
+      filteredImages = filterImagesLabeledBy(filteredImages, searchQuery);
+    } else if (searchType === "address") {
+      filteredImages = filterImagesByLocation(filteredImages, addressFilter);
+    }
+
+    return filteredImages;
+  } catch (error) {
+    console.error("Failed to apply filters:", error);
+    return [];
   }
-
-  return filteredImages;
 };

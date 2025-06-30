@@ -71,6 +71,7 @@ export class UserService {
               contestScore: 0,
               referrer: ref,
               accessLevel: "basic",
+              hoursCertified: 0,
             };
             const finish = await UserModel.create(newUser);
             if (referrer && referrer.length > 0) {
@@ -522,7 +523,7 @@ export class UserService {
           email: item.email,
           score: item.score,
           username: item.nickname,
-          labels: item.label,
+          label: item.label,
           review: item.review,
           modify: item.modify,
           create: item.create,
@@ -532,6 +533,7 @@ export class UserService {
           institution: item.institution,
           updatedAt: item.updatedAt,
           accessLevel: item.accessLevel,
+          hoursCertified: item.hoursCertified,
         })),
       });
     } catch (e) {
@@ -1236,10 +1238,10 @@ export class UserService {
         $or: [
           { email: new RegExp(`^${searchTerm}$`, "i") },
           { nickname: new RegExp(searchTerm, "i") },
-          { accessLevel: new RegExp(`^${searchTerm}$`, "i") }, // match accessLevel exactly (case-insensitive)
+          { accessLevel: new RegExp(`^${searchTerm}$`, "i") }, 
         ],
       })
-        .select("_id nickname email accessLevel role")
+        .select( "_id nickname email accessLevel role institution score label review create hoursCertified createdAt updatedAt")
         .lean();
 
       if (users.length === 0) {
@@ -1327,4 +1329,32 @@ export class UserService {
       );
     }
   }
+
+  async fetchAllAdmins(ctx: AppContext) {
+  const { res } = ctx;
+  try {
+    const adminUsers = await UserModel.find({ accessLevel: "admin" }).lean(); // <-- only admins
+
+    res.json({
+      code: 0,
+      message: "Get admins successfully",
+      data: adminUsers.map((item) => ({
+        email: item.email,
+        score: item.score,
+        username: item.nickname,
+        role: item.role,
+        institution: item.institution,
+        accessLevel: item.accessLevel,
+      })),
+    });
+  } catch (e) {
+    const error = new Error(`${e}`);
+    res.json({
+      code: 5000,
+      message: error.message,
+    });
+  }
+}
+
+  
 }

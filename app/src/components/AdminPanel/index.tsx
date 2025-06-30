@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Pagination,
   Container,
@@ -10,7 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useImages } from "../../hooks/useImages";
+import { useImages } from "./utils/useImages";
 import DialogConfirmDelete from "./components/DialogConfirmDelete";
 import SearchFilters from "./components/SearchFilters";
 import { applyFilters } from "./utils/filters";
@@ -20,16 +20,12 @@ import AccessLevel from "./components/AccessLevel";
 import UserList from "./components/UserList";
 import ImageWindow from "./components/ImageWindow";
 
-
-//fetch address of image in format of Streen number/name/zip
-
 const AdminPanel = () => {
-
   // Local state for search and filter
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState<"creator" | "labledBy" | "address">(
-    "creator"
-  );
+  const [searchType, setSearchType] = useState<
+    "creator" | "labledBy" | "address"
+  >("creator");
   const [addressFilter, setAddressFilter] = useState("");
   const [filteredImages, setFilteredImages] = useState<
     CollectedImageInterface[]
@@ -40,14 +36,10 @@ const AdminPanel = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [imagesPerPage, setImagesPerPage] = useState(16);
-  const paginatedImages = filteredImages.slice(
-    (currentPage - 1) * imagesPerPage,
-    currentPage * imagesPerPage
-  );
-  const [address, setAddress] = useState<string | null>(null);
 
   const {
     images,
+    totalImages,
     handleDeleteClick,
     handleConfirmDelete,
     handleCancelDelete,
@@ -56,6 +48,8 @@ const AdminPanel = () => {
     selectedImage,
     handleCloseImageInfo,
   } = useImages(currentPage, imagesPerPage);
+
+  const filtersAreActive = searchQuery !== "" || addressFilter !== "";
 
   // Handle page change for pagination
   const handlePageChange = (
@@ -75,18 +69,43 @@ const AdminPanel = () => {
 
   // Filter images when search or filter options change
   useEffect(() => {
-    const filterImages = async () => {
-      const filtered = await applyFilters(images, {
-        searchQuery,
-        searchType,
-        addressFilter,
-      });
-      setFilteredImages(filtered);
-      setCurrentPage(1); // Reset to first page on filter change
+    const fetchFilteredImages = async () => {
+      if (filtersAreActive) {
+        const result = await applyFilters({
+          searchQuery,
+          searchType,
+          addressFilter,
+        }); // This should call the DB for all matches
+        setFilteredImages(result);
+        setCurrentPage(1);
+      } else {
+        setFilteredImages([]); // Return to paginated mode
+      }
     };
 
-    filterImages();
-  }, [images, searchQuery, searchType, addressFilter]);
+    fetchFilteredImages();
+  }, [searchQuery, searchType, addressFilter]);
+
+  // 🧠 Paginate filtered results or fallback to default paginated images
+  const displayImages = filtersAreActive ? filteredImages : images;
+
+  const paginatedImages = useMemo(() => {
+    if (filtersAreActive) {
+      // Client-side paginate filtered images
+      return filteredImages.slice(
+        (currentPage - 1) * imagesPerPage,
+        currentPage * imagesPerPage
+      );
+    }
+    // Server-side paginated images - use as is, no slicing
+    return images;
+  }, [filtersAreActive, filteredImages, images, currentPage, imagesPerPage]);
+
+  // 🧠 Display correct total count for pagination
+  const totalImageCount = filtersAreActive
+    ? filteredImages.length
+    : totalImages;
+
   //handle images to edit
   const navigate = useNavigate();
 
@@ -126,15 +145,17 @@ const AdminPanel = () => {
         onLabelFilterChange={handleSearchQueryChange}
         onAddressFilterChange={handleAddressFilterChange}
       />
-  
-      <Typography sx={{
+
+      <Typography
+        sx={{
           position: "absolute",
           top: "140px",
           right: "20px",
           padding: 1,
           borderRadius: 2,
-        }}>
-        Total Images: {images.length}
+        }}
+      >
+        Total Images: {totalImageCount}
       </Typography>
 
       <Button
@@ -143,9 +164,9 @@ const AdminPanel = () => {
         style={{
           position: "absolute",
           top: "100px",
-          right: "40px", 
+          right: "40px",
           backgroundColor: "#2980b9",
-          color: "white"
+          color: "white",
         }}
       >
         Add Admin
@@ -158,7 +179,7 @@ const AdminPanel = () => {
           top: "100px",
           right: "180px",
           backgroundColor: "#27ae60",
-          color: "white"
+          color: "white",
         }}
       >
         Users List
@@ -170,13 +191,12 @@ const AdminPanel = () => {
         handleConfirmDelete={handleConfirmDelete}
         handleCancelDelete={handleCancelDelete}
         openDialog={openDialog}
-        onImageClick={handleOpenImageInfo} // Pass the function to handle image click
+        onImageClick={handleOpenImageInfo}
       />
 
-      {/* Pagination Component */}
-      {filteredImages.length > imagesPerPage && (
+      {totalImageCount > imagesPerPage && (
         <Pagination
-          count={Math.ceil(filteredImages.length / imagesPerPage)}
+          count={Math.ceil(totalImageCount / imagesPerPage)}
           page={currentPage}
           onChange={handlePageChange}
           color="primary"
@@ -193,7 +213,7 @@ const AdminPanel = () => {
       {/* Image Info Dialog */}
       <Dialog open={Boolean(selectedImage)} onClose={handleCloseImageInfo}>
         <DialogContent>
-          <ImageWindow selectedImage={selectedImage}/>
+          <ImageWindow selectedImage={selectedImage} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseImageInfo} color="primary">
@@ -206,7 +226,11 @@ const AdminPanel = () => {
         <AccessLevel onClose={handleCloseDialog} />
       </Dialog>
       {/* User List */}
-      <Dialog open={openUserListDialog} onClose={handleCloseDialog} maxWidth="xl" >
+      <Dialog
+        open={openUserListDialog}
+        onClose={handleCloseDialog}
+        maxWidth="xl"
+      >
         <UserList onClose={handleCloseDialog} />
       </Dialog>
     </Container>

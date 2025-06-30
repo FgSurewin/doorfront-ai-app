@@ -13,16 +13,7 @@ import {
   WebMenu,
 } from "./Navbar.style";
 import { Box, SxProps } from "@mui/material";
-import {useUserStore} from "../../global/userState";
-
-// const menuItems = ["Start Exploring", "Validation"];
-let menuItems = [
-  { name: "Start Exploring", path: "/exploration" },
-  { name: "Validate Labels", path: "/reviewLabels" },
-  //{ name: "Contest Page" , path: "/contest" },
-  { name: "Tutorial", path:"/tutorial"},
-  { name: "Requests", path:"/requests"}
-]
+import { useUserStore } from "../../global/userState";
 
 export interface NavbarProps {
   position?: "static" | "fixed";
@@ -42,18 +33,31 @@ const Navbar = React.memo(function ({
     if (extraStyle) return Object.assign({}, style, extraStyle) as SxProps;
     return style;
   }, [isTransparent, extraStyle]);
-const LogoSrc = React.useMemo(
+  const LogoSrc = React.useMemo(
     () => (isTransparent ? WhiterLogo : BlackLogo),
     [isTransparent]
   );
 
-  const {userInfo} = useUserStore()
+  const { userInfo } = useUserStore();
   //console.log(userInfo.role)
-  if(userInfo.role === "Blind or Low Vision Data Requester"){
-    menuItems = [
-      {name: "Request Data", path: "/createRequest"}
-    ]
-  }
+    const menuItems = React.useMemo(() => {
+    if (userInfo.role === "Blind or Low Vision Data Requester") {
+      return [{ name: "Request Data", path: "/createRequest" }];
+    }
+
+    const baseMenu = [
+      { name: "Start Exploring", path: "/exploration" },
+      { name: "Validate Labels", path: "/reviewLabels" },
+      { name: "Tutorial", path: "/tutorial" },
+      { name: "Requests", path: "/requests" },
+    ];
+
+    if (userInfo.accessLevel === "admin") {
+      return [...baseMenu, { name: "Admin Panel", path: "/adminPage" }];
+    }
+
+    return baseMenu;
+  }, [userInfo]);
   /* this is to only show contest in navbar when a contest is active in the DB but it's buggy so disabled for now
     React.useEffect(()=>{
       if(readLocal("contest" as LocalStorageKeyType) != null && readLocal("contest" as LocalStorageKeyType) != "" ) {
@@ -65,7 +69,7 @@ const LogoSrc = React.useMemo(
         }
     },[readLocal("contest" as LocalStorageKeyType)])
     */
-return (
+  return (
     <>
       <AppBar position={position} sx={backgroundStyle}>
         <Container maxWidth="xl">

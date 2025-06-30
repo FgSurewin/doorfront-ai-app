@@ -57,6 +57,7 @@ export default function LabelStage() {
   // const { height, width } = useWindowDimensions();
   const [image] = useImage(currentImage ? currentImage.imgSrc : "");
   // const isChangingDirection = useMediaQuery("(max-width: 1200px)");
+  
 
   /* ------------------------------- Wheel Events ------------------------------ */
   const handleStageWheel = (e: KonvaEventObject<WheelEvent>) => {
@@ -188,14 +189,15 @@ export default function LabelStage() {
 
     window.addEventListener("resize", handleResize);
     handleResize(); // Initialize the stage size on initial render
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
 
   //console.log(imgRef);
   // stageSize.width is the window width, ok for mobile but extra space on desktop
   return (
-    <>
+ 
+    <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
       {currentImage && (
         <Stage
           className="labelStage"
@@ -235,6 +237,7 @@ export default function LabelStage() {
           </Layer>
         </Stage>
       )}
-    </>
+    </div>
+   
   );
 }

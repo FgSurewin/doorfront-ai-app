@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -15,15 +15,9 @@ import {
   searchUserByNameOrEmail,
   grantAdminRight,
   revokeAdminRight,
+  SingleUser,
+  fetchAllAdmins,
 } from "../../../apis/user";
-
-interface User {
-  nickname: string;
-  email: string;
-  role: string;
-  accessLevel: string;
-  _id: string;
-}
 
 interface AccessLevelProps {
   onClose: () => void;
@@ -31,11 +25,38 @@ interface AccessLevelProps {
 
 const UserSearchModal: React.FC<AccessLevelProps> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [user, setUser] = useState<User | null>(null);
+  const [admins, setAdmins] = useState<SingleUser[]>([]);
+  const [searchResults, setSearchResults] = useState<SingleUser[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadAdmins = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetchAllAdmins();
+        const adminsList = Array.isArray(response.data) ? response.data : [];
+        
+        if (Array.isArray(adminsList)) {
+          setAdmins(adminsList);
+        } else {
+          console.warn("Admin list is not an array", adminsList);
+          setAdmins([]);
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch admins", error);
+        setAdmins([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAdmins();
+  }, []);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
@@ -45,53 +66,71 @@ const UserSearchModal: React.FC<AccessLevelProps> = ({ onClose }) => {
     setHasSearched(true);
     try {
       const response = await searchUserByNameOrEmail(searchTerm);
-      setUser(response.data);
+      // response.data assumed to be an array of users now
+      setSearchResults(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
-      console.error("User not found or error occurred", error);
-      setUser(null);
+      console.error("Search error", error);
+      setSearchResults([]);
     } finally {
       setIsLoading(false);
     }
   };
+  // Merge admins and search results: searched users go on top (no duplicates)
+  const combinedUsers = React.useMemo(() => {
+    // Create a map of user IDs from searchResults to filter out duplicates from admins
+    const searchIds = new Set(searchResults.map((u) => u._id));
+    // Filter admins to exclude those already in searchResults
+    const filteredAdmins = admins.filter((admin) => !searchIds.has(admin._id));
+    // Concatenate search results on top + remaining admins below
+    return [...searchResults, ...filteredAdmins];
+  }, [admins, searchResults]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setHasSearched(false);
   };
 
-  const handleGiveAdmin = async () => {
-    if (user) {
-      try {
-        await grantAdminRight(user._id);
-        setSnackbarMessage(`Admin rights granted to ${user.nickname}`);
-        setSnackbarOpen(true);
-        setUser((prevUser) => ({ ...prevUser!, accessLevel: "admin" }));
-      } catch (error) {
-        setSnackbarMessage("Failed to grant admin rights");
-        setSnackbarOpen(true);
-      }
+  const handleGiveAdmin = async (userId: string) => {
+    try {
+      await grantAdminRight(userId);
+      setSnackbarMessage(`Admin rights granted`);
+      setSnackbarOpen(true);
+      // Update UI by refreshing admins list or updating the local state
+      setAdmins((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, accessLevel: "admin" } : u))
+      );
+      setSearchResults((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, accessLevel: "admin" } : u))
+      );
+    } catch {
+      setSnackbarMessage("Failed to grant admin rights");
+      setSnackbarOpen(true);
     }
   };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-  const handleRevokeAdmin = async () => {
-    if (user) {
-      try {
-        await revokeAdminRight(user._id);
-        setSnackbarMessage(`Admin rights revoked from ${user.nickname}`);
-        setSnackbarOpen(true);
-        setUser({ ...user, accessLevel: "basic" });
-      } catch (error) {
-        console.error("Failed to revoke admin rights:", error);
-        setSnackbarOpen(true);
-      }
+  const handleRevokeAdmin = async (userId: string) => {
+    try {
+      await revokeAdminRight(userId);
+      setSnackbarMessage(`Admin rights revoked`);
+      setSnackbarOpen(true);
+      setAdmins((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, accessLevel: "basic" } : u))
+      );
+      setSearchResults((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, accessLevel: "basic" } : u))
+      );
+    } catch {
+      setSnackbarMessage("Failed to revoke admin rights");
+      setSnackbarOpen(true);
     }
   };
   return (
     <Dialog open onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Search User and Give Admin Rights</DialogTitle>
-      
+      <DialogTitle>Search User and Manage Admin Rights</DialogTitle>
+
       <DialogContent>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <TextField
@@ -111,28 +150,39 @@ const UserSearchModal: React.FC<AccessLevelProps> = ({ onClose }) => {
             color="primary"
             variant="contained"
             disabled={isLoading}
-            style={{ marginLeft: 10 }}
+            sx={{ ml: 1 }}
           >
             Search
           </Button>
         </Box>
 
         {isLoading && (
-          <Box display="flex" justifyContent="center" marginTop={2}>
+          <Box display="flex" justifyContent="center" mt={2}>
             <CircularProgress />
           </Box>
         )}
 
-        {user && (
+        {!isLoading && combinedUsers.length === 0 && (
+          <Box mt={2}>
+            <Typography>No admins found.</Typography>
+          </Box>
+        )}
+
+        {combinedUsers.map((user) => (
           <Box
+            key={user._id}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            marginTop={2}
+            mt={2}
+            p={1}
+            border={1}
+            borderRadius={1}
+            borderColor="divider"
           >
             <Box>
               <Typography variant="body1">
-                <strong>Name:</strong> {user.nickname}
+                <strong>Name:</strong> {user.nickname || user.username}
               </Typography>
               <Typography variant="body1">
                 <strong>Email:</strong> {user.email}
@@ -147,32 +197,35 @@ const UserSearchModal: React.FC<AccessLevelProps> = ({ onClose }) => {
             <Box>
               {user.accessLevel === "admin" ? (
                 <Button
-                  onClick={handleRevokeAdmin}
+                  onClick={() => handleRevokeAdmin(user._id)}
                   color="secondary"
                   variant="contained"
-                  style={{ width: "200px" }}
+                  sx={{ width: 200 }}
                 >
                   Revoke Admin Right
                 </Button>
               ) : (
                 <Button
-                  onClick={handleGiveAdmin}
-                  color="secondary"
+                  onClick={() => handleGiveAdmin(user._id)}
+                  color="primary"
                   variant="contained"
-                  style={{ width: "200px" }}
+                  sx={{ width: 200 }}
                 >
                   Give Admin Right
                 </Button>
               )}
             </Box>
           </Box>
-        )}
+        ))}
 
-        {hasSearched && !user && !isLoading && searchTerm && (
-          <Box marginTop={2}>
-            <p>No user found with the name or email: "{searchTerm}"</p>
-          </Box>
-        )}
+        {hasSearched &&
+          !isLoading &&
+          searchResults.length === 0 &&
+          searchTerm && (
+            <Box mt={2}>
+              <Typography>No users found with: "{searchTerm}"</Typography>
+            </Box>
+          )}
       </DialogContent>
 
       <DialogActions>
@@ -180,6 +233,7 @@ const UserSearchModal: React.FC<AccessLevelProps> = ({ onClose }) => {
           Close
         </Button>
       </DialogActions>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}

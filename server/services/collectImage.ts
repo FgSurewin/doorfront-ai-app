@@ -96,24 +96,16 @@ export class CollectImageService {
       });
     }
   }
-
+  
   async getAllImages(ctx: AppContext): Promise<void> {
-    const { res, req } = ctx;
-
-    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
-    const skip = parseInt(req.query.skip as string) || 0;
-
+    const { res } = ctx;
     try {
-      const result = await CollectImageModel.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-
+      const result: CollectedImageInterface[] =
+        await CollectImageModel.find().lean();
       if (result.length > 0) {
         res.json({
           code: 0,
-          message: `Fetched ${result.length} images successfully`,
+          message: "Get all images successfully",
           data: result,
         });
       } else {
@@ -260,4 +252,44 @@ export class CollectImageService {
       });
     }
   }
+
+  async getPaginatedImages(ctx: AppContext): Promise<void> {
+  const { req, res } = ctx;
+
+  // Parse and limit pagination params safely
+  const limit = Math.min(parseInt(req.query.limit as string) || 50, 100); // max 100 items per page
+  const skip = parseInt(req.query.skip as string) || 0;
+
+  try {
+    // Fetch images and total count concurrently for efficiency
+    const [images, total] = await Promise.all([
+      CollectImageModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      CollectImageModel.countDocuments(),
+    ]);
+
+    res.status(200).json({
+      code: 0,
+      message: `Fetched ${images.length} images successfully`,
+      data: images,
+      pagination: {
+        total,       // total number of images in DB
+        limit,       // current page limit
+        skip,        // current offset
+        hasMore: skip + images.length < total, // true if more data available
+      },
+    });
+  } catch (e) {
+    console.error("Error fetching images:", e);
+
+    res.status(500).json({
+      code: 5000,
+      message: "Internal server error",
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
 }

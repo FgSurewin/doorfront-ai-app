@@ -225,6 +225,11 @@ export const updateNewHumanLabels = (
 /* -------------------------------------------------------------------------- */
 /*                     Exploration Page - Fetch All Images                    */
 /* -------------------------------------------------------------------------- */
+export interface FetchAllImagesParams {
+  limit?: number;
+  skip?: number;
+  handleFailedTokenFuncs?: HandleFailedTokenFuncs;
+}
 export const fetchAllImages = (
   handleFailedTokenFuncs?: HandleFailedTokenFuncs
 ) =>
@@ -247,3 +252,47 @@ export const fetchAllImages = (
     .catch((res) => {
       throw new Error(res);
     });
+
+export const fetchPaginatedImages = async ({
+  limit = 50,
+  skip = 0,
+  handleFailedTokenFuncs,
+}: FetchAllImagesParams): Promise<CollectedImageApiReturnType<CollectedImageInterface[]>> => {
+  try {
+    const response = await baseRequest.request<CollectedImageApiReturnType<CollectedImageInterface[]>>({
+      method: "GET",
+      url: `/collectImage/getPaginatedImages`,
+      params: { limit, skip },
+      headers: {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+      },
+    });
+
+    const data = response.data;
+
+    if (!data) {
+      console.warn("[fetchPaginatedImages] Warning: response.data is undefined or null");
+      return {
+        code: -1,
+        message: "No data",
+        data: [],
+        pagination: { total: 0, limit, skip, hasMore: false }
+      };
+    }
+
+    if (data.code === 2000) {
+      if (handleFailedTokenFuncs) {
+        handleFailedTokenFuncs.navigate?.("/login");
+        handleFailedTokenFuncs.deleteAllLocal?.();
+        handleFailedTokenFuncs.clearUserInfo?.();
+      }
+      throw new Error(data.message);
+    }
+
+    return data; // Return full response object
+  } catch (err) {
+    console.error("[fetchPaginatedImages] Error caught:", err);
+    throw err;
+  }
+};

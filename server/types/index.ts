@@ -39,6 +39,7 @@ export interface UserBody {
   institution: string;
   referralCode?:string;
   accessLevel:string;
+  hoursCertified?:number;
 }
 
 export interface LoginBody {

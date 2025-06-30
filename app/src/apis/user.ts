@@ -55,15 +55,22 @@ export interface contestUserReturn {
   contestScore?: number;
   areaScores: userAreaScore[];
 }
-export interface SingleUser {
-  id: string;
-  nickname: string;
-  email: string;
-  accessLevel: string;
-  role: string;
-  _id: string;
-}
 
+export interface SingleUser {
+  _id: string;
+  email: string;
+  username: string;
+  nickname: string;
+  score: number;
+  role: string;
+  label: number;
+  review: number;
+  create: number;
+  bonus: number;
+  institution: string;
+  accessLevel?: string;
+  hoursCertified?:number;
+}
 /* -------------------------------------------------------------------------- */
 /*                               Login & Sign Up                              */
 /* -------------------------------------------------------------------------- */
@@ -289,10 +296,12 @@ export const addUserBonusCredit = (data: { id: string }) =>
 /*                   Get All User Information From Database                   */
 /* -------------------------------------------------------------------------- */
 export interface AllUserScores {
+  _id:string;
   email: string;
   score: number;
   username: string;
-  labels: number;
+  nickname: string;
+  label: number;
   review: number;
   modify: number;
   create: number;
@@ -302,6 +311,7 @@ export interface AllUserScores {
   updatedAt: Date;
   institution: string;
   accessLevel?: string;
+  hoursCertified?:number;
 }
 
 export const getAllUsersFromDB = () =>
@@ -475,6 +485,17 @@ export const searchUserByNameOrEmail = (searchTerm: string) =>
     .catch((err) => {
       console.error("Failed to search user:", err);
       throw new Error(err);
+    });
+
+export const fetchAllAdmins = () =>
+  baseRequest
+    .request<UserReturnData<AllUserScores[]>>({
+      method: "POST",
+      url: `/user/fetchAllAdmins`,
+    })
+    .then((res) => res.data)
+    .catch((res) => {
+      throw new Error(res);
     });
 
 export const grantAdminRight = (userId: string) =>

@@ -3,6 +3,7 @@ import { Box, Divider, Stack, Tooltip, Typography } from "@mui/material";
 import { useUserStore } from "../../global/userState";
 import { getUserScoreFromDB } from "../../apis/user";
 import HelpIcon from "@mui/icons-material/Help";
+import {timeConvert} from "../../utils/volunteerTimeCalc"
 
 export default function UserCreditShowcase() {
   /* ------------------------------ Global State ------------------------------ */
@@ -87,10 +88,10 @@ export default function UserCreditShowcase() {
   );
 }
 
-function timeConvert(num: number) {
-  const hours = num / 60;
-  const rhours = Math.floor(hours);
-  const minutes = (hours - rhours) * 60;
-  const rminutes = Math.floor(minutes);
-  return rhours + " hour(s) and " + rminutes + " minute(s)";
-}
+// function timeConvert(num: number) {
+//   const hours = num / 60;
+//   const rhours = Math.floor(hours);
+//   const minutes = (hours - rhours) * 60;
+//   const rminutes = Math.floor(minutes);
+//   return rhours + " hour(s) and " + rminutes + " minute(s)";
+// }

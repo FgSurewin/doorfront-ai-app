@@ -66,6 +66,7 @@ export interface UserInterface extends Document {
   referrer : string;
   updatedAt: Date
   accessLevel?: string;
+  hoursCertified?: number;
 }
 
 const UserModel = new Schema<UserInterface>(

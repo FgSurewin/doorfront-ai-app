@@ -46,6 +46,7 @@ export default function Header() {
           <Typography variant="h5">Explore</Typography>
         </Button>
         }
+        
       </Stack>
     </div>
   );

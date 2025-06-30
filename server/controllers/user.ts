@@ -317,6 +317,13 @@ async revokeAdminRight(
     next(error);
   }
 }
+  async fetchAllAdmins(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    await userService.fetchAllAdmins({ req, res, next });
+  }
 
 }
 

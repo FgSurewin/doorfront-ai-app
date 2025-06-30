@@ -76,13 +76,13 @@ export interface ReactToolState {
 
   /* -------------------------------- get notes ------------------------------- */
   currentNotes: NotesInterface;
-  updateCurrentNotes: (boxId:string, notes:NotesInterface) => void;
+  updateCurrentNotes: (boxId: string, notes: NotesInterface) => void;
 
   // Global operation functions
   operationsFuncs: OperationFunctions;
   initOperationFunctions: (funcs: OperationFunctions) => void;
 }
-
+const MAX_IMAGE_STORE_LIMIT = 100;
 export const useReactToolsStore = create<ReactToolState>(
   devtools(
     (set) => ({
@@ -121,16 +121,16 @@ export const useReactToolsStore = create<ReactToolState>(
           "ReactToolState/changeReactToolImageLabels"
         );
       },
-      currentNotes:{
-        name:'',
-        address:'',
-        additionalInfo: ''
+      currentNotes: {
+        name: "",
+        address: "",
+        additionalInfo: "",
       },
-      updateCurrentNotes:(boxId,notes) => {
+      updateCurrentNotes: (boxId, notes) => {
         set(
           (state) => {
-            state.changeReactToolImageLabels(boxId,{notes:notes})
-            return{...state,currentNotes: notes}
+            state.changeReactToolImageLabels(boxId, { notes: notes });
+            return { ...state, currentNotes: notes };
           },
           false,
           "ReactToolState/updateCurrentNotes"
@@ -177,21 +177,30 @@ export const useReactToolsStore = create<ReactToolState>(
 
       selectedImageId: "",
       initReactToolState: (imageList) => {
-        set(
-          (state) => {
-            if (imageList.length === 0) {
-              return { ...state, reactToolImageList: imageList };
-            }
-            return {
-              ...state,
-              reactToolImageList: imageList,
-              selectedImageId: imageList[0].imageId,
-            };
-          },
-          false,
-          "ReactToolState/initReactToolState"
-        );
-      },
+      set(
+        (state) => {
+          const limitedImageList = imageList.slice(0, MAX_IMAGE_STORE_LIMIT);
+
+          if (limitedImageList.length === 0) {
+            return { ...state, reactToolImageList: limitedImageList };
+          }
+
+          const shouldSetSelectedImage =
+            !state.selectedImageId ||
+            !limitedImageList.find((img) => img.imageId === state.selectedImageId);
+
+          return {
+            ...state,
+            reactToolImageList: limitedImageList,
+            selectedImageId: shouldSetSelectedImage
+              ? limitedImageList[0].imageId
+              : state.selectedImageId,
+          };
+        },
+        false,
+        "ReactToolState/initReactToolState"
+      );
+    },
       changeSelectedImageId: (imageId) => {
         set(
           (state) => ({ ...state, selectedImageId: imageId }),
@@ -249,3 +258,4 @@ export const useReactToolsStore = create<ReactToolState>(
     { name: "ReactToolState" }
   )
 );
+

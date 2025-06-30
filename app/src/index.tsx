@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AdminPage from "./pages/AdminPage/AdminPage";
-import AdminLabel from "./pages/AdminLabel/ReviewLabelingPage";
+// import AdminLabel from "./pages/AdminLabel/ReviewLabelingPage";
 import NotFound from "./pages/NotFound";
 import ExplorationPage from "./pages/Exploration";
 import LabelPage from "./pages/Label";
@@ -38,7 +38,7 @@ ReactDOM.render(
             {/* <Route path="/contest" element={<Contest />} /> */}
             <Route path="/requests" element={<Request />} />
             <Route path="/createRequest" element={<CreateRequest />} />
-            {<Route path="/contestTest" element = {<Test />} /> }
+            {/* {<Route path="/contestTest" element = {<Test />} /> } */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/exploration" element={<ExplorationPage />} />
             <Route path="/label" element={<LabelPage />} />
@@ -47,7 +47,7 @@ ReactDOM.render(
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/adminPage" element={<AdminPage />} />
-            <Route path="/adminLabel" element={<AdminLabel />} />
+            {/* <Route path="/adminLabel" element={<AdminLabel />} /> */}
           </Route>
           
         </Route>

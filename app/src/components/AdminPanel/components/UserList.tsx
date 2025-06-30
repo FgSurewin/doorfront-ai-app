@@ -19,29 +19,17 @@ import {
   searchUserByNameOrEmail,
   grantAdminRight,
   revokeAdminRight,
+  SingleUser
 } from "../../../apis/user";
-
+import {getUserLabeledTime, getCurrentTime} from "../../../utils/volunteerTimeCalc"
 interface UserListProps {
   onClose: () => void;
 }
 
-interface User {
-  email: string;
-  username: string;
-  score: number;
-  role: string;
-  labels: number;
-  review: number;
-  create: number;
-  bonus: number;
-  institution: string;
-  accessLevel?: string;
-}
-
 const UserList: React.FC<UserListProps> = ({ onClose }) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<SingleUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [searchResults, setSearchResults] = useState<SingleUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -53,9 +41,17 @@ const UserList: React.FC<UserListProps> = ({ onClose }) => {
       setLoading(true);
       try {
         const response = await getAllUsersFromDB();
-        setUsers([...response.data].reverse());
+
+        if (Array.isArray(response.data)) {
+          // Reverse without mutating original data
+          setUsers(response.data.slice().reverse());
+        } else {
+          console.error("Unexpected data format:", response.data);
+          setUsers([]);
+        }
       } catch (error) {
         console.error("Failed to fetch users:", error);
+        setUsers([]);
       } finally {
         setLoading(false);
       }
@@ -63,6 +59,7 @@ const UserList: React.FC<UserListProps> = ({ onClose }) => {
 
     fetchUsers();
   }, []);
+
 
   // ✅ Debounce search input
   useEffect(() => {
@@ -87,23 +84,10 @@ const UserList: React.FC<UserListProps> = ({ onClose }) => {
       setError("");
 
       try {
-        const response = await searchUserByNameOrEmail(debouncedTerm);
+        const response = await searchUserByNameOrEmail(debouncedTerm); // ✅ FIXED
 
         if (Array.isArray(response.data) && response.data.length > 0) {
-          const convertedUsers: User[] = response.data.map((user: any) => ({
-            email: user.email,
-            username: user.nickname || "N/A",
-            role: user.role,
-            score: user.score ?? 0,
-            labels: user.label ?? 0,
-            review: user.review ?? 0,
-            bonus: user.bonus ?? 0,
-            create: user.create ?? 0,
-            institution: "",
-            accessLevel: user.accessLevel || "basic",
-          }));
-
-          setSearchResults(convertedUsers);
+          setSearchResults(response.data as SingleUser[]);
         } else {
           setSearchResults([]);
         }
@@ -117,6 +101,7 @@ const UserList: React.FC<UserListProps> = ({ onClose }) => {
 
     performSearch();
   }, [debouncedTerm]);
+
 
   // ✅ Handler just sets the input
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,30 +155,32 @@ const UserList: React.FC<UserListProps> = ({ onClose }) => {
             <TableHead>
               <TableRow>
                 <TableCell><strong>Name</strong></TableCell>
-                <TableCell sx={{ width: 300, wordWrap: "break-word" }}><strong>Email</strong></TableCell>
+                <TableCell sx={{ width: 200, wordWrap: "break-word" }}><strong>Email</strong></TableCell>
                 <TableCell sx={{ width: 100 }}><strong>Role</strong></TableCell>
                 <TableCell sx={{ maxWidth: 200 }}><strong>Institution</strong></TableCell>
                 <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Score</strong></TableCell>
                 <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Labels</strong></TableCell>
                 <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Reviews</strong></TableCell>
                 <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Created</strong></TableCell>
-                <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Bonus</strong></TableCell>
-                <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Access</strong></TableCell>
+                <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Hours Total</strong></TableCell>
+                <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Hours Current</strong></TableCell>
+                <TableCell align="center" sx={{ maxWidth: 100 }}><strong>Hours Certified</strong></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {(searchPerformed ? searchResults : users).map((user, index) => (
                 <TableRow key={index}>
-                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.nickname || user.username}</TableCell>
                   <TableCell sx={{ wordWrap: "break-word" }}>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>{user.institution}</TableCell>
                   <TableCell align="center">{user.score}</TableCell>
-                  <TableCell align="center">{user.labels}</TableCell>
+                  <TableCell align="center">{user.label }</TableCell>
                   <TableCell align="center">{user.review}</TableCell>
                   <TableCell align="center">{user.create}</TableCell>
-                  <TableCell align="center">{user.bonus}</TableCell>
-                  <TableCell align="center">{user.accessLevel}</TableCell>
+                  <TableCell align="center">{getUserLabeledTime(user)}</TableCell>
+                  <TableCell align="center">{getCurrentTime((user))}</TableCell>
+                  <TableCell align="center">{(user.hoursCertified ?? 0)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
