@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useImages } from "./utils/useImages";
+import { useImages } from "./hooks/useImages";
 import DialogConfirmDelete from "./components/DialogConfirmDelete";
 import SearchFilters from "./components/SearchFilters";
 import { CollectedImageInterface } from "../../types/collectedImage";
