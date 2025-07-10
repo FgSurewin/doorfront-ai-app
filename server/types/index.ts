@@ -15,6 +15,22 @@ export interface AppContext {
   next: NextFunction;
 }
 
+type FilterQuery = {
+  searchQuery?: string;
+  searchType?: "creator" | "labledBy" | "address";
+  addressFilter?: string;
+  page?: string;
+  limit?: string;
+  skip?:string;
+};
+
+export interface FilteringContext {
+  req: Request;
+  res: Response;
+  next: NextFunction;
+  query: FilterQuery;
+}
+
 export type ImageField = "user_one" | "user_two" | "user_three";
 
 export interface ImageBody {

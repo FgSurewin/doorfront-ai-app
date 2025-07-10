@@ -38,12 +38,9 @@ export default function CreateRequest() {
 
   async function fetchAddress(){
     try{
-      console.log(requestData.address);
       const res = await fromAddress(requestData.address)
       if(res){
-        console.log(res)
         const { lat, lng } = res.results[0].geometry.location;
-        console.log(lat, lng);
         setLocation(res.results[0].geometry.location)
         setCurrentStep(currentStep +1)
       }
@@ -110,7 +107,7 @@ export default function CreateRequest() {
 
   async function handleSubmit(){
     const result = await addRequest({...requestData, requestedBy:userInfo.id as string, location})
-    console.log(result)
+    
     if(result){
       setCurrentStep(4);
       setRequestData(baseData);

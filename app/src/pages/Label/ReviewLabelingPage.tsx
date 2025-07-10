@@ -60,7 +60,7 @@ export default function ReviewLabelingPage() {
   });
 
   React.useEffect(() => {
-    if (!userInfo.nickname) return; 
+    if (!userInfo.nickname) return;
     async function loadFunc() {
       if (!userInfo.nickname) {
         enqueueSnackbar("Missing user nickname", { variant: "error" });
@@ -74,7 +74,7 @@ export default function ReviewLabelingPage() {
           { nickname: userInfo.nickname, limit: 100, skip: 0 },
           { clearUserInfo, navigate, deleteAllLocal }
         );
-        console.log(result)
+
         if (result && result.data) {
           const images = result.data as CollectedImageInterface[];
           const convertedImages = convertHumanImageToInputImageList(images);

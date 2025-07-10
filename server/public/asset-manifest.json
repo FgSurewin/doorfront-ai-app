@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.71de3bc4.css",
-    "main.js": "/static/js/main.377ca344.js",
+    "main.js": "/static/js/main.af985fe4.js",
     "static/js/787.b95d21ec.chunk.js": "/static/js/787.b95d21ec.chunk.js",
     "static/media/arrow2.PNG": "/static/media/arrow2.e8fd24454fb528e237e0.PNG",
     "static/media/arrow1.PNG": "/static/media/arrow1.4ccd10c3caa7889880ce.PNG",
@@ -18,7 +18,10 @@
     "static/media/capture.png": "/static/media/capture.b9ae2185c1284ba270f1.png",
     "static/media/ramdom.PNG": "/static/media/ramdom.009e1cd64f1f0230f8b3.PNG",
     "static/js/mapbox-gl-csp-worker.0a4f7132.worker.js": "/static/js/mapbox-gl-csp-worker.0a4f7132.worker.js",
-    "static/media/door.jpeg": "/static/media/door.cc623085ad5187a684cb.jpeg",
+    "static/media/c80295e1-6d7c-4e6b-b985-deffe3465317.jpg": "/static/media/c80295e1-6d7c-4e6b-b985-deffe3465317.8031ea82998b40e8cca0.jpg",
+    "static/media/2cbe69f1-32a3-4716-96d6-8c0bf392ad72.jpg": "/static/media/2cbe69f1-32a3-4716-96d6-8c0bf392ad72.f2b319ecf6495f252a37.jpg",
+    "static/media/young-blind-person-with-long-cane-walking-city.jpg": "/static/media/young-blind-person-with-long-cane-walking-city.a1dd3e24c0b68c9f4ab2.jpg",
+    "static/media/man-coming-door-handler.jpg": "/static/media/man-coming-door-handler.cdcbcbc3c9ae1bd531f3.jpg",
     "static/media/whole.svg": "/static/media/whole.e865fa10a296087acf4d306523ce8437.svg",
     "static/media/page_not_found.svg": "/static/media/page_not_found.74cc35da75a238602130bce73f7f282a.svg",
     "static/media/treasure.svg": "/static/media/treasure.6bfd77b75a945552644118dee041881f.svg",
@@ -40,11 +43,11 @@
     "static/media/Badge_1.svg": "/static/media/Badge_1.06121c2031cb1a13acbdf11d1627821d.svg",
     "static/media/curve.svg": "/static/media/curve.9b62b4f674a36bf378a761bf2a6827bb.svg",
     "main.71de3bc4.css.map": "/static/css/main.71de3bc4.css.map",
-    "main.377ca344.js.map": "/static/js/main.377ca344.js.map",
+    "main.af985fe4.js.map": "/static/js/main.af985fe4.js.map",
     "787.b95d21ec.chunk.js.map": "/static/js/787.b95d21ec.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.71de3bc4.css",
-    "static/js/main.377ca344.js"
+    "static/js/main.af985fe4.js"
   ]
 }

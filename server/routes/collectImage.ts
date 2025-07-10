@@ -32,5 +32,5 @@ route.post(
   checkToken,
   collectImageController.addNewHumanLabels
 );
-
+route.get("/getFilteredImages", checkToken, collectImageController.getFilteredImages);
 export default route;

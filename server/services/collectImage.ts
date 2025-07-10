@@ -1,5 +1,5 @@
 // import { ModifierInterface } from "./../database/models/collectImage";
-import { AppContext } from "../types";
+import { AppContext, FilteringContext } from "../types";
 import CollectImageModel, {
   CollectedImageInterface,
 } from "../database/models/collectImage";
@@ -123,6 +123,60 @@ export class CollectImageService {
       });
     }
   }
+
+  async getFilteredImages(ctx: FilteringContext): Promise<void> {
+  const { res, query } = ctx;
+
+  // Use limit and skip from query, with safe parsing and defaults
+  const limitNumber = Math.min(parseInt(query.limit as string, 10) || 16, 100); // max 100
+  const skip = parseInt(query.skip as string, 10) || 0;
+
+  // Build filter object based on query params
+  const filter: Record<string, any> = {};
+
+  if (query.searchType === "creator" && query.searchQuery) {
+    filter.creator = { $regex: new RegExp(query.searchQuery, "i") };
+  }
+
+  if (query.searchType === "labledBy" && query.searchQuery) {
+    filter["human_labels.name"] = { $regex: new RegExp(query.searchQuery, "i") };
+  }
+
+  if (query.searchType === "address" && query.addressFilter) {
+    filter.address = { $regex: new RegExp(query.addressFilter, "i") };
+  }
+
+  try {
+    const [images, total] = await Promise.all([
+      CollectImageModel.find(filter)
+        .sort({ createdAt: -1 })  // add sorting for consistent pagination
+        .skip(skip)
+        .limit(limitNumber)
+        .lean(),
+      CollectImageModel.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      code: 0,
+      message: `Fetched ${images.length} filtered images successfully`,
+      data: images,
+      pagination: {
+        total,
+        limit: limitNumber,
+        skip,
+        hasMore: skip + images.length < total,
+      },
+    });
+  } catch (e) {
+    console.error("Error fetching filtered images:", e);
+    res.status(500).json({
+      code: 5000,
+      message: "Internal server error while filtering",
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
 
   async getMultiImageByIds(
     ctx: AppContext,
@@ -331,7 +385,9 @@ export class CollectImageService {
         }
 
         for (const image of images) {
-          const labeledBy = image.human_labels.map((h) => (h.name || "").trim().toLowerCase());
+          const labeledBy = image.human_labels.map((h) =>
+            (h.name || "").trim().toLowerCase()
+          );
 
           if (labeledBy.includes(nickname.trim().toLowerCase())) {
             continue; // skip already labeled
