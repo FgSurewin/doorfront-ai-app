@@ -78,7 +78,7 @@ export default function Profile() {
             if (allReferredUsers.data[i].bonusReceived === true) BR = true;
             const currentUser = await getNickname({id: allReferredUsers.data[i].userID})
             const currentUserScore = await getUserScoreFromDB({id: allReferredUsers.data[i].userID})
-            console.log(currentUserScore)
+            // console.log(currentUserScore)
             if (currentUserScore.data.score >= 1 && allReferredUsers.data[i].bonusReceived !== true) {
               BR = true
               //give 10 points to referrer and referree
@@ -91,7 +91,7 @@ export default function Profile() {
                 referrerId: userInfo.id!,
                 refereeId: allReferredUsers.data[i].userID
               })
-              console.log(t1)
+              // console.log(t1)
             }
             users.push({userID: currentUser.data, bonusReceived: BR})
           }
@@ -121,7 +121,7 @@ export default function Profile() {
 
     referralCode();
     innerFunc();
-    console.log(usersReferred)
+    // console.log(usersReferred)
   }, [updateUserScore, userInfo.id]);
   return (
     <div>

@@ -67,3 +67,21 @@ export interface CollectedImageInterface {
   updatedAt?: string;
   // modifiers: ModifierInterface[];
 }
+export interface FetchUnapprovedLabelsParams {
+  limit?: number;
+  skip?: number;
+}
+// 📂 apis/collectedImage.ts
+
+export interface FetchFilteredImagesParams {
+  searchQuery?: string;
+  searchType?: "creator" | "labledBy" | "address" | "";
+  addressFilter?: string;
+  limit?: number;
+  skip?: number;
+  handleFailedTokenFuncs?: {
+    navigate?: (path: string) => void;
+    deleteAllLocal?: () => void;
+    clearUserInfo?: () => void;
+  };
+}

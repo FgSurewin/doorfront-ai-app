@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import {
   Pagination,
   Container,
@@ -7,13 +7,11 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useImages } from "./utils/useImages";
 import DialogConfirmDelete from "./components/DialogConfirmDelete";
 import SearchFilters from "./components/SearchFilters";
-import { applyFilters } from "./utils/filters";
 import { CollectedImageInterface } from "../../types/collectedImage";
 import ImageGrid from "./components/ImageGrid";
 import AccessLevel from "./components/AccessLevel";
@@ -21,21 +19,11 @@ import UserList from "./components/UserList";
 import ImageWindow from "./components/ImageWindow";
 
 const AdminPanel = () => {
-  // Local state for search and filter
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchType, setSearchType] = useState<
-    "creator" | "labledBy" | "address"
-  >("creator");
+  const [searchType, setSearchType] = useState<"creator" | "labledBy" | "address">("creator");
   const [addressFilter, setAddressFilter] = useState("");
-  const [filteredImages, setFilteredImages] = useState<
-    CollectedImageInterface[]
-  >([]);
-
-  const [openAdminDialog, setOpenAdminDialog] = useState(false);
-  const [openUserListDialog, setOpenUserListDialog] = useState(false);
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [imagesPerPage, setImagesPerPage] = useState(16);
+  const [imagesPerPage] = useState(16); // Fixed page size
 
   const {
     images,
@@ -47,19 +35,20 @@ const AdminPanel = () => {
     handleOpenImageInfo,
     selectedImage,
     handleCloseImageInfo,
-  } = useImages(currentPage, imagesPerPage);
+  } = useImages({
+    currentPage,
+    imagesPerPage,
+    searchQuery,
+    searchType,
+    addressFilter,
+  });
 
-  const filtersAreActive = searchQuery !== "" || addressFilter !== "";
+  const totalPages = Math.ceil(totalImages / imagesPerPage);
 
-  // Handle page change for pagination
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
 
-  // Handle search and filter changes
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearchQuery(e.target.value);
   const handleAddressFilterChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -67,75 +56,24 @@ const AdminPanel = () => {
   const handleSearchTypeChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setSearchType(e.target.value as "creator" | "labledBy" | "address");
 
-  // Filter images when search or filter options change
-  useEffect(() => {
-    const fetchFilteredImages = async () => {
-      if (filtersAreActive) {
-        const result = await applyFilters({
-          searchQuery,
-          searchType,
-          addressFilter,
-        }); // This should call the DB for all matches
-        setFilteredImages(result);
-        setCurrentPage(1);
-      } else {
-        setFilteredImages([]); // Return to paginated mode
-      }
-    };
-
-    fetchFilteredImages();
-  }, [searchQuery, searchType, addressFilter]);
-
-  // 🧠 Paginate filtered results or fallback to default paginated images
-  const displayImages = filtersAreActive ? filteredImages : images;
-
-  const paginatedImages = useMemo(() => {
-    if (filtersAreActive) {
-      // Client-side paginate filtered images
-      return filteredImages.slice(
-        (currentPage - 1) * imagesPerPage,
-        currentPage * imagesPerPage
-      );
-    }
-    // Server-side paginated images - use as is, no slicing
-    return images;
-  }, [filtersAreActive, filteredImages, images, currentPage, imagesPerPage]);
-
-  // 🧠 Display correct total count for pagination
-  const totalImageCount = filtersAreActive
-    ? filteredImages.length
-    : totalImages;
-
-  //handle images to edit
   const navigate = useNavigate();
-
   const handleEditClick = (image: CollectedImageInterface) => {
     if (image?.url) {
-      console.log(image?.url);
       navigate("/adminlabel", { state: { imageSrc: image.url } });
     }
   };
 
-  const handleAddAdminClick = () => {
-    // Open the dialog when "Add Admin" button is clicked
-    setOpenAdminDialog(true);
-  };
-
-  const handleUserListClick = () => {
-    // Open the dialog when "Add Admin" button is clicked
-    setOpenUserListDialog(true);
-  };
-
+  const [openAdminDialog, setOpenAdminDialog] = useState(false);
+  const [openUserListDialog, setOpenUserListDialog] = useState(false);
+  const handleAddAdminClick = () => setOpenAdminDialog(true);
+  const handleUserListClick = () => setOpenUserListDialog(true);
   const handleCloseDialog = () => {
-    // Close the dialog
     setOpenAdminDialog(false);
     setOpenUserListDialog(false);
   };
+
   return (
-    <Container
-      maxWidth={false}
-      sx={{ paddingLeft: 2, paddingRight: 2, paddingTop: 2, marginBottom: 3 }}
-    >
+    <Container maxWidth={false} sx={{ p: 2, mb: 3 }}>
       <SearchFilters
         searchQuery={searchQuery}
         searchType={searchType}
@@ -146,46 +84,27 @@ const AdminPanel = () => {
         onAddressFilterChange={handleAddressFilterChange}
       />
 
-      <Typography
-        sx={{
-          position: "absolute",
-          top: "140px",
-          right: "20px",
-          padding: 1,
-          borderRadius: 2,
-        }}
-      >
-        Total Images: {totalImageCount}
+      <Typography sx={{ position: "absolute", top: 140, right: 20, p: 1, borderRadius: 2 }}>
+        Total Images: {totalImages}
       </Typography>
 
       <Button
         variant="contained"
         onClick={handleAddAdminClick}
-        style={{
-          position: "absolute",
-          top: "100px",
-          right: "40px",
-          backgroundColor: "#2980b9",
-          color: "white",
-        }}
+        sx={{ position: "absolute", top: 100, right: 40, backgroundColor: "#2980b9", color: "white" }}
       >
         Add Admin
       </Button>
       <Button
         variant="contained"
         onClick={handleUserListClick}
-        style={{
-          position: "absolute",
-          top: "100px",
-          right: "180px",
-          backgroundColor: "#27ae60",
-          color: "white",
-        }}
+        sx={{ position: "absolute", top: 100, right: 180, backgroundColor: "#27ae60", color: "white" }}
       >
         Users List
       </Button>
+
       <ImageGrid
-        images={paginatedImages}
+        images={images}
         onEdit={handleEditClick}
         onDelete={(image) => handleDeleteClick(image.image_id)}
         handleConfirmDelete={handleConfirmDelete}
@@ -194,23 +113,22 @@ const AdminPanel = () => {
         onImageClick={handleOpenImageInfo}
       />
 
-      {totalImageCount > imagesPerPage && (
+      {totalPages > 1 && (
         <Pagination
-          count={Math.ceil(totalImageCount / imagesPerPage)}
+          count={totalPages}
           page={currentPage}
           onChange={handlePageChange}
           color="primary"
-          sx={{ marginTop: 2 }}
+          sx={{ mt: 2 }}
         />
       )}
 
-      {/* Dialog for delete confirmation */}
+      {/* Dialogs */}
       <DialogConfirmDelete
         open={openDialog}
         onConfirm={handleConfirmDelete}
         onClose={handleCancelDelete}
       />
-      {/* Image Info Dialog */}
       <Dialog open={Boolean(selectedImage)} onClose={handleCloseImageInfo}>
         <DialogContent>
           <ImageWindow selectedImage={selectedImage} />
@@ -221,16 +139,10 @@ const AdminPanel = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {/* Admin Rights Dialog */}
       <Dialog open={openAdminDialog} onClose={handleCloseDialog}>
         <AccessLevel onClose={handleCloseDialog} />
       </Dialog>
-      {/* User List */}
-      <Dialog
-        open={openUserListDialog}
-        onClose={handleCloseDialog}
-        maxWidth="xl"
-      >
+      <Dialog open={openUserListDialog} onClose={handleCloseDialog} maxWidth="xl">
         <UserList onClose={handleCloseDialog} />
       </Dialog>
     </Container>

@@ -37,6 +37,14 @@ export class CollectImageController {
   ): Promise<void> {
     await collectImageService.getAllImages({ req, res, next });
   }
+  
+  async getFilteredImages(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    await collectImageService.getFilteredImages({ req, res, next, query: req.query });
+  }
   async getPaginatedImages(
     req: Request,
     res: Response,

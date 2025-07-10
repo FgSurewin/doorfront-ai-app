@@ -1,21 +1,36 @@
 import { useState, useEffect } from "react";
 import {
   fetchPaginatedImages,
+  fetchFilteredImages,
   deleteDBImage,
 } from "../../../apis/collectedImage";
 import { CollectedImageInterface } from "../../../types/collectedImage";
 
-export const useImages = (currentPage: number, imagesPerPage: number) => {
+interface UseImagesParams {
+  currentPage: number;
+  imagesPerPage: number;
+  searchQuery?: string;
+  searchType?: "creator" | "labledBy" | "address";
+  addressFilter?: string | "";
+}
+
+export const useImages = ({
+  currentPage,
+  imagesPerPage,
+  searchQuery = "",
+  searchType = "creator",
+  addressFilter = "",
+}: UseImagesParams) => {
   const [images, setImages] = useState<CollectedImageInterface[]>([]);
   const [totalImages, setTotalImages] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedImage, setSelectedImage] =
-    useState<CollectedImageInterface | null>(null);
+  const [selectedImage, setSelectedImage] = useState<CollectedImageInterface | null>(null);
 
-  // ✅ Fetch paginated images when page or page size changes
+  const filtersAreActive = searchQuery.trim() !== "" || addressFilter.trim() !== "";
+
   useEffect(() => {
     const loadImages = async () => {
       setLoading(true);
@@ -23,13 +38,27 @@ export const useImages = (currentPage: number, imagesPerPage: number) => {
       const limit = imagesPerPage;
 
       try {
-        const response = await fetchPaginatedImages({ limit, skip });
+        let response;
+
+        if (filtersAreActive) {
+          response = await fetchFilteredImages({
+            searchQuery,
+            searchType,
+            addressFilter,
+            skip,
+            limit,
+          });
+        } else {
+          response = await fetchPaginatedImages({ skip, limit });
+        }
+
         const images = response.data ?? [];
-        const pagination = response.pagination ?? { total: 0, hasMore: false };
+        const total = response.pagination?.total ?? 0;
+        const hasMore = response.pagination?.hasMore ?? false;
 
         setImages(images);
-        setTotalImages(pagination.total);
-        setHasMore(pagination.hasMore);
+        setTotalImages(total);
+        setHasMore(hasMore);
       } catch (error) {
         console.error("Error fetching images:", error);
         setImages([]);
@@ -41,12 +70,14 @@ export const useImages = (currentPage: number, imagesPerPage: number) => {
     };
 
     loadImages();
-  }, [currentPage, imagesPerPage]);
+  }, [currentPage, imagesPerPage, searchQuery, searchType, addressFilter, filtersAreActive]);
 
+  // ✅ Delete logic
   const handleDelete = async (imageId: string) => {
     try {
       await deleteDBImage({ imageId });
       setImages((prev) => prev.filter((img) => img.image_id !== imageId));
+      setTotalImages((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error("Error deleting image:", error);
     }

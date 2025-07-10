@@ -63,8 +63,6 @@ export default function LabelPanel() {
         try {
           const res1 = await addUserBonusCredit({id: userInfo.id!})
           const res2 = await addLabeler({labelerId: userInfo.id!, requestId: selectedRequestId})
-          console.log(res1)
-          console.log(res2)
           if (res1 && res2) {
             setSelectedRequestId("")
             enqueueSnackbar("+10 Bonus Points for completing request!")
@@ -76,7 +74,6 @@ export default function LabelPanel() {
       onChangeNotesOpen(false)
       onChangeSelectedBoxType("")
       onChangeSelectedBoxId("")
-      console.log(selectedBoxType, selectedBoxId, selectedBoxId);
       deleteReactToolImage(selectedImageId);
       updateIsSubmitting(false);
     }
@@ -114,8 +111,6 @@ export default function LabelPanel() {
     (async function () {
         try {
           const result = await getOpenRequests()
-          //console.log(result)
-          console.log(result)
           if (result.data) {
             setRequests(result.data)
             for (const request of result.data) {
@@ -126,7 +121,6 @@ export default function LabelPanel() {
                 request.location.lng.toFixed(decimalPoint) === selectedLocation.lng.toFixed(decimalPoint) &&
                 request.location.lat.toFixed(decimalPoint) === selectedLocation.lat.toFixed(decimalPoint)) {
                 //console.log("Nearby!");
-                console.log(request)
                 setSelectedRequestId(request._id as string)
                 break
               } else {

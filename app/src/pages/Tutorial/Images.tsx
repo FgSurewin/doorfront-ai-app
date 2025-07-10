@@ -32,42 +32,17 @@ export function Intro() {
         rowHeight={300}
       >
         <ImageListItem cols={1} rows={1}>
-          <img
-            {...srcset(
-              "https://thumbs.dreamstime.com/z/close-up-blind-person-negotiating-steps-outdoors-using-cane-154515757.jpg",
-              121,
-              1,
-              1
-            )}
-            loading="lazy"
-          />
+          <img src={require('./Timage/c80295e1-6d7c-4e6b-b985-deffe3465317.jpg')} alt=""/>
 
         </ImageListItem>
         <ImageListItem cols={1} rows={1}>
-          <img src={require('./Timage/door.jpeg')} alt=""/>
+           <img src={require('./Timage/young-blind-person-with-long-cane-walking-city.jpg')} alt=""/>
         </ImageListItem>
         <ImageListItem cols={1} rows={1}>
-          <img
-            {...srcset(
-              "http://img.thrfun.com/img/068/950/couple_m.jpg",
-              121,
-              1,
-              1
-            )}
-            loading="lazy"
-          />
+          <img src={require('./Timage/2cbe69f1-32a3-4716-96d6-8c0bf392ad72.jpg')} alt=""/>
         </ImageListItem>
         <ImageListItem cols={1} rows={1}>
-          <img
-            {...srcset(
-              "https://www.readersdigest.ca/wp-content/uploads/2020/03/GettyImages-586384872-e1584451335950.jpg",
-              121,
-              1,
-              1
-            )}
-
-            loading="lazy"
-          />
+          <img src={require('./Timage/man-coming-door-handler.jpg')} alt=""/>
         </ImageListItem>
 
       </ImageList>

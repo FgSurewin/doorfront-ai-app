@@ -1,5 +1,5 @@
 import { baseRequest } from ".";
-import { CollectedImageInterface, HumanLabels } from "../types/collectedImage";
+import { CollectedImageInterface, HumanLabels,FetchFilteredImagesParams } from "../types/collectedImage";
 import {
   CollectedImageApiReturnType,
   CreateImageData,
@@ -254,7 +254,7 @@ export const fetchAllImages = (
     });
 
 export const fetchPaginatedImages = async ({
-  limit = 50,
+  limit = 16,
   skip = 0,
   handleFailedTokenFuncs,
 }: FetchAllImagesParams): Promise<CollectedImageApiReturnType<CollectedImageInterface[]>> => {
@@ -296,10 +296,65 @@ export const fetchPaginatedImages = async ({
     throw err;
   }
 };
-interface FetchUnapprovedLabelsParams {
-  limit?: number;
-  skip?: number;
-}
+
+export const fetchFilteredImages = async ({
+  searchQuery = "",
+  searchType = "",
+  addressFilter = "",
+  limit = 16,
+  skip = 0,
+  handleFailedTokenFuncs,
+}: FetchFilteredImagesParams): Promise<
+  CollectedImageApiReturnType<CollectedImageInterface[]>
+> => {
+  try {
+    const response = await baseRequest.request<
+      CollectedImageApiReturnType<CollectedImageInterface[]>
+    >({
+      method: "GET",
+      url: `/collectImage/getFilteredImages`,
+      params: {
+        searchQuery,
+        searchType,
+        addressFilter,
+        limit,
+        skip,
+      },
+      headers: {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+      },
+    });
+
+    const data = response.data;
+
+    if (!data) {
+      console.warn("[fetchFilteredImages] Warning: response.data is undefined or null");
+      return {
+        code: -1,
+        message: "No data",
+        data: [],
+        pagination: { total: 0, limit, skip, hasMore: false },
+      };
+    }
+
+    if (data.code === 2000) {
+      if (handleFailedTokenFuncs) {
+        handleFailedTokenFuncs.navigate?.("/login");
+        handleFailedTokenFuncs.deleteAllLocal?.();
+        handleFailedTokenFuncs.clearUserInfo?.();
+      }
+      throw new Error(data.message);
+    }
+
+    return data;
+  } catch (err) {
+    console.error("[fetchFilteredImages] Error caught:", err);
+    throw err;
+  }
+};
+
+
 
 export const fetchUnapprovedLabels = (
   params: { nickname: string; limit?: number; skip?: number },

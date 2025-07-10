@@ -1,65 +1,50 @@
-// 📂 pages/AdminPanel/utils/filters.ts
-import { CollectedImageInterface } from "../../../types/collectedImage";
-import { fetchAllImages } from "../../../apis/collectedImage"; 
+import {
+  CollectedImageInterface,
+  FetchFilteredImagesParams,
+} from "../../../types/collectedImage";
+import { fetchFilteredImages } from "../../../apis/collectedImage";
+import { CollectedImageApiReturnType } from "../../../utils/api";
 
-export const filterImagesLabeledBy = (images: CollectedImageInterface[], labledQuery: string) => {
-  return images.filter((image) =>
-    image.human_labels.some((label) =>
-      label.name.toLowerCase().includes(labledQuery.toLowerCase())
-    )
-  );
-};
-
-export const filterImagesByCreator = (images: CollectedImageInterface[], creatorQuery: string) => {
-  return images.filter((image) =>
-    image.creator.toLowerCase().includes(creatorQuery.toLowerCase())
-  );
-};
-
-export const filterImagesByLocation = (
-  images: CollectedImageInterface[],
-  address: string
-): CollectedImageInterface[] => {
-  if (!address.trim()) return images;
-
-  const normalizedSearch = address.trim().toLowerCase();
-
-  return images.filter((image) => {
-    const imageAddress = image.address?.trim().toLowerCase() || "";
-    return imageAddress.includes(normalizedSearch);
-  });
-};
-
-
-// ✅ Unified filtering function — now fetches all images first
 export const applyFilters = async ({
   searchQuery,
   searchType,
   addressFilter,
-}: {
-  searchQuery: string;
-  searchType: "creator" | "labledBy" | "address";
-  addressFilter: string;
-}): Promise<CollectedImageInterface[]> => {
+  page = 1,
+  limit = 20,
+}: FetchFilteredImagesParams & { page?: number; limit?: number }): Promise<{
+  images: CollectedImageInterface[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}> => {
   try {
-    // ✅ Fetch all images from DB (unpaginated)
-    const response = await fetchAllImages();
-    const allImages = response.data || [];
+    const response: CollectedImageApiReturnType<CollectedImageInterface[]> =
+      await fetchFilteredImages({
+        searchQuery,
+        searchType,
+        addressFilter,
+        limit,
+        skip: (page - 1) * limit,
+      });
 
-    // 🧠 Apply filters in memory
-    let filteredImages = allImages;
-
-    if (searchType === "creator") {
-      filteredImages = filterImagesByCreator(filteredImages, searchQuery);
-    } else if (searchType === "labledBy") {
-      filteredImages = filterImagesLabeledBy(filteredImages, searchQuery);
-    } else if (searchType === "address") {
-      filteredImages = filterImagesByLocation(filteredImages, addressFilter);
-    }
-
-    return filteredImages;
+    const images = response.data || [];
+    const pagination = response.pagination || {
+      total: 0,
+      limit,
+      skip: (page - 1) * limit,
+      hasMore: false,
+    };
+    console.log(pagination.total)
+    return {
+      images,
+      total: pagination.total,
+      page,
+      limit: pagination.limit,
+      hasMore: pagination.hasMore,
+    };
   } catch (error) {
-    console.error("Failed to apply filters:", error);
-    return [];
+    console.error("Failed to fetch filtered images:", error);
+    return { images: [], total: 0, page, limit, hasMore: false };
   }
 };
