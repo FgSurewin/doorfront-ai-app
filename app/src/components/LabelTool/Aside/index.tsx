@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import {
   Paper,
   Tab,
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { panelData } from "./panelData";
 import { useTourStore } from "../../../global/tourState";
-import NotesIcon from '@mui/icons-material/Notes';
+import NotesIcon from "@mui/icons-material/Notes";
 import { useReactToolInternalStore } from "../state/internalState";
 import NotesPanel from "./NotesPanel";
 // import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -23,23 +23,19 @@ export default function Aside() {
     labelingTourStepIndex,
     updateLabelingTourStepIndex,
   } = useTourStore();
-  const {selectedBoxType,selectedBoxId,onChangeNotesOpen} = useReactToolInternalStore();
+  const { selectedBoxType, selectedBoxId, onChangeNotesOpen } =
+    useReactToolInternalStore();
 
-  
-  useEffect(
-    () => {
-      if(value !==3){
-        onChangeNotesOpen(false)
-      }
-      if(value===3 && selectedBoxType !== "door"){
-        setValue(0);
-        onChangeNotesOpen(false)
-      }
-    },
-    [selectedBoxType],
-  );
+  useEffect(() => {
+    if (value !== 3) {
+      onChangeNotesOpen(false);
+    }
+    if (value === 3 && selectedBoxType !== "door") {
+      setValue(0);
+      onChangeNotesOpen(false);
+    }
+  }, [selectedBoxType]);
 
-    
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     if (labelingPageTour && labelingTourStepIndex === 5) {
@@ -69,7 +65,7 @@ export default function Aside() {
         sx={{
           borderRight: 1,
           borderColor: "divider",
-          width:"auto"
+          width: "auto",
         }}
       >
         {panelData.map((item) => (
@@ -83,8 +79,8 @@ export default function Aside() {
           />
         ))}
         {/*change back to door to enable notes */}
-        {selectedBoxType === 'door' &&
-        <Tab
+        {selectedBoxType === "door" && (
+          <Tab
             key={"NotesPanel"}
             className={`${"Notes"}-button`}
             icon={<NotesIcon />}
@@ -92,26 +88,23 @@ export default function Aside() {
             label={"Notes"}
             {...a11yProps("Notes")}
           />
-        }
+        )}
         {/* <Button sx={{ display: "flex", flexDirection: "column", p: 1.5 }}>
           <ExitToAppIcon />
           <Typography variant="body2">Exit</Typography>
         </Button> */}
       </Tabs>
       {panelData.map((item, index) => (
-        <>
-        <TabPanel key={index} value={value} index={index}>
+        <TabPanel key={item.tabName} value={value} index={index}>
           {item.panelElement}
         </TabPanel>
-        </>
       ))}
-      {
-      (selectedBoxType === "door" &&
-      <TabPanel key={3} value={value} index={3}>
-        <NotesPanel page = "label" id ={selectedBoxId} />
-        {/*onChangeNotesOpen(true)*/}
-      </TabPanel>) 
-      }
+      {selectedBoxType === "door" && (
+        <TabPanel key={3} value={value} index={3}>
+          <NotesPanel page="label" id={selectedBoxId} />
+          {/*onChangeNotesOpen(true)*/}
+        </TabPanel>
+      )}
     </Stack>
   );
 }
