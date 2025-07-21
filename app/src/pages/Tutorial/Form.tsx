@@ -4,7 +4,6 @@ import YoutubeEmbed from './YoutubeEmbed';
 import { useState,} from "react";
 import {Intro, Junior, Pivot, Ramdom, Validate, Labeling, Panels} from './Images';
 import Navbar from '../../components/Navbar';
-import ReactPlayer from 'react-player/lazy'
 
 
 export default function Form() {
