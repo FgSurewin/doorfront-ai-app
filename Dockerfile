@@ -1,24 +1,24 @@
 FROM node:16
 
-# Set working directory
 WORKDIR /doorfront
 
-# Copy package files and install dependencies
+# Copy root package files and install
 COPY package*.json ./
 RUN npm ci
 
-# Copy all source code
+# Copy frontend package files and install
+COPY app/package*.json ./app/
+RUN npm ci --prefix ./app
+
+# Copy everything else
 COPY . .
 
-# Build client and server
-RUN npm run build --prefix app && npm run server-build
+# Build both app and server
+RUN npm run build --prefix ./app && npm run server-build
 
-# Set environment
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Expose port (optional for Cloud Run/GCP)
 EXPOSE 8080
 
-# Start server
 CMD ["npm", "start"]
