@@ -1,42 +1,24 @@
 FROM node:16
 
+# Set working directory
 WORKDIR /doorfront
 
-COPY package*.json /doorfront/
-
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN npm ci
-# If you are building your code for production
-# RUN npm ci --only=production
 
-COPY . /doorfront/
+# Copy all source code
+COPY . .
 
-# RUN cd /doorfront/app
+# Build client and server
+RUN npm run build --prefix app && npm run server-build
 
-# RUN npm ci
-
-# RUN cd ..
-
-# Development Mode
-# -----------------------------------------------------------------------------
-# Uncomment the following statement(s) if you run on development mode
-# ENV NODE_ENV=development
-
-# EXPOSE 3000
-
-# EXPOSE 27017
-
-# EXPOSE 8080
-
-# CMD npm run dev
-
-# Production Mode
-# -----------------------------------------------------------------------------
-# Uncomment the following statement(s) if you run on production mode
-
-# RUN npm run linux-build
-
-RUN npm run server-build
-
+# Set environment
 ENV NODE_ENV=production
+ENV PORT=8080
 
-CMD npm start --bind 0.0.0.0:$PORT
+# Expose port (optional for Cloud Run/GCP)
+EXPOSE 8080
+
+# Start server
+CMD ["npm", "start"]

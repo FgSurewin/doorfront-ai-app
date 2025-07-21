@@ -25,16 +25,27 @@ export function convertInitImageToInputImageList(
 export function convertHumanImageToInputImageList(
   data: CollectedImageInterface[]
 ): InputImageList[] {
-  return data.map((item) => ({
-    imageId: item.image_id,
-    imgSrc: item.url,
-    fileName: item.fileName,
-    location: item.location,
-    labels:
-      item.human_labels.length > 0
-        ? modelLabelsToInputLabels(item.human_labels[0].labels)
-        : [],
-  }));
+  return data.map((item) => {
+    let labelsToUse: CollectedLabelInterface[] = [];
+
+    if (item.human_labels && item.human_labels.length > 0) {
+      labelsToUse = item.human_labels[0].labels || [];
+      // console.log(`Using HUMAN labels for imageId=${item.image_id}, count=${labelsToUse.length}`);
+    } else if (item.model_labels && item.model_labels.length > 0) {
+      labelsToUse = item.model_labels;
+      // console.log(`Using MODEL labels for imageId=${item.image_id}, count=${labelsToUse.length}`);
+    } else {
+      // console.log(`No labels found for imageId=${item.image_id}`);
+    }
+
+    return {
+      imageId: item.image_id,
+      imgSrc: item.url,
+      fileName: item.fileName,
+      location: item.location,
+      labels: modelLabelsToInputLabels(labelsToUse),
+    };
+  });
 }
 
 export function modelLabelsToInputLabels(
