@@ -389,16 +389,22 @@ export class CollectImageService {
         }
 
         for (const image of images) {
+          // ✅ Include if no human labels at all
           if (
             !Array.isArray(image.human_labels) ||
             image.human_labels.length === 0
           ) {
-            continue; // skip if no human labels
+            filtered.push(image); // it's unapproved
+            if (filtered.length >= limit) {
+              hasMore = true;
+              break;
+            }
+            continue;
           }
 
-          const labeledBy = image.human_labels.map((h) =>
-            (h.name || "").trim().toLowerCase()
-          );
+          const labeledBy = Array.isArray(image.human_labels)
+          ? image.human_labels.map((h) => (h.name || "").trim().toLowerCase())
+          : [];
 
           if (labeledBy.includes(nickname.trim().toLowerCase())) {
             continue; // skip already labeled
@@ -414,7 +420,7 @@ export class CollectImageService {
 
           // check incomplete door label (in first labeler only, as in frontend)
           let incompleteDoor = false;
-          const labels = image.human_labels[0].labels || [];
+          const labels = (image.human_labels[0] && image.human_labels[0].labels) || [];
           for (const label of labels) {
             if (label.label === "door" && label.subtype === "") {
               incompleteDoor = true;
@@ -430,10 +436,11 @@ export class CollectImageService {
 
           filtered.push(image);
           if (filtered.length >= limit) {
-            hasMore = true;
+            hasMore = false;
             break;
           }
         }
+
       }
 
       res.status(200).json({
