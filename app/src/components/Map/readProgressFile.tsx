@@ -1,53 +1,68 @@
-
 import * as turf from "@turf/turf";
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon"
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import { neighborhoods } from "./neighborhoods.js";
-import * as progress from './progress.json';
+import * as progress from "./progress.json";
 
+export const datasetID = "cl1zpzqog0jxt2do9zoo11smr";
 
-export const datasetsToken = process.env.REACT_APP_MAPBOX_DATASETS_TOKEN
-export const datasetID = 'cl1zpzqog0jxt2do9zoo11smr';
+const mbxClient = require("@mapbox/mapbox-sdk");
+const mbxDatasets = require("@mapbox/mapbox-sdk/services/datasets");
+const mbxUploads = require("@mapbox/mapbox-sdk/services/uploads");
 
-const mbxClient = require('@mapbox/mapbox-sdk');
-const mbxDatasets = require('@mapbox/mapbox-sdk/services/datasets')
-const mbxUploads = require('@mapbox/mapbox-sdk/services/uploads')
-const baseClient = mbxClient({ accessToken: datasetsToken });
-const datasetsClient = mbxDatasets(baseClient);
-const uploadsClient = mbxUploads(baseClient);
+function createClients(datasetsToken: string) {
+  const baseClient = mbxClient({ accessToken: datasetsToken });
+  return {
+    datasetsClient: mbxDatasets(baseClient),
+    uploadsClient: mbxUploads(baseClient),
+  };
+}
 
-
-function uploadTileset() {
-  uploadsClient.createUpload({
-    tileset: `tort8678.cl1zpzqog0jxt2do9zoo11smr-60nd0`,
-    url: 'mapbox://datasets/tort8678/cl1zpzqog0jxt2do9zoo11smr',
-    name: 'doorfront_map'
-  })
+function uploadTileset(
+  uploadsClient: any,
+  tileset: string,
+  url: string,
+  name: string
+) {
+  uploadsClient
+    .createUpload({
+      tileset,
+      url,
+      name,
+    })
     .send()
     .then((response: any) => {
       const upload = response.body;
       console.log(upload);
+    })
+    .catch((error: any) => {
+      console.error("Upload failed:", error);
     });
-
 }
 
-export default function readFile() {
+export default function readFile(config: {
+  REACT_APP_MAPBOX_DATASETS_TOKEN: string;
+}) {
+  const { datasetsClient, uploadsClient } = createClients(
+    config.REACT_APP_MAPBOX_DATASETS_TOKEN
+  );
   let pro = progress;
   let points = [];
   for (let i = 0; i < pro.features.length; i++) {
-    points.push(turf.point(pro.features[i].geometry.coordinates))
+    points.push(turf.point(pro.features[i].geometry.coordinates));
   }
 
   let manhattan = [] as any;
   for (let i = 0; i < neighborhoods.features.length; i++) {
     neighborhoods.features[i].properties.progress = 0;
-    manhattan.push(turf.polygon(neighborhoods.features[i].geometry.coordinates,
-      {
+    manhattan.push(
+      turf.polygon(neighborhoods.features[i].geometry.coordinates, {
         name: neighborhoods.features[i].properties.name,
         progress: 0,
         total: neighborhoods.features[i].properties.total as number,
         percentage: 0,
         id: neighborhoods.features[i].id,
-      }));
+      })
+    );
   }
 
   for (let i = 0; i < points.length; i++) {
@@ -59,56 +74,76 @@ export default function readFile() {
         break;
       }
     }
-    if (!found) { console.log("ERROR: Point not within any neighborhood!\n") }
+    if (!found) {
+      console.log("ERROR: Point not within any neighborhood!\n");
+    }
   }
 
-  manhattan.forEach((element:any) => {
+  manhattan.forEach((element: any) => {
     if (element.properties.progress < element.properties.total) {
       let num = (element.properties.progress / element.properties.total) * 100;
       element.properties.percentage = Math.round(num);
-    }
-    else {
+    } else {
       element.properties.percentage = 100;
     }
   });
 
   let different: boolean = false;
   for (let i = 0; i < manhattan.length; i++) {
-    let p = manhattan[i].properties.progress
-    datasetsClient.getFeature({
-      datasetId: datasetID,
-      featureId: manhattan[i].properties.id
-    })
+    let p = manhattan[i].properties.progress;
+    datasetsClient
+      .getFeature({
+        datasetId: datasetID,
+        featureId: manhattan[i].properties.id,
+      })
       .send()
       .then((response: any) => {
-        const feature = response.body
+        const feature = response.body;
         if (feature.properties.progress !== p) {
           different = true;
-          console.log(different)
+          console.log(different);
         }
-      })
-
+      });
   }
 
   if (different) {
     for (let i = 0; i < manhattan.length; i++) {
-      datasetsClient.putFeature({
-        datasetId: datasetID,
-        featureId: manhattan[i].properties.id,
-        feature: {
-          "type": "Feature",
-          "properties": {
-            "name": manhattan[i].properties.name, "total": manhattan[i].properties.total,
-            "progress": manhattan[i].properties.progress, "percentage": manhattan[i].properties.percentage
+      datasetsClient
+        .putFeature({
+          datasetId: datasetID,
+          featureId: manhattan[i].properties.id,
+          feature: {
+            type: "Feature",
+            properties: {
+              name: manhattan[i].properties.name,
+              total: manhattan[i].properties.total,
+              progress: manhattan[i].properties.progress,
+              percentage: manhattan[i].properties.percentage,
+            },
+            geometry: {
+              type: "Polygon",
+              coordinates: manhattan[i].geometry.coordinates,
+            },
           },
-          "geometry": { "type": "Polygon", "coordinates": manhattan[i].geometry.coordinates }
-        }
-      })
+        })
         .send()
-        .then((response: any) => { console.log(response) });
-      console.log("Added " + manhattan[i].properties.progress + ' to ' + manhattan[i].properties.name)
+        .then((response: any) => {
+          console.log(response);
+        });
+      console.log(
+        "Added " +
+          manhattan[i].properties.progress +
+          " to " +
+          manhattan[i].properties.name
+      );
     }
-    uploadTileset();
-  }
 
+    // Pass params here:
+    uploadTileset(
+      uploadsClient,
+      `tort8678.${datasetID}-60nd0`,
+      `mapbox://datasets/tort8678/${datasetID}`,
+      "doorfront_map"
+    );
+  }
 }

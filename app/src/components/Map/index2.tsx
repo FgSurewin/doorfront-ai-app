@@ -1,18 +1,22 @@
 
 import * as React from 'react';
-import { useState, useRef, useEffect} from 'react';
+import { useState, useRef, useEffect,useMemo} from 'react';
 import mapboxgl from 'mapbox-gl';
-import readFile, { datasetsToken, datasetID } from './readProgressFile'
+import { useContext } from 'react';
+import { ConfigContext } from '../../App';
+import readFile, { datasetID } from './readProgressFile'
 import './index.css';
 import { Box, Container,Grid } from '@mui/material'
 import Item from '@mui/material/Grid'
 import CircleIcon from '@mui/icons-material/Circle';
 
+
 const mbxClient = require('@mapbox/mapbox-sdk');
 const mbxDatasets = require('@mapbox/mapbox-sdk/services/datasets');
-const baseClient = mbxClient({ accessToken: datasetsToken });
-const datasetsClient = mbxDatasets(baseClient);
-const accessToken = process.env.REACT_APP_MAPBOX_TOKEN
+
+// const baseClient = mbxClient({ accessToken: datasetsToken });
+// const datasetsClient = mbxDatasets(baseClient);
+const accessToken = "pk.eyJ1IjoidG9ydDg2NzgiLCJhIjoiY2wxcXZncDJtMXMzNTNpb2JjMGM0a3ptNSJ9.esX8M7MJ2cTfFWfL2C4w7g"
 export const legend = {
   layers: [
     '0%',
@@ -42,42 +46,61 @@ export const legend = {
     '#22fa1e']
 }
 
-mapboxgl.accessToken = accessToken as string
-
-function CheckModified(): boolean | null {
-  let modifiedToday: boolean | null = null;
-  const [dateModified, setDateModified] = useState<Date | undefined>()
-  let today: Date = new Date();
+function useCheckModified(datasetID: string, datasetsClient: any): boolean | null {
+  const [modifiedToday, setModifiedToday] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (modifiedToday != null) { return }
-    datasetsClient.getMetadata({
-      datasetId: datasetID
-    })
+    if (!datasetsClient) return;
+
+    const today = new Date();
+    datasetsClient.getMetadata({ datasetId: datasetID })
       .send()
       .then((response: any) => {
-        const datasetMetadata = response.body;
-        setDateModified(new Date(datasetMetadata.modified))
+        const modified = new Date(response.body.modified);
+        const isModified =
+          today.getFullYear() === modified.getFullYear() &&
+          today.getMonth() === modified.getMonth() &&
+          today.getDate() === modified.getDate();
+
+        setModifiedToday(isModified);
       })
-  }, []);
-
-  if (dateModified !== undefined && today.getFullYear() >= dateModified.getFullYear() &&
-    today.getMonth() >= dateModified.getMonth() && today.getDay() > dateModified.getDay()) {
-    modifiedToday = false;
-  }
-  else {
-    modifiedToday = true;
-  }
-
+      .catch(() => setModifiedToday(false)); // fallback on error
+  }, [datasetID, datasetsClient]);
 
   return modifiedToday;
 }
 
+
 export default function MapboxMap() {
-  let modified: boolean | null = CheckModified();
-  if (modified !== null && modified === false) {
-    readFile();
+  const config = useContext(ConfigContext);
+
+  const datasetsToken = config?.REACT_APP_MAPBOX_DATASETS_TOKEN || "";
+  const accessToken = "pk.eyJ1IjoidG9ydDg2NzgiLCJhIjoiY2wxcXZncDJtMXMzNTNpb2JjMGM0a3ptNSJ9.esX8M7MJ2cTfFWfL2C4w7g"
+
+  // Create clients here inside component so we have access to tokens
+  const baseClient = useMemo(() => mbxClient({ accessToken: datasetsToken }), [datasetsToken]);
+  const datasetsClient = useMemo(() => mbxDatasets(baseClient), [baseClient]);
+
+  // Set mapbox-gl access token once config is ready
+
+  useEffect(() => {
+    mapboxgl.accessToken = accessToken;
+  }, [accessToken]);
+
+  const modified = useCheckModified(datasetID, datasetsClient);
+  
+  useEffect(() => {
+    if (
+    modified === false &&
+    config?.REACT_APP_MAPBOX_DATASETS_TOKEN &&
+    config.REACT_APP_MAPBOX_TOKEN
+  ) {
+    // We assert the config type to satisfy readFile input type
+    readFile(config as { REACT_APP_MAPBOX_DATASETS_TOKEN: string });
   }
+}, [modified, config]);
+
+
 
   //change progress.geojson to progress.json before calling readFile()
   const map = useRef<mapboxgl.Map>();
@@ -110,8 +133,7 @@ export default function MapboxMap() {
       }
       
     })
-    first = false;
-  },[first]);
+  },[]);
   
   useEffect(() => {
     if (map.current === undefined) return;
@@ -125,7 +147,7 @@ export default function MapboxMap() {
     map.current.on('mousemove','doorfront-map', (e: mapboxgl.MapMouseEvent) => {
       const point = map.current?.queryRenderedFeatures(e.point) as any
       geojsonSource.current = map.current?.getSource('border');
-      if (point !== undefined && point[0] && point[0].layer.id === 'doorfront-map') {
+      if (point && point.length > 0 && point[0].layer.id === 'doorfront-map') {
         setSubtitle(point[0].properties.progress + ' commercial doorfronts (' + point[0].properties.percentage + '%) marked in ' + point[0].properties.name);
         geojsonSource.current.setData({
           "type": "FeatureCollection",
@@ -149,7 +171,7 @@ export default function MapboxMap() {
           })
         }
       }
-      else if (point !== undefined && point[1] && point[1].layer.id === 'doorfront-map') {
+      else if (point && point.length > 1 && point[1].layer.id === 'doorfront-map') {
         setSubtitle(point[1].properties.progress + ' commercial doorfronts (' + point[1].properties.percentage + '%) marked in ' + point[1].properties.name);
         geojsonSource.current.setData({
           "type": "FeatureCollection",

@@ -9,15 +9,15 @@ import {
   IconButton,
   TextField
 } from "@mui/material";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useContext} from "react";
 import Button from "@mui/material/Button";
 // import {useUserStore} from "../../global/userState";
-import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
 import {useUserStore} from "../../global/userState";
 import { useSnackbar } from "notistack";
 import {fromAddress, setKey} from "react-geocode";
 import { LocationType } from "../../global/explorationState";
 import {useNavigate} from "react-router-dom";
+import { ConfigContext } from '../../App';
 
 export default function CreateRequest() {
   // const deadlines = [2, 3, 4, 5];
@@ -34,7 +34,12 @@ export default function CreateRequest() {
   const {userInfo} = useUserStore()
   const {enqueueSnackbar} = useSnackbar()
   const navigate = useNavigate();
-  setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
+  const config = useContext(ConfigContext);
+  useEffect(() => {
+    if (config?.REACT_APP_GOOGLE_GEOCODE_API_KEY) {
+      setKey(config.REACT_APP_GOOGLE_GEOCODE_API_KEY);
+    }
+  }, [config]);
 
   async function fetchAddress(){
     try{

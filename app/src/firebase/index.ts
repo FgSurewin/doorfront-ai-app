@@ -1,22 +1,27 @@
-import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+// firebase/firebase.ts
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
-/**
- * Firebase configuration & Initialization
- * Reference: https://firebase.google.com/docs/storage/web/start
- */
+let firebaseApp: FirebaseApp | null = null;
+let storage: FirebaseStorage | null = null;
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT,
-  storageBucket: process.env.REACT_APP_FIREBASE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESS,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-};
+export function initFirebase(config: any) {
+  if (!firebaseApp) {
+    firebaseApp = initializeApp(config);
+    storage = getStorage(firebaseApp);
+  }
+}
 
-// firebase.initializeApp(firebaseConfig);
-export const firebaseApp = initializeApp(firebaseConfig);
+export function getFirebaseApp(): FirebaseApp {
+  if (!firebaseApp) {
+    throw new Error("Firebase has not been initialized yet.");
+  }
+  return firebaseApp;
+}
 
-// Get a reference to the storage service, which is used to create references in your storage bucket
-export const storage = getStorage(firebaseApp);
+export function getFirebaseStorage(): FirebaseStorage {
+  if (!storage) {
+    throw new Error("Firebase Storage has not been initialized yet.");
+  }
+  return storage;
+}

@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const localLink = "mongodb://127.0.0.1/crsp_docker_dev";
-//const localLink = "mongodb://localhost:27017/myFirstDatabase_local"
+// const localLink = "mongodb://127.0.0.1/crsp_docker_dev";
+const localLink = "mongodb://localhost:27017/myFirstDatabase_local"
 
 export const databaseLink =
   process.env.NODE_ENV === "production" ? process.env.WEB_LINK : localLink;

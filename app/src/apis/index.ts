@@ -1,8 +1,11 @@
 import axios from "axios";
 import { readLocal, TOKEN } from "../utils/localStorage";
 
+const API_URL = process.env.REACT_APP_API_URL || "https://doorfront.org";
+
 export const baseRequest = axios.create({
-  baseURL: "/api",
+  baseURL: API_URL + "/api",
+  withCredentials: true,
 });
 
 baseRequest.interceptors.request.use(

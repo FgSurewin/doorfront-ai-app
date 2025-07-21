@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState,useContext} from "react";
 import {
   GoogleMapContainerStyle,
   MapContainerStyle,
@@ -26,7 +26,7 @@ import {Button, Box, Grid, TextField} from "@mui/material";
 import {fromAddress} from "react-geocode";
 import {getNewStreetview} from "../../apis/queryStreetView";
 import {useSnackbar} from "notistack";
-
+import { ConfigContext } from '../../App';
 
 export interface GoogleMapProps {
   google?: typeof google;
@@ -36,7 +36,7 @@ export interface GoogleMapProps {
   streetViewMarkerList?: StreetViewMarkerType[];
 }
 
-function GoogleMap({
+export default function GoogleMap({
                      google,
                      streetViewEvents,
                      mapConfig,
@@ -58,6 +58,8 @@ function GoogleMap({
   } = useExplorationStore();
   const {enqueueSnackbar} = useSnackbar();
   const [showSearch, setShowSearch] = React.useState(false);
+  const config = useContext(ConfigContext);
+  const REACT_APP_GOOGLE_MAP_API_KEY = config?.REACT_APP_GOOGLE_MAP_API_KEY
   // const _panoID = React.useRef("");
 
   /* -------------------------------------------------------------------------- */
@@ -157,7 +159,7 @@ function GoogleMap({
       //console.log(result)
       if (result.status === "OK") {
         setLocation({lat: result.results[0].geometry.location.lat, lng: result.results[0].geometry.location.lng});
-        const newSV = await getNewStreetview(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
+        const newSV = await getNewStreetview(REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
         //  console.log(newSV!.data.location?.pano);
         // const metadata = await fetchMetadata(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
         // console.log(metadata)
@@ -304,8 +306,4 @@ function GoogleMap({
   );
 }
 
-const api = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
-const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=places&callback=Function.prototype&v=quarterly`;
-export default makeAsyncScriptLoader(url, {
-  globalName: "google",
-})(GoogleMap);
+

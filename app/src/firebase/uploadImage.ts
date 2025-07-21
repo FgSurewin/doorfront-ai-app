@@ -6,20 +6,18 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { storage } from ".";
+import { getFirebaseStorage } from ".";
 
-/* ---------- Using environment variable to determine the root path --------- */
-const devPath = "Development_v1"; // 2022/2/14 - v1 for beta-test-2
-const rootPath =
-  process.env.NODE_ENV === "development" ? devPath : "Production";
+/* ---------- Use environment to set root path ---------- */
+const devPath = "Development_v1"; // for dev builds
+const rootPath = process.env.NODE_ENV === "development" ? devPath : "Production";
 
 /**
  * Upload Blob File
  * Reference: https://firebase.google.com/docs/storage/web/upload-files
  */
-
 export function uploadImage(
-  imgBlob: any,
+  imgBlob: Blob,
   imageId: string,
   pov: { heading: number; pitch: number; zoom: number },
   pano: string,
@@ -29,28 +27,32 @@ export function uploadImage(
     onError?: (errorMsg: string) => void;
   }
 ) {
-  // Upload file and metadata to the object 'images/mountains.jpg'
-  const currentFileName = `${rootPath}/${pano}/${imageId}`;
-  const storageRef = ref(storage, currentFileName);
-  const uploadTask = uploadBytesResumable(storageRef, imgBlob);
-  // Listen for state changes, errors, and completion of the upload.
-  uploadTask.on(
-    "state_changed", // or 'firebase.storage.TaskEvent.STATE_CHANGED' | "state_changed"
-    (snapshot: UploadTaskSnapshot) => {
-      const currentProgress =
-        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      optionFuncs.onUpload && optionFuncs.onUpload(currentProgress);
-    },
-    (error: StorageError) => {
-      optionFuncs.onError && optionFuncs.onError(error.message);
-    },
-    () => {
-      // Upload completed successfully, now we can get the download URL
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        optionFuncs.onSuccess(imageId, downloadURL, currentFileName);
-      });
-    }
-  );
+  try {
+    const storage = getFirebaseStorage(); // ✅ Get initialized storage
+
+    const currentFileName = `${rootPath}/${pano}/${imageId}`;
+    const storageRef = ref(storage, currentFileName);
+    const uploadTask = uploadBytesResumable(storageRef, imgBlob);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot: UploadTaskSnapshot) => {
+        const currentProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        optionFuncs.onUpload?.(currentProgress);
+      },
+      (error: StorageError) => {
+        optionFuncs.onError?.(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          optionFuncs.onSuccess(imageId, downloadURL, currentFileName);
+        });
+      }
+    );
+  } catch (err: any) {
+    optionFuncs.onError?.(err.message || "Upload failed");
+  }
 }
 
 /**
@@ -59,12 +61,11 @@ export function uploadImage(
  */
 export async function deleteImage(fileName: string) {
   try {
-    // Create a reference to the file to delete
-    const desertRef = ref(storage, fileName);
+    const storage = getFirebaseStorage(); // ✅ Get initialized storage
 
-    // Delete the file
-    await deleteObject(desertRef);
+    const fileRef = ref(storage, fileName);
+    await deleteObject(fileRef);
   } catch (error) {
-    console.error(error);
+    console.error("Failed to delete image:", error);
   }
 }

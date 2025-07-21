@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useContext} from "react";
 import { HeaderData } from "./data";
 import { Stack, SxProps, Typography } from "@mui/material";
+import { ConfigContext } from "../../App";
 
 export const HeaderWrapperStyle: React.CSSProperties = {
   height: "100vh",
@@ -37,10 +38,11 @@ const shadeStyle: React.CSSProperties = {
 /* -------------------------------------------------------------------------- */
 /*                     React Component - Background Video                     */
 /* -------------------------------------------------------------------------- */
-const videoLink = process.env.REACT_APP_VIDEO_LINK;
+
 export const BackgroundVideo = React.memo(function () {
   const videoRef = React.useRef<HTMLVideoElement>(null);
-
+  const config = useContext(ConfigContext);
+  const videoLink = config?.REACT_APP_VIDEO_LINK;
   React.useEffect(() => {
     const videoElement = videoRef.current;
     if (videoElement && /Mobi|Android/i.test(navigator.userAgent)) {

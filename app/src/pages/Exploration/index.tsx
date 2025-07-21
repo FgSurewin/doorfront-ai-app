@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import Navbar from "../../components/Navbar";
-import GoogleMap from "../../components/GoogleMap";
+import GoogleMap from "../../components/GoogleMap/GoogleMapLoader";
 import ActionPanel from "../../components/ActionPanel";
 import ImageDrawer from "./ImageDrawer";
 import BadgeShowcase from "./BadgeShowcase";
@@ -25,7 +25,7 @@ import {setKey} from "react-geocode";
 import {useSnackbar} from "notistack";
 import {useContestState} from "../../global/contestState";
 import {getOpenRequests, RequestData} from "../../apis/request";
-
+import { ConfigContext } from '../../App';
 
 export default function ExplorationPage() {
   const {
@@ -204,7 +204,9 @@ export default function ExplorationPage() {
       behavior: 'smooth',
     });
   };
-  setKey(process.env.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
+
+  const config = useContext(ConfigContext);
+  setKey(config?.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
 
   return (
     <div id="ExplorationWrapper">
