@@ -2,7 +2,8 @@ import axios from "axios";
 import { readLocal, TOKEN } from "../utils/localStorage";
 
 export const baseRequest = axios.create({
-  baseURL: "/api",
+  baseURL: process.env.REACT_APP_API_URL + "/api",
+  withCredentials: true,
 });
 
 baseRequest.interceptors.request.use(
