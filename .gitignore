@@ -111,3 +111,8 @@ dist
 .tern-port
 .DS_Store
 
+#ignore build folders: 
+/server/public/
+/server/views/
+/app/build/
+/build/
