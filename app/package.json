@@ -79,7 +79,8 @@
     "@types/mapbox-gl": "^2.7.6",
     "@types/react-async-script": "^1.2.1",
     "@types/turf": "^3.5.32",
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "patch-package": "^8.0.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
