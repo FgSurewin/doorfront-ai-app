@@ -292,7 +292,7 @@ function MapRender() {
       }}
       style={{width: "100%", height: "87vh", zIndex: 0}}
       mapStyle="mapbox://styles/tort8678/clwtixfto056501qlb3xh9ddz"
-      mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN as string}
+      mapboxAccessToken={"pk.eyJ1IjoidG9ydDg2NzgiLCJhIjoiY2wxcXZncDJtMXMzNTNpb2JjMGM0a3ptNSJ9.esX8M7MJ2cTfFWfL2C4w7g"}
       interactive={false}
       interactiveLayerIds={getFeatureIds()}
       onClick={(e) => findNearestPoint(e)}

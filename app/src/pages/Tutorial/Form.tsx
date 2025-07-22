@@ -7,7 +7,8 @@ import Navbar from '../../components/Navbar';
 
 
 export default function Form() {
- 
+  const REACT_APP_TUTORIAL_ONE="https://firebasestorage.googleapis.com/v0/b/doorfront-354705.appspot.com/o/Tutorial%2FDoorFront%20-%20Collect%20Accessibility%20Data%20and%209%20more%20pages%20-%20Personal%20-%20Microsoft%E2%80%8B%20Edge%202023-01-26%2010-57-59.mp4?alt=media&token=47762477-ae1e-4f77-bdfd-3aa22b958f8c"
+  const REACT_APP_TUTORIAL_TWO="https://firebasestorage.googleapis.com/v0/b/doorfront-354705.appspot.com/o/Tutorial%2FDoorFront%20-%20Collect%20Accessibility%20Data%20and%2010%20more%20pages%20-%20Personal%20-%20Microsoft%E2%80%8B%20Edge%202023-01-26%2011-23-36.mp4?alt=media&token=253d9bf4-0a8d-47ef-95b5-4f0eb5a347b6"
   const [value,setValue]= useState(0)
   const handleChange= ( event:  React.SyntheticEvent, newValue: number) => {
     // console.warn(newValue)
@@ -93,7 +94,7 @@ export default function Form() {
             <Box sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
 
               <video controls autoPlay width="90%" height="90%">
-                <source src={process.env.REACT_APP_TUTORIAL_ONE} />
+                <source src={REACT_APP_TUTORIAL_ONE} />
               </video>
 
             </Box>
@@ -148,7 +149,7 @@ export default function Form() {
               <Typography variant="h5" sx={{ mb: 2, textAlign: "left" }}>Video of Instructions</Typography>
               <Box sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
               <video controls autoPlay width="90%" height="90%">
-                <source src={process.env.REACT_APP_TUTORIAL_TWO} />
+                <source src={REACT_APP_TUTORIAL_TWO} />
               </video>
               </Box> 
           </TabPanel>
