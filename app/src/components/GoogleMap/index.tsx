@@ -58,6 +58,7 @@ function GoogleMap({
   } = useExplorationStore();
   const {enqueueSnackbar} = useSnackbar();
   const [showSearch, setShowSearch] = React.useState(false);
+  const REACT_APP_GOOGLE_MAP_API_KEY = "AIzaSyCB8qmDGFvUprijjju_-8Bznc-1bfLMAwU"
   // const _panoID = React.useRef("");
 
   /* -------------------------------------------------------------------------- */
@@ -157,7 +158,7 @@ function GoogleMap({
       //console.log(result)
       if (result.status === "OK") {
         setLocation({lat: result.results[0].geometry.location.lat, lng: result.results[0].geometry.location.lng});
-        const newSV = await getNewStreetview(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
+        const newSV = await getNewStreetview(REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
         //  console.log(newSV!.data.location?.pano);
         // const metadata = await fetchMetadata(process.env.REACT_APP_GOOGLE_MAP_API_KEY!, result.results[0].geometry.location)
         // console.log(metadata)
@@ -304,7 +305,7 @@ function GoogleMap({
   );
 }
 
-const api = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
+const api = "AIzaSyCB8qmDGFvUprijjju_-8Bznc-1bfLMAwU";
 const url = `https://maps.googleapis.com/maps/api/js?key=${api}&libraries=places&callback=Function.prototype&v=quarterly`;
 export default makeAsyncScriptLoader(url, {
   globalName: "google",

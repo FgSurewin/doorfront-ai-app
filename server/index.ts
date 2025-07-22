@@ -77,6 +77,7 @@ import nunjucks from "nunjucks";
 import morgan from "morgan";
 import cors, { CorsOptions, CorsOptionsDelegate } from 'cors';
 import { config, databaseLink } from "./database";
+import configRoute from './routes/config'
 
 (async function () {
   const app = express();
@@ -84,7 +85,7 @@ import { config, databaseLink } from "./database";
 
   // Read static files
   app.use(express.static("build"));
-
+  app.use('/api', configRoute);
   // Template engine
   nunjucks.configure("server/views", {
     autoescape: true,
@@ -93,9 +94,9 @@ import { config, databaseLink } from "./database";
 
   // Initialize Middleware
   const allowedOrigins = [
-    process.env.REACT_APP_API_URL || "http://localhost:3000",
-    // add other allowed origins if needed
-  ];
+  "http://localhost:3000", 
+  "https://doorfront.org", 
+];
   // Add CORS middleware here
   app.use(cors({
     origin: function(origin, callback) {
