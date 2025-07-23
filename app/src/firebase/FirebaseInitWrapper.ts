@@ -1,4 +1,4 @@
-import { initializeFirebase } from '../firebase/firebaseUtils';
+import { initFirebase } from '../firebase';
 import { useContext, useEffect } from 'react';
 import { ConfigContext } from '../App';
 
@@ -7,7 +7,7 @@ export function FirebaseInitWrapper() {
 
   useEffect(() => {
     if (config?.REACT_APP_FIREBASE_API_KEY) {
-      initializeFirebase({
+      initFirebase({
         apiKey: config.REACT_APP_FIREBASE_API_KEY,
         authDomain: config.REACT_APP_FIREBASE_AUTH,
         projectId: config.REACT_APP_FIREBASE_PROJECT,
