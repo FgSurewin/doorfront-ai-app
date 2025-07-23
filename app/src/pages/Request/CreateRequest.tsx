@@ -12,7 +12,6 @@ import {
 import {useState, useEffect, useContext} from "react";
 import Button from "@mui/material/Button";
 // import {useUserStore} from "../../global/userState";
-import {ArrowForwardIos, ArrowBackIos} from '@mui/icons-material';
 import {useUserStore} from "../../global/userState";
 import { useSnackbar } from "notistack";
 import {fromAddress, setKey} from "react-geocode";
@@ -36,8 +35,12 @@ export default function CreateRequest() {
   const {enqueueSnackbar} = useSnackbar()
   const navigate = useNavigate();
   const config = useContext(ConfigContext);
-  setKey(config?.REACT_APP_GOOGLE_GEOCODE_API_KEY as string)
-  console.log(config?.REACT_APP_GOOGLE_GEOCODE_API_KEY )
+  useEffect(() => {
+    if (config?.REACT_APP_GOOGLE_GEOCODE_API_KEY) {
+      setKey(config.REACT_APP_GOOGLE_GEOCODE_API_KEY);
+    }
+  }, [config]);
+
   async function fetchAddress(){
     try{
       const res = await fromAddress(requestData.address)

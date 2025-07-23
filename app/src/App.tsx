@@ -11,6 +11,7 @@ import { useState } from "react";
 import "./App.css";
 import { useUserStore } from "./global/userState";
 // import { deleteAllLocal } from "./utils/localStorage";
+import {FirebaseInitWrapper} from "./firebase/FirebaseInitWrapper"
 
 const queryClient = new QueryClient();
 interface Config {
@@ -36,7 +37,7 @@ export const ConfigContext = React.createContext<Config | null>(null);
 export default function App() {
   const [config, setConfig] = useState<Config | null>(null);
   const { initUserInfo } = useUserStore();
-
+  
   React.useEffect(() => {
     initUserInfo();
 
@@ -63,6 +64,7 @@ export default function App() {
             //@ts-ignore
             // }
             <ConfigContext.Provider value={config}>
+              <FirebaseInitWrapper />
               <SnackbarProvider
                 anchorOrigin={{
                   vertical: "bottom",
