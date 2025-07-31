@@ -344,11 +344,13 @@ export class UserService {
       const { id, type } = body;
       const currentUser = await UserModel.findById(id);
       if (currentUser) {
+        // Calculate score increment
+        const scoreIncrement = type === "review" ? 2 : 1;
         const result = await UserModel.findOneAndUpdate(
           { _id: id },
           {
             [type]: currentUser[type] + 1,
-            score: currentUser.score + 1,
+            score: currentUser.score + scoreIncrement,
           },
           {
             new: true,

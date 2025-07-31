@@ -23,6 +23,7 @@ import {
 import { deleteAllLocal } from "../../utils/localStorage";
 import { CircularProgress } from "@mui/material";
 import { Box } from "@mui/system";
+import { updateLabelCoordinates } from '../../apis/fastAPI';
 
 interface LocationStateProps {
   area: number;
@@ -113,10 +114,13 @@ export default function ReviewLabelingPage() {
   ]);
 
   const onSubmit = async (image: ReactToolImageListItemType) => {
+
     try {
+      const data = await updateLabelCoordinates(image.imageId);
       const filterImageList = Images.filter(
         (item) => item.image_id === image.imageId
       );
+      
       if (!filterImageList.length) {
         enqueueSnackbar("Image not found", { variant: "error" });
         return;
@@ -127,7 +131,6 @@ export default function ReviewLabelingPage() {
         image.labels,
         currentImagePov
       );
-
       const result = await updateNewHumanLabels(
         {
           imageId: image.imageId,
@@ -142,7 +145,7 @@ export default function ReviewLabelingPage() {
           deleteAllLocal,
         }
       );
-
+   
       if (result.code === 0) {
         await saveImageToDiffList({
           category: "review_images",
