@@ -22,6 +22,7 @@ import Profile from "./pages/Profile"
 import Tutorial from "./pages/Tutorial"
 import Request from "./pages/Request";
 import CreateRequest from "./pages/Request/CreateRequest";
+import AdminLabel from "./pages/AdminLabel"
 
 ReactDOM.render(
   <React.StrictMode>
@@ -47,7 +48,7 @@ ReactDOM.render(
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/adminPage" element={<AdminPage />} />
-            {/* <Route path="/adminLabel" element={<AdminLabel />} /> */}
+            <Route path="/adminLabel" element={<AdminLabel />} />
           </Route>
           
         </Route>

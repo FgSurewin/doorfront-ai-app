@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import { CollectedImageInterface } from "../../../types/collectedImage";
 import { formatDate } from "../../../utils/formatDate";
@@ -8,15 +8,65 @@ interface ImageWindowProps {
 }
 
 const ImageWindow: React.FC<ImageWindowProps> = ({ selectedImage }) => {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [imgSize, setImgSize] = useState({ width: 0, height: 0 });
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    if (imgRef.current) {
+      const rendered = imgRef.current.getBoundingClientRect();
+      setImgSize({ width: rendered.width, height: rendered.height });
+
+      const img = new Image();
+      img.onload = () => {
+        setNaturalSize({ width: img.width, height: img.height });
+      };
+      img.src = selectedImage.url;
+    }
+  }, [selectedImage]);
+
   if (!selectedImage) return null;
 
   return (
     <>
-      <img
-        src={selectedImage.url}
-        alt={selectedImage.fileName}
-        style={{ width: "100%", marginBottom: "1rem" }}
-      />
+      {/* Image with bounding box overlay */}
+      <Box sx={{ position: "relative", width: "100%", marginBottom: "1rem" }}>
+        <img
+          ref={imgRef}
+          src={selectedImage.url}
+          alt={selectedImage.fileName}
+          style={{ width: "100%", display: "block" }}
+        />
+
+        {/* Render human_labels[0].labels bunnyboxes */}
+        {imgSize.width > 0 &&
+          naturalSize.width > 0 &&
+          selectedImage.human_labels?.[0]?.labels?.map((label, index) => {
+            const { box } = label;
+            const scaleX = imgSize.width / naturalSize.width;
+            const scaleY = imgSize.height / naturalSize.height;
+
+            return (
+              <Box
+                key={index}
+                sx={{
+                  position: "absolute",
+                  left: box.x * scaleX,
+                  top: box.y * scaleY,
+                  width: box.width * scaleX,
+                  height: box.height * scaleY,
+                  border: "2px solid red",
+                  boxSizing: "border-box",
+                  zIndex: 1,
+                }}
+              />
+            );
+          })}
+      </Box>
+
+      {/* Text info */}
       <Typography variant="body1">
         <strong>Creator:</strong> {selectedImage.creator}
       </Typography>
@@ -39,7 +89,6 @@ const ImageWindow: React.FC<ImageWindowProps> = ({ selectedImage }) => {
       </Typography>
       {selectedImage.human_labels?.map((annotator, i) => (
         <Box key={i} sx={{ mb: 2, pl: 1 }}>
-          {/* Show the name of the annotator in one line */}
           <Typography variant="subtitle1">
             🧑‍💻 <strong>Labeled by:</strong> {annotator.name}
           </Typography>
@@ -47,7 +96,6 @@ const ImageWindow: React.FC<ImageWindowProps> = ({ selectedImage }) => {
             📅 <strong>Labeled at:</strong>{" "}
             {annotator.createdAt ? formatDate(annotator.createdAt) : "N/A"}
           </Typography>
-          {/* Show each label's information separately */}
           {annotator.labels.map((label, j) => (
             <Box key={j} sx={{ mb: 1, pl: 2, borderLeft: "2px solid #ccc" }}>
               <Typography variant="body2">
@@ -75,6 +123,7 @@ const ImageWindow: React.FC<ImageWindowProps> = ({ selectedImage }) => {
         </Box>
       ))}
 
+      {/* Model Labels (optional) */}
       {selectedImage.model_labels && selectedImage.model_labels.length > 0 && (
         <Typography variant="body1" sx={{ mt: 2 }}>
           🤖 <strong>Model Labels: </strong>
@@ -92,7 +141,6 @@ const ImageWindow: React.FC<ImageWindowProps> = ({ selectedImage }) => {
                 {label.box.y.toFixed(1)}, w={label.box.width.toFixed(1)}, h=
                 {label.box.height.toFixed(1)}
               </Typography>
-              {/* Add any additional information you want to display about the model label here */}
             </Box>
           ))}
         </Typography>
