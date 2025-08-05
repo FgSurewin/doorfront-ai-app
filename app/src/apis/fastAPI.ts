@@ -10,7 +10,7 @@ export interface UpdateResponse {
 }
 
 
-const BASE_URL = process.env.FAST_API_URL || "https://doorfront-fast-api-748982393343.europe-west1.run.app";
+const BASE_URL = process.env.FAST_API_URL || "https://doorfront-fastapi-server-748982393343.us-central1.run.app";
 
 export async function updateLabelCoordinates(imageId: string): Promise<UpdateResponse> {
   const response = await fetch(`${BASE_URL}/add-exactCoordinates-and-address`, {
