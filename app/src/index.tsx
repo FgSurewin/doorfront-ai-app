@@ -6,7 +6,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AdminPage from "./pages/AdminPage/AdminPage";
-// import AdminLabel from "./pages/AdminLabel/ReviewLabelingPage";
 import NotFound from "./pages/NotFound";
 import ExplorationPage from "./pages/Exploration";
 import LabelPage from "./pages/Label";
@@ -22,6 +21,7 @@ import Profile from "./pages/Profile"
 import Tutorial from "./pages/Tutorial"
 import Request from "./pages/Request";
 import CreateRequest from "./pages/Request/CreateRequest";
+import AdminLabel from "./pages/AdminLabel"
 
 ReactDOM.render(
   <React.StrictMode>
@@ -47,7 +47,8 @@ ReactDOM.render(
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/adminPage" element={<AdminPage />} />
-            {/* <Route path="/adminLabel" element={<AdminLabel />} /> */}
+            <Route path="/adminLabel/:imageId" element={<AdminLabel />} />
+
           </Route>
           
         </Route>

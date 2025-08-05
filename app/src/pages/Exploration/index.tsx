@@ -272,7 +272,7 @@ export default function ExplorationPage() {
                   streetViewConfig={{
                     pov: googleMapConfig.povConfig,
                     position: googleMapConfig.position,
-                    pano: googleMapConfig.panoId
+               
                   }}
                   streetViewMarkerList={panoramaMarkerList}
                 />
