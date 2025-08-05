@@ -118,11 +118,11 @@ export default function EditLabelingPage() {
   };
 
   const onFailureExit = () => {
-    navigate("/exploration");
+    navigate("/adminPage");
   };
 
   const onSuccessExit = () => {
-    navigate("/exploration");
+    navigate("/adminPage");
   };
   
   return (

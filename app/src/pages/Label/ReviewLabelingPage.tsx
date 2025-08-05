@@ -116,7 +116,13 @@ export default function ReviewLabelingPage() {
   const onSubmit = async (image: ReactToolImageListItemType) => {
 
     try {
-      const data = await updateLabelCoordinates(image.imageId);
+      let data;
+        try {
+          data = await updateLabelCoordinates(image.imageId);
+        } catch (err) {
+          console.warn("Failed to update label coordinates, continuing anyway.", err);
+      }
+      
       const filterImageList = Images.filter(
         (item) => item.image_id === image.imageId
       );

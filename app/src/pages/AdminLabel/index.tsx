@@ -7,7 +7,6 @@ import {
 } from "../../apis/collectedImage";
 import LabelTool from "../../components/LabelTool";
 import { ReactToolImageListItemType } from "../../components/LabelTool/state/reactToolState";
-import { useQueryImagesStore } from "../../global/queryImagesState";
 import { useUserStore } from "../../global/userState";
 import { deleteAllLocal } from "../../utils/localStorage";
 import { testTypeConfigs } from "./testImageData";
@@ -15,7 +14,7 @@ import {
   convertInitImageToInputImageList,
   convertReactToolImageLabelsToDBImageLabels,
 } from "./utils/label";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { deleteImage } from "../../firebase/uploadImage";
 import { CollectedImageInterface } from "../../types/collectedImage";
 import {
@@ -27,65 +26,59 @@ import {
 
 export default function LabelPage() {
   const [Images, setImages] = React.useState<CollectedImageInterface[]>([]);
-  const { queryImageList } = useQueryImagesStore();
   const { userInfo, clearUserInfo } = useUserStore();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { imageId } = useParams(); // ✅ get single imageId from URL
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
   React.useEffect(() => {
     async function loadFunc() {
       try {
-        if (queryImageList.length > 0) {
-          const result = await getMultiImageByIds(
-            {
-              idList: queryImageList.map((item) => item.imageId),
-            },
-            {
-              clearUserInfo,
-              navigate,
-              deleteAllLocal,
-            }
-          );
-          if (result.code === 0) {
-            setImages(result.data!);
-            console.log(result.data);
-          }
-        } else {
-          navigate("/exploration");
+        if (!imageId) {
+          enqueueSnackbar("No image ID provided", { variant: "error" });
+          navigate("/adminPage");
+          return;
         }
+
+        const result = await getMultiImageByIds(
+          { idList: [imageId] },
+          {
+            clearUserInfo,
+            navigate,
+            deleteAllLocal,
+          }
+        );
+
+        if (result.code === 0 && result.data && result.data.length > 0) {
+          setImages(result.data);
+        }
+        else {
+        enqueueSnackbar("Image not found or empty data.", { variant: "warning" });
+        navigate("/adminPage");
+      }
       } catch (e) {
-        const error = e as Error;
-        enqueueSnackbar(error.message, {
-          variant: "error",
-        });
+        enqueueSnackbar((e as Error).message, { variant: "error" });
       }
     }
+
     loadFunc();
-  }, [queryImageList, clearUserInfo, navigate, enqueueSnackbar]);
+  }, [imageId, clearUserInfo, navigate, enqueueSnackbar]);
 
   const onSubmit = async (image: ReactToolImageListItemType) => {
     try {
-      const filterImageList = Images.filter(
-        (item) => item.image_id === image.imageId
-      );
-      // Extract images data from response data
-      // const humanLabelList = filterImageList[0].human_labels;
-      const currentImagePov = filterImageList[0].pov;
+      const target = Images.find((item) => item.image_id === image.imageId);
+      if (!target) throw new Error("Image not found.");
 
-      // Parse data into certain format required by database
       const newHumanLabels = convertReactToolImageLabelsToDBImageLabels(
         image.labels,
-        currentImagePov
+        target.pov
       );
 
-      // * Change labelBy form model to current user nickname
-      // * Only do this in creating image
       newHumanLabels.forEach((item) => {
         item.labeledBy = userInfo.nickname!;
       });
 
-      // Send back to Database
       const result = await updateNewHumanLabels(
         {
           imageId: image.imageId,
@@ -100,11 +93,8 @@ export default function LabelPage() {
           deleteAllLocal,
         }
       );
+
       if (result.code === 0) {
-        //TODO Handle QueryImages
-        // Delete state
-        // setState(state.filter((item) => item.image_id !== image.imageId));
-        //TODO Delete UnLabelImage property
         await deleteImageFromList({
           id: userInfo.id!,
           data: {
@@ -114,7 +104,7 @@ export default function LabelPage() {
           },
           category: "unLabel_images",
         });
-        //TODO Add LabelImage property
+
         await saveImageToDiffList({
           id: userInfo.id!,
           data: {
@@ -125,61 +115,40 @@ export default function LabelPage() {
           category: "label_images",
         });
 
-        // * Handle User Credits
-        // add create credit
         await addUserCredit({ id: userInfo.id!, type: "create" });
-        // add label credit
         await addUserLabelCredit({
           id: userInfo.id!,
           labelNum: newHumanLabels.length,
         });
 
-        enqueueSnackbar("Save successfully", {
-          variant: "success",
-        });
+        enqueueSnackbar("Save successfully", { variant: "success" });
       }
     } catch (e) {
-      const error = e as Error;
-      enqueueSnackbar(error.message, {
-        variant: "error",
-      });
+      enqueueSnackbar((e as Error).message, { variant: "error" });
     }
   };
 
   const onFailureExit = () => {
     if (!hasUnsavedChanges) {
-      navigate("/exploration");
+      navigate("/adminPage");
+    } else if (window.confirm("You have unsaved changes. Exit without saving?")) {
+      navigate("/adminPage");
     } else {
-      const confirmExit = window.confirm(
-        "You have unsaved changes. Exit without saving?"
-      );
-      if (confirmExit) {
-        navigate("/exploration");
-      } else {
-        enqueueSnackbar("Please save your changes before exiting.", {
-          variant: "info",
-        });
-      }
+      enqueueSnackbar("Please save your changes before exiting.", {
+        variant: "info",
+      });
     }
   };
 
-  const onSuccessExit = () => {
-    navigate("/exploration");
-  };
+  const onSuccessExit = () => navigate("/adminPage");
 
-  /* ---------------- Handle Delete Function Within Label Tool ---------------- */
   const onDeleteImage = async (image: ReactToolImageListItemType) => {
     try {
-      //TODO Delete database image
       await deleteDBImage(
         { imageId: image.imageId },
-        {
-          clearUserInfo,
-          navigate,
-          deleteAllLocal,
-        }
+        { clearUserInfo, navigate, deleteAllLocal }
       );
-      //TODO Delete UnLabelImage property
+
       await deleteImageFromList({
         id: userInfo.id!,
         data: {
@@ -189,24 +158,18 @@ export default function LabelPage() {
         },
         category: "unLabel_images",
       });
-      // Notification
-      enqueueSnackbar("Delete image successfully", {
-        variant: "warning",
-      });
 
-      //TODO Delete firebase storage image
       await deleteImage(image.fileName);
+
+      enqueueSnackbar("Delete image successfully", { variant: "warning" });
     } catch (e) {
-      const error = e as Error;
-      enqueueSnackbar(error.message, {
-        variant: "error",
-      });
+      enqueueSnackbar((e as Error).message, { variant: "error" });
     }
   };
 
   return (
     <>
-      {Images && Images.length > 0 && (
+      {Images.length > 0 && (
         <LabelTool
           collectedImageList={convertInitImageToInputImageList(Images)}
           typeConfigs={testTypeConfigs}

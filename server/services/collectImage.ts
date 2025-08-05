@@ -148,7 +148,15 @@ export class CollectImageService {
     }
 
     if (query.searchType === "address" && query.addressFilter) {
-      filter.address = { $regex: new RegExp(query.addressFilter, "i") };
+      if (query.addressFilter.trim().toLowerCase() === "nan") {
+        // Special case: find documents with missing or null address
+        filter.$or = [{ address: { $exists: false } }, { address: null }];
+      } else {
+        // Regular address search (case-insensitive regex)
+        filter.address = {
+          $regex: new RegExp(query.addressFilter.trim(), "i"),
+        };
+      }
     }
 
     try {
@@ -403,8 +411,8 @@ export class CollectImageService {
           }
 
           const labeledBy = Array.isArray(image.human_labels)
-          ? image.human_labels.map((h) => (h.name || "").trim().toLowerCase())
-          : [];
+            ? image.human_labels.map((h) => (h.name || "").trim().toLowerCase())
+            : [];
 
           if (labeledBy.includes(nickname.trim().toLowerCase())) {
             continue; // skip already labeled
@@ -420,7 +428,8 @@ export class CollectImageService {
 
           // check incomplete door label (in first labeler only, as in frontend)
           let incompleteDoor = false;
-          const labels = (image.human_labels[0] && image.human_labels[0].labels) || [];
+          const labels =
+            (image.human_labels[0] && image.human_labels[0].labels) || [];
           for (const label of labels) {
             if (label.label === "door" && label.subtype === "") {
               incompleteDoor = true;
@@ -440,7 +449,6 @@ export class CollectImageService {
             break;
           }
         }
-
       }
 
       res.status(200).json({

@@ -24,7 +24,7 @@ const ImageCard: React.FC<ImageCardProps> = ({
 
   const handleEditClick = () => {
     changeSelectedImageId(image.image_id);
-    navigate("/adminLabel");
+    navigate(`/adminLabel/${image.image_id}`);
   };
 
   useEffect(() => {
