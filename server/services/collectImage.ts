@@ -363,7 +363,6 @@ export class CollectImageService {
     const { req, res } = ctx;
 
     const nickname = req.query.nickname as string;
-    const minLabels = parseInt(req.query.minLabels as string) || 3;
     const limit = Math.min(parseInt(req.query.limit as string) || 100, 100);
     const skip = parseInt(req.query.skip as string) || 0;
     const chunkSize = 100;
@@ -418,15 +417,14 @@ export class CollectImageService {
             continue; // skip already labeled
           }
 
-          // skip if too few labels or sample image
+          // skip if sample image
           if (
-            image.human_labels.length <= minLabels ||
             image.image_id === "GuildTourSample"
           ) {
             continue;
           }
 
-          // check incomplete door label (in first labeler only, as in frontend)
+          // check incomplete door label 
           let incompleteDoor = false;
           const labels =
             (image.human_labels[0] && image.human_labels[0].labels) || [];
@@ -438,7 +436,7 @@ export class CollectImageService {
           }
 
           // skip if too many labels and no incomplete door
-          const maxModifier = 5;
+          const maxModifier = 3;
           if (image.human_labels.length >= maxModifier && !incompleteDoor) {
             continue;
           }
